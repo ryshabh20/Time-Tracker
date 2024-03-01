@@ -1,0 +1,54 @@
+import { connect } from "@/db/dbConfig";
+import User from "@/db/models/userSchema";
+import { NextRequest, NextResponse } from "next/server";
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+connect();
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { email, password, stayLoggedIn } = body;
+    console.log("loggedIn", stayLoggedIn);
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "User does not exist" },
+        { status: 400 }
+      );
+    }
+
+    const validPassword = await bcryptjs.compare(password, user.password);
+    if (!validPassword) {
+      return NextResponse.json({ error: "Wrong Credentials" }, { status: 400 });
+    }
+
+    const userData = {
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      projects: user.projects,
+      team: user.team,
+    };
+    const token = await jwt.sign(userData, process.env.SECRET!, {
+      expiresIn: stayLoggedIn ? "7d" : "1d",
+    });
+
+    const res = NextResponse.json({
+      message: "Login successful",
+      success: true,
+    });
+
+    res.cookies.set("authtoken", token, {
+      httpOnly: true,
+      maxAge: stayLoggedIn ? 7 * 24 * 60 * 60 : 1 * 24 * 60 * 60,
+    });
+
+    return res;
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
