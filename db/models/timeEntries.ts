@@ -6,11 +6,11 @@ const timeEntriesSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  project_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Task",
-    optional: true,
-  },
+  // project_id: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "Task",
+  //   optional: true,
+  // },
   start_time: {
     type: Date,
     required: true,

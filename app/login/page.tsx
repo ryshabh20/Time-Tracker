@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 
 import axios from "axios";
 
-export default function SignupPage() {
+export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
@@ -24,7 +24,7 @@ export default function SignupPage() {
     try {
       setLoading(true);
       const response = await axios.post("/api/users/login", user);
-
+      console.log("this is the response", response);
       router.push("/components/dashboard");
     } catch (error: any) {
       setLoading(true);

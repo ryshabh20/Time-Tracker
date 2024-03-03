@@ -1,13 +1,17 @@
 "use client";
 import axios from "axios";
+import { useAppSelector } from "@/store/store";
+
 import { useState } from "react";
 const timetracker = () => {
+  const user = useAppSelector((state) => state.userData);
+
   const [task, setTask] = useState("");
   const [timer, setTimer] = useState(false);
   const data = { task, timer };
   const handleOnClick = async () => {
     setTimer(!timer);
-    const user = await axios.get("/api/users/currentUser");
+    // const user = await axios.get("/api/users/currentUser");
     const bodydata = { ...data, user };
     const response = await axios.post("/api/users/timeentry", bodydata);
   };

@@ -13,6 +13,7 @@ interface UserData {
   projects: string[];
   role: string;
   updatedAt: string;
+  isTimer: boolean;
 }
 
 const initialState: UserState = {
@@ -25,7 +26,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUserData(state, action: { payload: UserData }) {
+    setUserData(state, action: { payload: UserData | null }) {
       state.userData = action.payload;
     },
     setLoading(state, action: { payload: boolean }) {
