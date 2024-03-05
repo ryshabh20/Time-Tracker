@@ -1,31 +1,32 @@
 "use client";
 import axios from "axios";
-import { useAppSelector } from "@/store/store";
+import { useAppSelector, useAppDispatch } from "@/store/store";
 
 import { useState } from "react";
+import { setUserData } from "@/store/slices/userSlice";
 const timetracker = () => {
   const user = useAppSelector((state) => state.userData);
-
+  const dispatch = useAppDispatch();
   const [task, setTask] = useState("");
-  const [timer, setTimer] = useState(false);
-  const data = { task, timer };
+
+  const data = { task };
   const handleOnClick = async () => {
-    setTimer(!timer);
-    // const user = await axios.get("/api/users/currentUser");
     const bodydata = { ...data, user };
     const response = await axios.post("/api/users/timeentry", bodydata);
   };
   return (
     <div>
       Time Tracker
-      <div>
+      <div className="flex">
         <input
           onChange={(e) => setTask(e.target.value)}
           value={task}
           type="text"
           placeholder="What are you working on"
         ></input>
-        <button onClick={handleOnClick}>Start</button>
+        <button onClick={handleOnClick}>
+          {user?.isTimer ? "start" : "stop"}
+        </button>
       </div>
     </div>
   );

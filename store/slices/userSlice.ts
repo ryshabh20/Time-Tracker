@@ -10,10 +10,12 @@ interface UserData {
   _id: string;
   email: string;
   name: string;
-  projects: string[];
   role: string;
   updatedAt: string;
   isTimer: boolean;
+  team: string;
+  projects: string[];
+  timeentries: string[];
 }
 
 const initialState: UserState = {

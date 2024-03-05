@@ -4,22 +4,6 @@ import storage from "redux-persist/lib/storage";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import userReducer from "./slices/userSlice";
 
-interface UserState {
-  userData: UserData | null;
-  loading: boolean;
-  error: string | null;
-}
-
-interface UserData {
-  _id: string;
-  email: string;
-  name: string;
-  projects: string[];
-  role: string;
-  updatedAt: string;
-  isTimer: boolean;
-}
-
 const persistConfig = {
   key: "root",
   storage,

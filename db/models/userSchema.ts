@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Project from "./projectSchema";
+import TimeEntries from "./timeEntries";
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -24,11 +25,18 @@ const userSchema = new mongoose.Schema(
     team: {
       type: String,
       enum: ["Developer", "Designing", "Sales"],
+      default: "Developer",
     },
-    forgotPasswordToken: String,
-    forgotPasswordTokenExpiry: Date,
-    verifyToken: String,
-    verifyTokenExpiry: Date,
+    isTimer: {
+      type: Boolean,
+      default: false,
+    },
+    timeentries: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "TimeEntries",
+      },
+    ],
     projects: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -43,3 +51,5 @@ const userSchema = new mongoose.Schema(
 
 const User = mongoose.models.users || mongoose.model("users", userSchema);
 export default User;
+
+//

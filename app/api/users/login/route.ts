@@ -27,11 +27,13 @@ export async function POST(request: NextRequest) {
 
     const userData = {
       id: user._id,
-      username: user.username,
+      name: user.name,
       email: user.email,
-      role: user.role,
-      projects: user.projects,
       team: user.team,
+      role: user.role,
+      isTimer: user.isTimer,
+      projects: user.projects,
+      timeentries: user.timeentries,
     };
     const token = await jwt.sign(userData, process.env.SECRET!, {
       expiresIn: stayLoggedIn ? "7d" : "1d",
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     res.cookies.set("authtoken", token, {
       httpOnly: true,
-      maxAge: stayLoggedIn ? 7 * 24 * 60 * 60 : 1 * 24 * 60 * 60,
+      maxAge: stayLoggedIn == "on" ? 2592000 : 604800,
     });
 
     return res;

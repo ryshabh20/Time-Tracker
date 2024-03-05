@@ -19,22 +19,22 @@ interface LayoutProps {
 const sideBarData = [
   {
     name: "Dashboard",
-    icon: <RxDashboard className=" text-gray-600 w-10 h-10" />,
+    icon: <RxDashboard className=" text-gray-600 w-9 h-9" />,
     page: "/components/dashboard",
   },
   {
     name: "Time Tracker",
-    icon: <LuClock className=" text-gray-600 w-10 h-10" />,
+    icon: <LuClock className=" text-gray-600 w-9 h-9" />,
     page: "/components/timetracker",
   },
   {
     name: "Projects",
-    icon: <GrNotes className=" text-gray-600 w-10 h-10" />,
+    icon: <GrNotes className=" text-gray-600 w-9 h-9" />,
     page: "/components/projects",
   },
   {
     name: "Screenshots",
-    icon: <ImFilesEmpty className=" text-gray-600 w-10 h-10" />,
+    icon: <ImFilesEmpty className=" text-gray-600 w-9 h-9" />,
     page: "/components/screenshots",
   },
 ];
@@ -64,47 +64,55 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
   return (
     <div className="w-full h-screen flex flex-row">
-      <div className="w-3/12">
-        <Image
-          alt="logo"
-          src="https://firebasestorage.googleapis.com/v0/b/authentication-e70b1.appspot.com/o/Screenshot%20from%202024-02-28%2015-01-08.png?alt=media&token=1f237e60-3ad6-4be0-bce7-f0c4f70edf68"
-          width="0"
-          height="0"
-          sizes="100vw"
-          className="w-full h-auto"
-        />
-        <div>
-          <div className="flex items-center mx-10  mb-10 space-x-4">
+      <div className="w-1/5 ">
+        <div className="h-1/5">
+          <Image
+            alt="logo"
+            src="https://firebasestorage.googleapis.com/v0/b/authentication-e70b1.appspot.com/o/Screenshot%20from%202024-02-28%2015-01-08.png?alt=media&token=1f237e60-3ad6-4be0-bce7-f0c4f70edf68"
+            width="0"
+            height="0"
+            sizes="100vw"
+            className="w-full h-36"
+          />
+        </div>
+        <div className=" flex  h-4/5 flex-col  ">
+          <div className="flex items-center mx-10  space-x-4">
             <div className="h-12 w-12 rounded-full bg-custom-green"></div>
             <div className="flex flex-col">
-              <span className="text-xl">{user?.name || "loading"}</span>
-              <span className="text-custom-green text-xl">
+              <span className="text-lg float-left">
+                {user?.name || "loading"}
+              </span>
+              <span className="text-custom-green text-lg">
                 {user?.team || "loading"}
               </span>
             </div>
           </div>
-          {sideBarData.map((data, index) => (
-            <div className="hover:bg-[#00a7b1] " key={index}>
-              <div
-                key={index}
-                className="flex items-center hover:text-white w-max-content mx-10 pl-1 py-2 my-5  cursor-pointer"
-              >
-                <div className="">{data.icon}</div>
-                <div className="ml-2 text-xl ">
-                  <Link href={data.page}> {data.name} </Link>
+          <div className=" flex flex-1 justify-between flex-col ">
+            <div>
+              {sideBarData.map((data, index) => (
+                <div className="hover:bg-[#00a7b1] " key={index}>
+                  <div
+                    key={index}
+                    className="flex items-center hover:text-white w-max-content mx-10 pl-1 py-2 my-3  cursor-pointer"
+                  >
+                    <div className="">{data.icon}</div>
+                    <div className="ml-4 text-lg ">
+                      <Link href={data.page}> {data.name} </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-          <button
-            onClick={logoutHandler}
-            className="w-full bg-custom-green text-white hover:text-black p-4 text-2xl"
-          >
-            Logout
-          </button>
+            <button
+              onClick={logoutHandler}
+              className=" bg-custom-green m-2  text-white hover:text-black p-3 text-xl"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </div>
-      <div className="bg-[#f2f2f2] w-9/12 p-4"> {children}</div>
+      <div className="bg-[#f2f2f2] w-4/5 p-4"> {children}</div>
     </div>
   );
 };
