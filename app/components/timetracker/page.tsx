@@ -1,26 +1,40 @@
 "use client";
 import axios from "axios";
 import { useAppSelector, useAppDispatch, RootState } from "@/store/store";
-import TimeEntries from "@/db/models/timeEntries";
-import { NextResponse } from "next/server";
 import { useState, useEffect } from "react";
 import { UserData, setUserData } from "@/store/slices/userSlice";
-
+import { IoCalendarOutline } from "react-icons/io5";
+import { CiPlay1 } from "react-icons/ci";
+import { RiDeleteBin6Fill } from "react-icons/ri";
 const Timetracker = () => {
   const [timeEntries, setTimeEntries] = useState([]);
+  const [duration, setDuration] = useState([]);
   const [task, setTask] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
   const user = useAppSelector((state: RootState) => state.userData);
   const dispatch = useAppDispatch();
   function formatTime(date) {
-    const hours = formatTimePart(date.getHours());
+    let hours = date.getHours();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Handle midnight (0 hours)
     const minutes = formatTimePart(date.getMinutes());
-    const seconds = formatTimePart(date.getSeconds());
-    return `${hours}:${minutes}:${seconds}`;
+    return `${hours}:${minutes} ${ampm}`;
+  }
+  function convertMillisecondsToTime(milliseconds) {
+    const totalSeconds = Math.round(milliseconds / 1000); // Round to nearest second
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const paddedHours = String(hours).padStart(2, "0");
+    const paddedMinutes = String(minutes).padStart(2, "0");
+    const paddedSeconds = String(seconds).padStart(2, "0");
+
+    return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
   }
 
-  function formatTimePart(part) {
-    return part.toString().padStart(2, "0");
+  function formatTimePart(timePart) {
+    return timePart < 10 ? `0${timePart}` : timePart;
   }
   const handleOnClick = async () => {
     if (task.trim() !== "") {
@@ -43,14 +57,17 @@ const Timetracker = () => {
   useEffect(() => {
     const fetchingData = async () => {
       const response = await axios.get("/api/users/getalltimenetries");
+      console.log(response);
       const result = Object.groupBy(response.data.data, (data) => {
         return new Date(data.start_time).toLocaleDateString();
       });
       setTimeEntries(result);
+      setDuration(response.data.duration);
     };
     fetchingData();
   }, [user?.isTimer]);
   console.log(timeEntries);
+  console.log(duration);
   return (
     <div>
       <div className="flex bg-white h-14">
@@ -61,7 +78,7 @@ const Timetracker = () => {
                 setTask(e.target.value);
                 setErrorMessage(false);
               }}
-              className={`bg-[#e4e0e0]  w-full h-full ${
+              className={`bg-[#f6f6f6]  w-full h-full pl-2 ${
                 errorMessage
                   ? "border border-red-700"
                   : "hover:border-green-700"
@@ -76,20 +93,62 @@ const Timetracker = () => {
               required
             ></input>
           </div>
+          <button
+            type="submit"
+            className="bg-custom-green text-white w-20"
+            onClick={handleOnClick}
+          >
+            {user?.isTimer ? "Stop" : "Start"}
+          </button>
         </div>
-        <button type="submit" onClick={handleOnClick}>
-          {user?.isTimer ? "Stop" : "Start"}
-        </button>
       </div>
       {Object.keys(timeEntries)?.map((date) => (
-        <div key={date}>
-          <h2>{date}</h2>
+        <div className="flex flex-col " key={date}>
+          <div className="bg-[#e9e9e9] items-center flex justify-between mt-7 pl-4 py-2">
+            <span className="text-[#868686]">{date}</span>
+            <div className="flex items-center pr-4">
+              <span className="text-[#868686] mr-2">Total:</span>
+              <span className="text-xl font-medium">
+                {duration.find(
+                  (d) => new Date(d._id).toLocaleDateString() === date
+                )
+                  ? convertMillisecondsToTime(
+                      duration?.find(
+                        (d) => new Date(d._id)?.toLocaleDateString() === date
+                      ).totalDuration
+                    )
+                  : "00:00:00"}
+              </span>
+            </div>
+          </div>
           {timeEntries[date].map((entry) => (
-            <div key={entry._id}>
-              <p>Start Time: {formatTime(new Date(entry.start_time))}</p>
+            <div className="flex w-full p-4  border" key={entry._id}>
+              <div className="text-[#707070] truncate font-medium w-2/12">
+                {entry.task}
+              </div>
+              <li className="ml-2 text-[#58c4cc] truncate md-4/12 sm-2/12 font-medium w-6/12">
+                Project
+              </li>
+              <div className=" flex items-center text-[#707070] border-r-2 truncate text-sm font-medium  w-2/12">
+                {`${formatTime(new Date(entry.start_time))} - ${formatTime(
+                  new Date(entry.end_time)
+                )}`}
+                <IoCalendarOutline className="ml-2 w-6 h-6" />
+              </div>
+              <div className=" ml-2 text-black border-r-2 text-center m-0 truncate text-lg font-medium  w-1/12">
+                {convertMillisecondsToTime(entry.duration)}
+              </div>
+              <div className="border-r-2 flex px-3 ">
+                <CiPlay1 className="w-6  h-6 " />
+              </div>
+              <div className="px-3">
+                <RiDeleteBin6Fill className="w-6 h-6" />
+              </div>
+
+              {/* <p>Start Time: {formatTime(new Date(entry.start_time))}</p>
               <p>End Time: {formatTime(new Date(entry.end_time))}</p>
               <p>Duration</p>
-              <p>Task: {entry.task}</p>
+              <p>Task: {entry.task}</p> */}
             </div>
           ))}
         </div>

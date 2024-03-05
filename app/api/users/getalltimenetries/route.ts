@@ -13,6 +13,24 @@ export async function GET(request: NextRequest) {
     }).sort({
       createdAt: -1,
     });
+
+    const duration = await TimeEntries.aggregate([
+      {
+        $match: {
+          end_time: { $exists: true },
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$start_time" } },
+          totalDuration: {
+            $sum: {
+              $subtract: ["$end_time", "$start_time"],
+            },
+          },
+        },
+      },
+    ]);
     // const timeEntries = await TimeEntries.aggregate([
     //   {
     //     $group: {
@@ -24,6 +42,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       message: "All entries fetched",
       data: timeEntries,
+      duration,
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 400 });
