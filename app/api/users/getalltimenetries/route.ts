@@ -7,7 +7,20 @@ connect();
 export async function GET(request: NextRequest) {
   try {
     const userId = await tokenDataId(request);
-    const timeEntries = await TimeEntries.find({ user_id: userId });
+    const timeEntries = await TimeEntries.find({
+      user_id: userId,
+      end_time: { $exists: true },
+    }).sort({
+      createdAt: -1,
+    });
+    // const timeEntries = await TimeEntries.aggregate([
+    //   {
+    //     $group: {
+    //       _id: { $dateToString: { format: "%Y-%m-%d", date: "$start_time" } },
+    //       entries: { $addToSet: "$$ROOT" }, // Add all documents to the 'entries' array
+    //     },
+    //   },
+    // ]);
     return NextResponse.json({
       message: "All entries fetched",
       data: timeEntries,

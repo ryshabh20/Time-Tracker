@@ -112,7 +112,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </div>
-      <div className="bg-[#f2f2f2] w-4/5 p-4"> {children}</div>
+      <div className="bg-[#f2f2f2] w-4/5 py-16 px-10"> {children}</div>
     </div>
   );
 };
