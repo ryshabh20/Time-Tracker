@@ -53,7 +53,26 @@ const Timetracker = () => {
       setErrorMessage(true);
     }
   };
+  const updateHandler = async (id:string)=>{
+    try{
+      await axios
+    }
+  }
+  const deleteHandler = async (id: string, fulldate: string) => {
+    try {
+      await axios.delete(`/api/users/deleteEntry/${id}`);
+      const date = new Date(fulldate).toLocaleDateString();
 
+      setTimeEntries((prev) => {
+        if (prev[date]) {
+          prev[date] = prev[date].filter((entry) => entry._id !== id);
+        }
+        return { ...prev };
+      });
+    } catch (error) {
+      console.error("Error deleting entry:", error);
+    }
+  };
   useEffect(() => {
     const fetchingData = async () => {
       const response = await axios.get("/api/users/getalltimenetries");
@@ -139,9 +158,12 @@ const Timetracker = () => {
                 {convertMillisecondsToTime(entry.duration)}
               </div>
               <div className="border-r-2 flex px-3 ">
-                <CiPlay1 className="w-6  h-6 " />
+                <CiPlay1 className="w-6  h-6 " onClick={()=>updateHanlder(entry._id)}/>
               </div>
-              <div className="px-3">
+              <div
+                className="px-3"
+                onClick={() => deleteHandler(entry._id, entry.start_time)}
+              >
                 <RiDeleteBin6Fill className="w-6 h-6" />
               </div>
 
