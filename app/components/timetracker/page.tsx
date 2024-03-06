@@ -55,8 +55,10 @@ const Timetracker = () => {
   };
   const updateHandler = async (id:string)=>{
     try{
-      await axios
+     const response = await axios.post('/api/users/timeentry')
+      return response;
     }
+    
   }
   const deleteHandler = async (id: string, fulldate: string) => {
     try {
