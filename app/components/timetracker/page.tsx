@@ -6,6 +6,7 @@ import { UserData, setUserData } from "@/store/slices/userSlice";
 import { IoCalendarOutline } from "react-icons/io5";
 import { CiPlay1 } from "react-icons/ci";
 import { RiDeleteBin6Fill } from "react-icons/ri";
+import { setTimeEntry } from "@/store/slices/timeSlice";
 const Timetracker = () => {
   const [timeEntries, setTimeEntries] = useState([]);
   const [duration, setDuration] = useState([]);
@@ -53,11 +54,20 @@ const Timetracker = () => {
       setErrorMessage(true);
     }
   };
+  // const deleteHandler = async(id: string) => {
+  //   const response = await axios.delete(`/api/users/deleteEntry/${id}`)
+  //   return response
+  // };
+  const deleteHandler = async (id: string) => {
+    const response = await axios.delete(`/api/users/deleteEntry/${id}`);
+    console.log(response);
+    console.log(timeEntries);
+    // setTimeEntries((prev) => prev.filter((listing) => listing._id !== id));
+  };
 
   useEffect(() => {
     const fetchingData = async () => {
       const response = await axios.get("/api/users/getalltimenetries");
-      console.log(response);
       const result = Object.groupBy(response.data.data, (data) => {
         return new Date(data.start_time).toLocaleDateString();
       });
@@ -66,8 +76,7 @@ const Timetracker = () => {
     };
     fetchingData();
   }, [user?.isTimer]);
-  console.log(timeEntries);
-  console.log(duration);
+
   return (
     <div>
       <div className="flex bg-white h-14">
@@ -138,19 +147,21 @@ const Timetracker = () => {
               <div className=" ml-2 text-black border-r-2 text-center m-0 truncate text-lg font-medium  w-1/12">
                 {convertMillisecondsToTime(entry.duration)}
               </div>
-              <div className="border-r-2 flex px-3 ">
+              <div
+                className="border-r-2 flex px-3 "
+                // onClick={deleteHandler(entry._id)}
+              >
                 <CiPlay1 className="w-6  h-6 " />
               </div>
-              <div className="px-3">
+              <div className="px-3" onClick={() => deleteHandler(entry._id)}>
                 <RiDeleteBin6Fill className="w-6 h-6" />
               </div>
-
-              {/* <p>Start Time: {formatTime(new Date(entry.start_time))}</p>
-              <p>End Time: {formatTime(new Date(entry.end_time))}</p>
-              <p>Duration</p>
-              <p>Task: {entry.task}</p> */}
             </div>
           ))}
+          {/* <p>Start Time: {formatTime(new Date(entry.start_time))}</p>
+          <p>End Time: {formatTime(new Date(entry.end_time))}</p>
+          <p>Duration</p>
+          <p>Task: {entry.task}</p> */}
         </div>
       ))}
     </div>
