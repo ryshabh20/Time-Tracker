@@ -6,24 +6,38 @@ import { UserData, setUserData } from "@/store/slices/userSlice";
 import { IoCalendarOutline } from "react-icons/io5";
 import { CiPlay1 } from "react-icons/ci";
 import { RiDeleteBin6Fill } from "react-icons/ri";
-import { setTimeEntry } from "@/store/slices/timeSlice";
+interface Entry {
+  _id: string;
+  user_id: string;
+  start_time: string;
+  task: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  duration: number;
+  end_time: string;
+}
+
+type DailyEntries = Record<string, Entry[]>;
 const Timetracker = () => {
-  const [timeEntries, setTimeEntries] = useState([]);
-  const [duration, setDuration] = useState([]);
+  const [timeEntries, setTimeEntries] = useState<DailyEntries>({});
+  const [duration, setDuration] = useState<
+    { _id: string; totalDuration: number }[]
+  >([]);
   const [task, setTask] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
   const user = useAppSelector((state: RootState) => state.userData);
   const dispatch = useAppDispatch();
-  function formatTime(date) {
+  function formatTime(date: Date) {
     let hours = date.getHours();
     const ampm = hours >= 12 ? "PM" : "AM";
     hours = hours % 12;
-    hours = hours ? hours : 12; // Handle midnight (0 hours)
+    hours = hours ? hours : 12;
     const minutes = formatTimePart(date.getMinutes());
     return `${hours}:${minutes} ${ampm}`;
   }
-  function convertMillisecondsToTime(milliseconds) {
-    const totalSeconds = Math.round(milliseconds / 1000); // Round to nearest second
+  function convertMillisecondsToTime(milliseconds: number) {
+    const totalSeconds = Math.ceil(milliseconds / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
@@ -33,8 +47,16 @@ const Timetracker = () => {
 
     return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
   }
+  const renderTotalDuration = (date: string): string => {
+    const foundItem = duration.find(
+      (d) => new Date(d._id).toLocaleDateString() === date
+    );
+    return foundItem
+      ? convertMillisecondsToTime(foundItem.totalDuration)
+      : "00:00:00";
+  };
 
-  function formatTimePart(timePart) {
+  function formatTimePart(timePart: number) {
     return timePart < 10 ? `0${timePart}` : timePart;
   }
   const handleOnClick = async () => {
@@ -54,21 +76,33 @@ const Timetracker = () => {
       setErrorMessage(true);
     }
   };
-  // const deleteHandler = async(id: string) => {
-  //   const response = await axios.delete(`/api/users/deleteEntry/${id}`)
-  //   return response
-  // };
-  const deleteHandler = async (id: string) => {
-    const response = await axios.delete(`/api/users/deleteEntry/${id}`);
-    console.log(response);
-    console.log(timeEntries);
-    // setTimeEntries((prev) => prev.filter((listing) => listing._id !== id));
+  const updateHandler = async (id: string) => {
+    try {
+      const response = await axios.post("/api/users/timeentry");
+      return response;
+    } catch {}
   };
+  const deleteHandler = async (id: string, fulldate: string) => {
+    try {
+      await axios.delete(`/api/users/deleteEntry/${id}`);
+      const date = new Date(fulldate).toLocaleDateString();
 
+      setTimeEntries((prev) => {
+        if (prev[date]) {
+          prev[date] = prev[date].filter((entry) => entry._id !== id);
+        }
+        return { ...prev };
+      });
+      renderTotalDuration(date);
+    } catch (error) {
+      console.error("Error deleting entry:", error);
+    }
+  };
   useEffect(() => {
     const fetchingData = async () => {
       const response = await axios.get("/api/users/getalltimenetries");
-      const result = Object.groupBy(response.data.data, (data) => {
+      console.log(response);
+      const result = Object.groupBy(response.data.data, (data: Entry) => {
         return new Date(data.start_time).toLocaleDateString();
       });
       setTimeEntries(result);
@@ -76,7 +110,8 @@ const Timetracker = () => {
     };
     fetchingData();
   }, [user?.isTimer]);
-
+  console.log(timeEntries);
+  console.log(duration);
   return (
     <div>
       <div className="flex bg-white h-14">
@@ -111,22 +146,14 @@ const Timetracker = () => {
           </button>
         </div>
       </div>
-      {Object.keys(timeEntries)?.map((date) => (
+      {Object.keys(timeEntries)?.map((date: string) => (
         <div className="flex flex-col " key={date}>
           <div className="bg-[#e9e9e9] items-center flex justify-between mt-7 pl-4 py-2">
             <span className="text-[#868686]">{date}</span>
             <div className="flex items-center pr-4">
               <span className="text-[#868686] mr-2">Total:</span>
               <span className="text-xl font-medium">
-                {duration.find(
-                  (d) => new Date(d._id).toLocaleDateString() === date
-                )
-                  ? convertMillisecondsToTime(
-                      duration?.find(
-                        (d) => new Date(d._id)?.toLocaleDateString() === date
-                      ).totalDuration
-                    )
-                  : "00:00:00"}
+                {renderTotalDuration(date)}
               </span>
             </div>
           </div>
@@ -147,21 +174,25 @@ const Timetracker = () => {
               <div className=" ml-2 text-black border-r-2 text-center m-0 truncate text-lg font-medium  w-1/12">
                 {convertMillisecondsToTime(entry.duration)}
               </div>
-              <div
-                className="border-r-2 flex px-3 "
-                // onClick={deleteHandler(entry._id)}
-              >
-                <CiPlay1 className="w-6  h-6 " />
+              <div className="border-r-2 flex px-3 ">
+                <CiPlay1
+                  className="w-6  h-6 "
+                  onClick={() => updateHandler(entry._id)}
+                />
               </div>
-              <div className="px-3" onClick={() => deleteHandler(entry._id)}>
+              <div
+                className="px-3"
+                onClick={() => deleteHandler(entry._id, entry.start_time)}
+              >
                 <RiDeleteBin6Fill className="w-6 h-6" />
               </div>
+
+              {/* <p>Start Time: {formatTime(new Date(entry.start_time))}</p>
+              <p>End Time: {formatTime(new Date(entry.end_time))}</p>
+              <p>Duration</p>
+              <p>Task: {entry.task}</p> */}
             </div>
           ))}
-          {/* <p>Start Time: {formatTime(new Date(entry.start_time))}</p>
-          <p>End Time: {formatTime(new Date(entry.end_time))}</p>
-          <p>Duration</p>
-          <p>Task: {entry.task}</p> */}
         </div>
       ))}
     </div>
