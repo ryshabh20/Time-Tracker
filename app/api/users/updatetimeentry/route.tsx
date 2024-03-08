@@ -10,9 +10,24 @@ connect();
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
-    const userId = reqBody.user._id;
+    console.log(reqBody);
+    const timeEntryId = reqBody.id;
+    const timeEntry = await TimeEntries.findById(timeEntryId);
+    if (!timeEntry) {
+      return NextResponse.json(
+        {
+          message: "No time Entries found",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+    console.log(timeEntry);
+    const userId = timeEntry.user_id.toString();
+
     const tokenId = await tokenDataId(request);
-    if (tokenId !== userId) {
+    if (userId !== tokenId) {
       return NextResponse.json(
         {
           message: "You can only update your time entries",
@@ -20,15 +35,20 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-    const userData = await User.findOne({ _id: tokenId }).select("-password");
+    const userData = await User.findById(userId);
+    if (!userData) {
+      return NextResponse.json(
+        { message: "User doesnot exist please refresh the page" },
+        { status: 400 }
+      );
+    }
     if (userData.isTimer === false) {
       const newTimeEntry = await new TimeEntries({
         user_id: userId,
         start_time: new Date(),
-        task: reqBody.task,
+        task: timeEntry.task,
       });
       const savedEntry = await newTimeEntry.save();
-
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {

@@ -1,6 +1,7 @@
 import { connect } from "@/db/dbConfig";
 import TimeEntries from "@/db/models/timeEntries";
 import { tokenDataId } from "@/helper/tokenData";
+import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 connect();
@@ -14,9 +15,12 @@ export async function GET(request: NextRequest) {
       createdAt: -1,
     });
 
+    console.log("timeEntries", timeEntries);
+    const objectId = new mongoose.Types.ObjectId(userId);
     const duration = await TimeEntries.aggregate([
       {
         $match: {
+          user_id: objectId,
           end_time: { $exists: true },
         },
       },

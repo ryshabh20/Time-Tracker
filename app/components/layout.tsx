@@ -63,8 +63,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   };
   return (
-    <div className="w-full h-screen flex flex-row">
-      <div className="w-1/5 ">
+    <div className="w-full min-h-screen flex flex-row">
+      <div className="w-1/5 h-screen">
         <div className="h-1/5">
           <Image
             alt="logo"
@@ -112,7 +112,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
       </div>
-      <div className="bg-[#f2f2f2] w-4/5 py-16 px-10"> {children}</div>
+      <div className="bg-[#f2f2f2]  w-4/5 py-16 px-10"> {children}</div>
     </div>
   );
 };

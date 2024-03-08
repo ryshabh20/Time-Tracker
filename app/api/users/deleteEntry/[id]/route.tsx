@@ -1,5 +1,7 @@
 import TimeEntries from "@/db/models/timeEntries";
+import User from "@/db/models/userSchema";
 import { tokenDataId } from "@/helper/tokenData";
+import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
@@ -28,6 +30,16 @@ export async function DELETE(
   }
   try {
     await TimeEntries.findByIdAndDelete(params.id);
+    const timeEntryIdtoDelete = new mongoose.Types.ObjectId(params.id);
+    console.log(timeEntryIdtoDelete);
+    const response = await User.findOneAndUpdate(
+      { _id: userId },
+      {
+        $pull: { timeentries: timeEntryIdtoDelete },
+      },
+      { new: true }
+    );
+    console.log("this is the user id that got updated", response);
     return NextResponse.json(
       { message: "Time Entry deleted successfully" },
       { status: 200 }
