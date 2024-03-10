@@ -7,17 +7,8 @@ import { IoCalendarOutline } from "react-icons/io5";
 import { CiPlay1 } from "react-icons/ci";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import Timer from "@/helperComponents/Timer";
-interface Entry {
-  _id: string;
-  user_id: string;
-  start_time: string;
-  task: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  duration: number;
-  end_time: string;
-}
+import { groupBy } from "@/helper/groupBy";
+import { convertMillisecondsToTime } from "@/helper/convertMillisecondsToTime";
 
 type DailyEntries = Record<string, Entry[]>;
 const Timetracker = () => {
@@ -39,17 +30,17 @@ const Timetracker = () => {
     const minutes = formatTimePart(date.getMinutes());
     return `${hours}:${minutes} ${ampm}`;
   }
-  function convertMillisecondsToTime(milliseconds: number) {
-    const totalSeconds = Math.ceil(milliseconds / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    const paddedHours = String(hours).padStart(2, "0");
-    const paddedMinutes = String(minutes).padStart(2, "0");
-    const paddedSeconds = String(seconds).padStart(2, "0");
+  // function convertMillisecondsToTime(milliseconds: number) {
+  //   const totalSeconds = Math.floor(milliseconds / 1000);
+  //   const hours = Math.floor(totalSeconds / 3600);
+  //   const minutes = Math.floor((totalSeconds % 3600) / 60);
+  //   const seconds = totalSeconds % 60;
+  //   const paddedHours = String(hours).padStart(2, "0");
+  //   const paddedMinutes = String(minutes).padStart(2, "0");
+  //   const paddedSeconds = String(seconds).padStart(2, "0");
 
-    return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
-  }
+  //   return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
+  // }
   const renderTotalDuration = (date: string): string => {
     const foundItem = duration.find(
       (d) => new Date(d._id).toLocaleDateString() === date
@@ -110,11 +101,8 @@ const Timetracker = () => {
     }
   };
   const fetchingData = async () => {
-    const response = await axios.get("/api/users/getalltimenetries");
-    console.log(response);
-    const result = Object.groupBy(response.data.data, (data: Entry) => {
-      return new Date(data.start_time).toLocaleDateString();
-    });
+    const response = await axios.get("/api/users/getalltimeentries");
+    const result = groupBy(response.data.data);
 
     setTimeEntries(result);
     setDuration(response.data.duration);
