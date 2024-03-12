@@ -20,22 +20,22 @@ const sideBarData = [
   {
     name: "Dashboard",
     icon: <RxDashboard className=" text-gray-600 w-9 h-9" />,
-    page: "/components/dashboard",
+    page: "/dashboard",
   },
   {
     name: "Time Tracker",
     icon: <LuClock className=" text-gray-600 w-9 h-9" />,
-    page: "/components/timetracker",
+    page: "/timetracker",
   },
   {
     name: "Projects",
     icon: <GrNotes className=" text-gray-600 w-9 h-9" />,
-    page: "/components/projects",
+    page: "/projects",
   },
   {
     name: "Screenshots",
     icon: <ImFilesEmpty className=" text-gray-600 w-9 h-9" />,
-    page: "/components/screenshots",
+    page: "/screenshots",
   },
 ];
 const Layout: React.FC<LayoutProps> = ({ children }) => {

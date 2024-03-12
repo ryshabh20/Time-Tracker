@@ -12,9 +12,7 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get("authtoken")?.value || "";
 
   if (isPublicPath && token) {
-    return NextResponse.redirect(
-      new URL("/components/dashboard", request.nextUrl)
-    );
+    return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
   }
 
   if (!isPublicPath && !token) {

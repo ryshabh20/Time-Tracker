@@ -9,3 +9,7 @@ interface Entry {
   duration: number;
   end_time: string;
 }
+
+interface TimerProps {
+  startTiming?: Date;
+}

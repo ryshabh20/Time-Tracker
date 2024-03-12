@@ -11,11 +11,13 @@ export async function GET(request: NextRequest) {
     const timeEntries = await TimeEntries.find({
       user_id: userId,
       end_time: { $exists: true },
+      start_time: {
+        $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      },
     }).sort({
       createdAt: -1,
     });
 
-    console.log("timeEntries", timeEntries);
     const objectId = new mongoose.Types.ObjectId(userId);
     const duration = await TimeEntries.aggregate([
       {
@@ -32,9 +34,16 @@ export async function GET(request: NextRequest) {
               $subtract: ["$end_time", "$start_time"],
             },
           },
+          createdAt: { $first: "$createdAt" }, // Assuming createdAt field is available
+        },
+      },
+      {
+        $sort: {
+          createdAt: 1, // Sort by createdAt field in ascending order
         },
       },
     ]);
+
     // const timeEntries = await TimeEntries.aggregate([
     //   {
     //     $group: {

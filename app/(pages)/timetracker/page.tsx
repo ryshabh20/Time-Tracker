@@ -30,17 +30,7 @@ const Timetracker = () => {
     const minutes = formatTimePart(date.getMinutes());
     return `${hours}:${minutes} ${ampm}`;
   }
-  // function convertMillisecondsToTime(milliseconds: number) {
-  //   const totalSeconds = Math.floor(milliseconds / 1000);
-  //   const hours = Math.floor(totalSeconds / 3600);
-  //   const minutes = Math.floor((totalSeconds % 3600) / 60);
-  //   const seconds = totalSeconds % 60;
-  //   const paddedHours = String(hours).padStart(2, "0");
-  //   const paddedMinutes = String(minutes).padStart(2, "0");
-  //   const paddedSeconds = String(seconds).padStart(2, "0");
 
-  //   return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
-  // }
   const renderTotalDuration = (date: string): string => {
     const foundItem = duration.find(
       (d) => new Date(d._id).toLocaleDateString() === date
@@ -66,6 +56,7 @@ const Timetracker = () => {
           })
         );
       }
+
       setTask(response.data.task);
     } else {
       setErrorMessage(true);
@@ -74,6 +65,7 @@ const Timetracker = () => {
   const updateHandler = async (id: string) => {
     const data = { id };
     const response = await axios.post("/api/users/updatetimeentry", data);
+
     if (user) {
       dispatch(
         setUserData({
@@ -103,7 +95,6 @@ const Timetracker = () => {
   const fetchingData = async () => {
     const response = await axios.get("/api/users/getalltimeentries");
     const result = groupBy(response.data.data);
-
     setTimeEntries(result);
     setDuration(response.data.duration);
   };
@@ -162,7 +153,13 @@ const Timetracker = () => {
         return (
           <div className="flex flex-col " key={date}>
             <div className="bg-[#e9e9e9] items-center flex justify-between mt-7 pl-4 py-2">
-              <span className="text-[#868686]">{date}</span>
+              <span className="text-[#868686]">
+                {new Date(date).toLocaleDateString("en-US", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </span>
               <div className="flex items-center pr-4">
                 <span className="text-[#868686] mr-2">Total:</span>
                 <span className="text-xl font-medium">
@@ -199,11 +196,6 @@ const Timetracker = () => {
                 >
                   <RiDeleteBin6Fill className="w-6 h-6" />
                 </div>
-
-                {/* <p>Start Time: {formatTime(new Date(entry.start_time))}</p>
-              <p>End Time: {formatTime(new Date(entry.end_time))}</p>
-              <p>Duration</p>
-              <p>Task: {entry.task}</p> */}
               </div>
             ))}
           </div>
