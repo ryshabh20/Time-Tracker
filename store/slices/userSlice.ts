@@ -16,6 +16,7 @@ export interface UserData {
   team: string;
   projects: string[];
   timeentries: string[];
+  currentTask?: string;
 }
 
 const initialState: UserState = {

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto_Condensed } from "next/font/google";
 import "./globals.css";
 import ReduxProvider from "@/store/redux-provider";
-const inter = Inter({ subsets: ["latin"] });
+const inter = Roboto_Condensed({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Time Tracker",

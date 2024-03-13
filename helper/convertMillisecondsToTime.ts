@@ -22,3 +22,15 @@ export function convertHoursToTime(hours: number) {
 
   return `${paddedHours}:${paddedMinutes}:${paddedSeconds}`;
 }
+
+export function formatDate(dateString: string) {
+  const dateObj = new Date(dateString.split("/").reverse().join("-"));
+
+  const formattedDate = dateObj.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+  });
+
+  return formattedDate;
+}

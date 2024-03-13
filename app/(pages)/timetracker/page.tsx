@@ -1,5 +1,6 @@
 "use client";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 import { useAppSelector, useAppDispatch, RootState } from "@/store/store";
 import { useState, useEffect } from "react";
 import { UserData, setUserData } from "@/store/slices/userSlice";
@@ -8,9 +9,14 @@ import { CiPlay1 } from "react-icons/ci";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import Timer from "@/helperComponents/Timer";
 import { groupBy } from "@/helper/groupBy";
-import { convertMillisecondsToTime } from "@/helper/convertMillisecondsToTime";
+import {
+  convertMillisecondsToTime,
+  formatDate,
+} from "@/helper/convertMillisecondsToTime";
+import { AiTwotoneAlert } from "react-icons/ai";
 
 type DailyEntries = Record<string, Entry[]>;
+
 const Timetracker = () => {
   const [timeEntries, setTimeEntries] = useState<DailyEntries>({});
   const [seconds, setSeconds] = useState<number>(0);
@@ -31,6 +37,15 @@ const Timetracker = () => {
     return `${hours}:${minutes} ${ampm}`;
   }
 
+  const notify = (status: boolean, message: string) => {
+    console.log(status);
+    if (status) {
+      toast.success(message);
+    } else {
+      toast.error(message);
+    }
+  };
+
   const renderTotalDuration = (date: string): string => {
     const foundItem = duration.find(
       (d) => new Date(d._id).toLocaleDateString() === date
@@ -48,13 +63,17 @@ const Timetracker = () => {
       const bodydata = { task, user };
 
       const response = await axios.post("/api/users/timeentry", bodydata);
-      if (user) {
+      if (user && response) {
         dispatch(
           setUserData({
             ...user,
             isTimer: response.data.updatedTimer,
+            currentTask: response.data.task,
           })
         );
+      }
+      if (response.data.success) {
+        notify(response.data.success, response.data.message);
       }
 
       setTask(response.data.task);
@@ -64,47 +83,67 @@ const Timetracker = () => {
   };
   const updateHandler = async (id: string) => {
     const data = { id };
-    const response = await axios.post("/api/users/updatetimeentry", data);
 
-    if (user) {
-      dispatch(
-        setUserData({
-          ...user,
-          isTimer: response.data.updatedTimer,
-        })
-      );
+    try {
+      const response = await axios.post("/api/users/updatetimeentry", data);
+      console.log(response);
+      if (response.data.success) {
+        notify(response.data.success, response.data.message);
+      }
+
+      if (user && response) {
+        dispatch(
+          setUserData({
+            ...user,
+            isTimer: response.data.updatedTimer,
+          })
+        );
+      }
+      setTask(response.data.task);
+    } catch (err: any) {
+      notify(err.response.data.success, err.response.data.message);
     }
-    setTask(response.data.task);
   };
   const deleteHandler = async (id: string, fulldate: string) => {
     try {
-      await axios.delete(`/api/users/deleteEntry/${id}`);
+      const response = await axios.delete(`/api/users/deleteEntry/${id}`);
       const date = new Date(fulldate).toLocaleDateString();
-
       setTimeEntries((prev) => {
         if (prev[date]) {
           prev[date] = prev[date].filter((entry) => entry._id !== id);
         }
         return { ...prev };
       });
+      if (response.data.success) {
+        notify(response.data.success, response.data.message);
+      }
       fetchingData();
-    } catch (error) {
-      console.error("Error deleting entry:", error);
+    } catch (err: any) {
+      notify(err.response.data.success, err.response.data.message);
     }
   };
   const fetchingData = async () => {
-    const response = await axios.get("/api/users/getalltimeentries");
-    const result = groupBy(response.data.data);
-    setTimeEntries(result);
-    setDuration(response.data.duration);
+    try {
+      const response = await axios.get("/api/users/getalltimeentries");
+      if (!response.data.success) {
+        notify(response.data.success, response.data.error);
+      }
+      const result = groupBy(response.data.data);
+      setTimeEntries(result);
+      setDuration(response.data.duration);
+    } catch (error) {
+      notify(false, "please reload the page");
+      console.error("Error fetching the entries");
+    }
   };
+
   useEffect(() => {
     fetchingData();
   }, [user?.isTimer]);
 
   return (
     <div>
-      <div className="flex bg-white h-14 justify-between">
+      <div className="flex bg-white h-14 justify-between ">
         <div className=" flex p-2 w-3/6 ">
           <div className="w-full">
             <input
@@ -139,7 +178,7 @@ const Timetracker = () => {
           <Timer />
           <button
             type="submit"
-            className="bg-custom-green text-white w-20"
+            className="bg-custom-green text-white px-5"
             onClick={handleOnClick}
           >
             {user?.isTimer ? "Stop" : "Start"}
@@ -153,13 +192,7 @@ const Timetracker = () => {
         return (
           <div className="flex flex-col " key={date}>
             <div className="bg-[#e9e9e9] items-center flex justify-between mt-7 pl-4 py-2">
-              <span className="text-[#868686]">
-                {new Date(date).toLocaleDateString("en-US", {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                })}
-              </span>
+              <span className="text-[#868686]">{formatDate(date)}</span>
               <div className="flex items-center pr-4">
                 <span className="text-[#868686] mr-2">Total:</span>
                 <span className="text-xl font-medium">
@@ -201,6 +234,7 @@ const Timetracker = () => {
           </div>
         );
       })}
+      <Toaster position="bottom-right" />
     </div>
   );
 };

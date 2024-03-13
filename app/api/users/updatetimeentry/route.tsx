@@ -17,13 +17,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           message: "No time Entries found",
+          success: false,
         },
         {
           status: 400,
         }
       );
     }
-    console.log(timeEntry);
     const userId = timeEntry.user_id.toString();
 
     const tokenId = await tokenDataId(request);
@@ -31,6 +31,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           message: "You can only update your time entries",
+          success: "false",
         },
         { status: 401 }
       );
@@ -38,7 +39,10 @@ export async function POST(request: NextRequest) {
     const userData = await User.findById(userId);
     if (!userData) {
       return NextResponse.json(
-        { message: "User doesnot exist please refresh the page" },
+        {
+          message: "User doesnot exist please refresh the page",
+          success: false,
+        },
         { status: 400 }
       );
     }

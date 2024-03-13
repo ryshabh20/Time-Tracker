@@ -30,6 +30,11 @@ const clientSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
+  status: {
+    type: Boolean,
+    default: true,
+    required: true,
+  },
 });
 
 const Client =

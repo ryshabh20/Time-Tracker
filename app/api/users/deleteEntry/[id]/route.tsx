@@ -9,26 +9,26 @@ export async function DELETE(
 
   { params }: { params: { id: string } }
 ) {
-  const userId = await tokenDataId(request);
-  const entryId = params.id;
-  console.log(entryId);
-  const entryUser = await TimeEntries.findOne({ _id: entryId });
-  if (!entryUser) {
-    return NextResponse.json(
-      { message: "Entry do not exists" },
-      { status: 404 }
-    );
-  }
-  if (userId !== entryUser.user_id.toString()) {
-    console.log(userId, entryUser.user_id);
-    return NextResponse.json(
-      {
-        message: "You can only delete your time entries",
-      },
-      { status: 401 }
-    );
-  }
   try {
+    const userId = await tokenDataId(request);
+    const entryId = params.id;
+    const entryUser = await TimeEntries.findOne({ _id: entryId });
+    if (!entryUser) {
+      return NextResponse.json(
+        { message: "Entry does not exist" },
+        { status: 404 }
+      );
+    }
+    if (userId !== entryUser.user_id.toString()) {
+      console.log(userId, entryUser.user_id);
+      return NextResponse.json(
+        {
+          message: "You can only delete your time entries",
+          success: false,
+        },
+        { status: 401 }
+      );
+    }
     await TimeEntries.findByIdAndDelete(params.id);
     const timeEntryIdtoDelete = new mongoose.Types.ObjectId(params.id);
     console.log(timeEntryIdtoDelete);
@@ -39,15 +39,15 @@ export async function DELETE(
       },
       { new: true }
     );
-    console.log("this is the user id that got updated", response);
     return NextResponse.json(
-      { message: "Time Entry deleted successfully" },
+      { message: "Time Entry deleted successfully", success: true },
       { status: 200 }
     );
   } catch (error: any) {
     return NextResponse.json(
       {
         message: error.message,
+        sucess: false,
       },
       { status: 400 }
     );

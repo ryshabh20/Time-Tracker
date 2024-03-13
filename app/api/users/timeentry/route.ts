@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           message: "You can only update your time entries",
+          success: "false",
         },
         { status: 401 }
       );
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
       );
       const updatedTimer = updatedUser.isTimer;
       return NextResponse.json({
-        message: "time entry created successfully",
+        message: "Time entry created successfully",
         task: savedEntry.task,
         success: true,
         savedEntry,
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
       );
       const updatedTimer = updatedUser.isTimer;
       return NextResponse.json({
-        message: "time entry stopped successfully",
+        message: "Time entry stopped successfully",
         task: "",
         success: true,
         updatedTimer,

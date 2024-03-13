@@ -46,11 +46,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   useEffect(() => {
     const getUserDetails = async () => {
       const response = await axios.get("/api/users/currentUser");
-      dispatch(setUserData(response.data.data));
+      dispatch(setUserData({ ...response.data.data, currentTask: "" }));
       setUser(response.data.data);
     };
     getUserDetails();
   }, []);
+
   const logoutHandler = async () => {
     try {
       console.log("button was clicked");
