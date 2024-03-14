@@ -36,12 +36,12 @@ export async function GET(request: NextRequest) {
               $subtract: ["$end_time", "$start_time"],
             },
           },
-          createdAt: { $first: "$createdAt" }, // Assuming createdAt field is available
+          createdAt: { $first: "$createdAt" },
         },
       },
       {
         $sort: {
-          createdAt: 1, // Sort by createdAt field in ascending order
+          createdAt: 1,
         },
       },
     ]);

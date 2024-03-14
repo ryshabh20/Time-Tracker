@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
     currentTask: {
-      description: { type: String },
+      description: { type: String, default: "" },
       currentProject: {
         projectId: { type: mongoose.Schema.Types.ObjectId },
         projectTask: { type: String },

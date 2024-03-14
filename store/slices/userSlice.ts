@@ -5,6 +5,14 @@ interface UserState {
   loading: boolean;
   error: string | null;
 }
+interface currentProject {
+  projectId: string;
+  projectTask: string;
+}
+interface currentTask {
+  description: string;
+  currentProject?: currentProject | null;
+}
 
 export interface UserData {
   _id: string;
@@ -16,7 +24,7 @@ export interface UserData {
   team: string;
   projects: string[];
   timeentries: string[];
-  currentTask?: string;
+  currentTask?: currentTask;
 }
 
 const initialState: UserState = {

@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
         {
           $set: {
             isTimer: !userData.isTimer,
+            "currentTask.description": savedEntry.task,
           },
           $push: {
             timeentries: savedEntry,
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
         },
         { new: true }
       );
+      console.log("updatedUser", updatedUser);
 
       const updatedTimer = updatedUser.isTimer;
       return NextResponse.json({
@@ -80,6 +82,7 @@ export async function POST(request: NextRequest) {
         {
           $set: {
             isTimer: !userData.isTimer,
+            "currentTask.description": "",
           },
         },
         { new: true }

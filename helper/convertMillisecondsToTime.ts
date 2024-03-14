@@ -25,7 +25,19 @@ export function convertHoursToTime(hours: number) {
 
 export function formatDate(dateString: string) {
   const dateObj = new Date(dateString.split("/").reverse().join("-"));
-
+  const todayDate = new Date().toLocaleDateString();
+  if (todayDate === dateObj.toLocaleDateString()) {
+    return "Today";
+  }
+  const today = new Date();
+  const yesterday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - 1
+  );
+  if (yesterday.toLocaleDateString() === dateObj.toLocaleDateString()) {
+    return "Yesterday";
+  }
   const formattedDate = dateObj.toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",

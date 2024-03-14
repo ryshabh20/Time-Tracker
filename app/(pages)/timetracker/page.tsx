@@ -13,7 +13,7 @@ import {
   convertMillisecondsToTime,
   formatDate,
 } from "@/helper/convertMillisecondsToTime";
-import { AiTwotoneAlert } from "react-icons/ai";
+// import { AiTwotoneAlert } from "react-icons/ai";
 
 type DailyEntries = Record<string, Entry[]>;
 
@@ -21,14 +21,14 @@ const Timetracker = () => {
   const [timeEntries, setTimeEntries] = useState<DailyEntries>({});
   const [seconds, setSeconds] = useState<number>(0);
   const [hydrated, setHydtared] = useState(false);
-
+  const [offset, setoffset] = useState(1);
   const [duration, setDuration] = useState<
     { _id: string; totalDuration: number }[]
   >([]);
   const [totalDuration, setTotalDuration] = useState<String>("");
   const [errorMessage, setErrorMessage] = useState(false);
   const user = useAppSelector((state: RootState) => state.userData);
-  const [task, setTask] = useState(user?.currentTask);
+  const [task, setTask] = useState(user?.currentTask?.description);
   const dispatch = useAppDispatch();
   function formatTime(date: Date) {
     let hours = date.getHours();
@@ -72,7 +72,10 @@ const Timetracker = () => {
             setUserData({
               ...user,
               isTimer: response.data.updatedTimer,
-              currentTask: response.data.task,
+              currentTask: {
+                ...user.currentTask,
+                description: response.data.task,
+              },
               timeentries: [...allTimeEntries, newTaskId],
             })
           );
@@ -81,7 +84,10 @@ const Timetracker = () => {
             setUserData({
               ...user,
               isTimer: response.data.updatedTimer,
-              currentTask: response.data.task,
+              currentTask: {
+                ...user.currentTask,
+                description: response.data.task,
+              },
             })
           );
         }
@@ -153,6 +159,7 @@ const Timetracker = () => {
   };
   const fetchingData = async () => {
     try {
+      const params = { loadweek: offset };
       const response = await axios.get("/api/users/getalltimeentries");
       if (!response.data.success) {
         notify(response.data.success, response.data.error);
@@ -182,7 +189,7 @@ const Timetracker = () => {
     }
   };
   console.log("The time in state thats passed down is ", seconds / 1000);
-
+  const loadMoreData = () => {};
   useEffect(() => {
     currentEntry();
     fetchingData();
@@ -285,6 +292,7 @@ const Timetracker = () => {
                 </div>
               </div>
             ))}
+            {/* <button onClick={loadMoreData}>Load more data</button> */}
           </div>
         );
       })}
