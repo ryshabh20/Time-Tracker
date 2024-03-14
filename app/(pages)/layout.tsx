@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import { useAppDispatch } from "@/store/store";
 import { setUserData } from "@/store/slices/userSlice";
+import { useAppSelector } from "@/store/store";
 import Image from "next/image";
 import { RxDashboard } from "react-icons/rx";
 import { LuClock } from "react-icons/lu";
@@ -11,6 +12,7 @@ import { ImFilesEmpty } from "react-icons/im";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { userDetails } from "@/helper/hydrationHelper";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -41,16 +43,30 @@ const sideBarData = [
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const [user, setUser] = useState<any>({});
+  const user = useAppSelector((state) => state.userData);
+  const [hydrated, setHydtared] = useState(false);
 
-  useEffect(() => {
-    const getUserDetails = async () => {
-      const response = await axios.get("/api/users/currentUser");
-      dispatch(setUserData({ ...response.data.data, currentTask: "" }));
-      setUser(response.data.data);
-    };
-    getUserDetails();
-  }, []);
+  // useEffect(() => {
+  //   setHydtared(true);
+  // }, []);
+
+  // if (!hydrated) return null;
+
+  // const [user, setUser] = useState<any>({});
+
+  // useEffect(() => {
+  // const getUserDetails = async () => {
+  //   const response = await axios.get("/api/users/currentUser");
+  //   dispatch(setUserData({ ...response.data.data, currentTask: "" }));
+  //   setUser(response.data.data);
+  // };
+  // getUserDetails();
+  // }, []);
+
+  // useEffect(()=>{
+  // const userData = useAppSelector((state) => state.userData);
+  // setUser(userData)
+  // },[])
 
   const logoutHandler = async () => {
     try {
@@ -59,7 +75,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       dispatch(setUserData(null));
       router.push("/login");
     } catch (error: any) {
-      console.log(error);
       console.log(error.message);
     }
   };
@@ -79,14 +94,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className=" flex  h-4/5 flex-col  ">
           <div className="flex items-center mx-10  space-x-4">
             <div className="h-12 w-12 rounded-full bg-custom-green"></div>
-            <div className="flex flex-col">
+            {/* <div className="flex flex-col">
               <span className="text-lg float-left">
                 {user?.name || "loading"}
               </span>
               <span className="text-custom-green text-lg">
                 {user?.team || "loading"}
               </span>
-            </div>
+            </div> */}
+            {userDetails()}
           </div>
           <div className=" flex flex-1 justify-between flex-col ">
             <div>

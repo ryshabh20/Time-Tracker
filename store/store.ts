@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+
 import {
   persistStore,
   persistReducer,
@@ -11,12 +12,11 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
-import userReducer from "./slices/userSlice";
+import userReducer, { fetchUser } from "./slices/userSlice";
 
 const persistConfig = {
   key: "root",
   storage,
-  whitelist: ["user"],
 };
 
 const persistedReducer = persistReducer(persistConfig, userReducer);
@@ -31,6 +31,7 @@ export const store = configureStore({
     }),
 });
 
+store.dispatch(fetchUser());
 export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -7,6 +7,8 @@ import {
   convertMillisecondsToTime,
 } from "@/helper/convertMillisecondsToTime";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import { setUserData } from "@/store/slices/userSlice";
+import { useAppDispatch } from "@/store/store";
 
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -19,13 +21,18 @@ const dashboard = () => {
   const [timeEntries, setTimeEntries] = useState<
     { _id: string; totalDuration: number }[]
   >([]);
-
+  const dispatch = useAppDispatch();
   const getTimeEntries = async () => {
     const response = await axios.get("/api/users/getalltimeentries");
-    console.log(response.data.duration);
     setTimeEntries(response.data.duration);
   };
   useEffect(() => {
+    const getUserDetails = async () => {
+      const response = await axios.get("/api/users/currentUser");
+      dispatch(setUserData({ ...response.data.data, currentTask: "" }));
+      // setUser(response.data.data);
+    };
+    getUserDetails();
     getTimeEntries();
   }, []);
   const lastWeek = [];

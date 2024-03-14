@@ -1,29 +1,36 @@
 import { useState, useEffect } from "react";
 import { useAppSelector, RootState } from "@/store/store";
-const Timer = () => {
-  const [seconds, setSeconds] = useState<number>(0);
+const Timer = ({ startTime }: { startTime: number }) => {
+  const [seconds, setSeconds] = useState<number>(startTime);
   const user = useAppSelector((state: RootState) => state.userData);
-  let intervalId: NodeJS.Timeout | undefined;
 
+  console.log("startTime", startTime);
+  let intervalId: NodeJS.Timeout | undefined;
   useEffect(() => {
     if (user?.isTimer) {
+      if (startTime >= 1000) {
+        const initialSeconds = Math.round(startTime / 1000);
+        setSeconds(initialSeconds);
+      } else {
+        setSeconds(0);
+      }
       intervalId = setInterval(() => {
         setSeconds((prevSeconds) => prevSeconds + 1);
       }, 1000);
     } else {
       if (intervalId) {
         clearInterval(intervalId);
-        intervalId = undefined; // Reset intervalId
+        intervalId = undefined;
       }
       setSeconds(0);
     }
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
-        intervalId = undefined; // Reset intervalId
+        intervalId = undefined;
       }
     };
-  }, [user?.isTimer]);
+  }, [user?.isTimer, startTime]);
   const hours: number = Math.floor(seconds / 3600);
   const minutes: number = Math.floor((seconds % 3600) / 60);
   const remainingSeconds: number = seconds % 60;

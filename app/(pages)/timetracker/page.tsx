@@ -20,13 +20,15 @@ type DailyEntries = Record<string, Entry[]>;
 const Timetracker = () => {
   const [timeEntries, setTimeEntries] = useState<DailyEntries>({});
   const [seconds, setSeconds] = useState<number>(0);
+  const [hydrated, setHydtared] = useState(false);
+
   const [duration, setDuration] = useState<
     { _id: string; totalDuration: number }[]
   >([]);
   const [totalDuration, setTotalDuration] = useState<String>("");
-  const [task, setTask] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
   const user = useAppSelector((state: RootState) => state.userData);
+  const [task, setTask] = useState(user?.currentTask);
   const dispatch = useAppDispatch();
   function formatTime(date: Date) {
     let hours = date.getHours();
@@ -38,7 +40,6 @@ const Timetracker = () => {
   }
 
   const notify = (status: boolean, message: string) => {
-    console.log(status);
     if (status) {
       toast.success(message);
     } else {
@@ -59,18 +60,31 @@ const Timetracker = () => {
     return timePart < 10 ? `0${timePart}` : timePart;
   }
   const handleOnClick = async () => {
-    if (task.trim() !== "") {
+    if (task?.trim() !== "") {
       const bodydata = { task, user };
 
       const response = await axios.post("/api/users/timeentry", bodydata);
       if (user && response) {
-        dispatch(
-          setUserData({
-            ...user,
-            isTimer: response.data.updatedTimer,
-            currentTask: response.data.task,
-          })
-        );
+        if (!user?.isTimer) {
+          const newTaskId = response.data.savedEntry._id.toString();
+          const allTimeEntries = user.timeentries;
+          dispatch(
+            setUserData({
+              ...user,
+              isTimer: response.data.updatedTimer,
+              currentTask: response.data.task,
+              timeentries: [...allTimeEntries, newTaskId],
+            })
+          );
+        } else {
+          dispatch(
+            setUserData({
+              ...user,
+              isTimer: response.data.updatedTimer,
+              currentTask: response.data.task,
+            })
+          );
+        }
       }
       if (response.data.success) {
         notify(response.data.success, response.data.message);
@@ -86,16 +100,18 @@ const Timetracker = () => {
 
     try {
       const response = await axios.post("/api/users/updatetimeentry", data);
-      console.log(response);
       if (response.data.success) {
         notify(response.data.success, response.data.message);
       }
 
       if (user && response) {
+        const newTaskId = response.data.savedEntry._id.toString();
+        const allTimeEntries = user.timeentries;
         dispatch(
           setUserData({
             ...user,
             isTimer: response.data.updatedTimer,
+            timeentries: [...allTimeEntries, newTaskId],
           })
         );
       }
@@ -117,6 +133,19 @@ const Timetracker = () => {
       if (response.data.success) {
         notify(response.data.success, response.data.message);
       }
+
+      if (user) {
+        const filteredTimeEntries = user?.timeentries.filter((timeentry) => {
+          return timeentry !== id;
+        });
+
+        dispatch(
+          setUserData({
+            ...user,
+            timeentries: [...filteredTimeEntries],
+          })
+        );
+      }
       fetchingData();
     } catch (err: any) {
       notify(err.response.data.success, err.response.data.message);
@@ -136,11 +165,33 @@ const Timetracker = () => {
       console.error("Error fetching the entries");
     }
   };
+  const currentEntry = async () => {
+    try {
+      if (user?.isTimer) {
+        const timeEntryId = user?.timeentries[user.timeentries.length - 1];
+        const response = await axios.get(`/api/users/getEntry/${timeEntryId}`);
+
+        const currentTime = new Date().getTime();
+        const startTime = new Date(response.data.data.start_time).getTime();
+        const timeinMilli = currentTime - startTime;
+        setSeconds(timeinMilli);
+        console.log("Entry started ", timeinMilli / 1000, " seconds ago.");
+      }
+    } catch (error: any) {
+      console.error(error);
+    }
+  };
+  console.log("The time in state thats passed down is ", seconds / 1000);
 
   useEffect(() => {
+    currentEntry();
     fetchingData();
   }, [user?.isTimer]);
+  useEffect(() => {
+    setHydtared(true);
+  }, []);
 
+  if (!hydrated) return null;
   return (
     <div>
       <div className="flex bg-white h-14 justify-between ">
@@ -175,7 +226,7 @@ const Timetracker = () => {
               className="bg-white text-custom-green mr-4 "
             ></select>
           </div>
-          <Timer />
+          <Timer startTime={seconds} />
           <button
             type="submit"
             className="bg-custom-green text-white px-5"

@@ -24,6 +24,7 @@ export default function LoginPage() {
     try {
       setLoading(true);
       const response = await axios.post("/api/users/login", user);
+
       router.push("/dashboard");
     } catch (error: any) {
       setLoading(true);

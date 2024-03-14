@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
         },
         { new: true }
       );
+
       const updatedTimer = updatedUser.isTimer;
       return NextResponse.json({
         message: "Time entry created successfully",
