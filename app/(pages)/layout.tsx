@@ -80,7 +80,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
   return (
     <div className="w-full min-h-screen flex flex-row">
-      <div className="w-1/5 h-screen">
+      <div className="md:3/12 lg:w-1/5 h-screen">
         <div className="h-1/5">
           <Image
             alt="logo"
@@ -110,7 +110,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <div className="hover:bg-[#00a7b1] " key={index}>
                   <div
                     key={index}
-                    className="flex items-center hover:text-white w-max-content mx-10 pl-1 py-2 my-3  cursor-pointer"
+                    className="flex items-center hover:text-white lg:w-max-content mx-10 pl-1 py-2 my-3  cursor-pointer"
                   >
                     <div className="">{data.icon}</div>
                     <div className="ml-4 text-lg ">

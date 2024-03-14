@@ -194,7 +194,7 @@ const Timetracker = () => {
   if (!hydrated) return null;
   return (
     <div>
-      <div className="flex bg-white h-14 justify-between ">
+      <div className="flex bg-white h-14 md:justify-between ">
         <div className=" flex p-2 w-3/6 ">
           <div className="w-full">
             <input
@@ -218,7 +218,7 @@ const Timetracker = () => {
             ></input>
           </div>
         </div>
-        <div className="flex p-2 justify-around    w-2/6">
+        <div className="flex p-2 md:justify-evenly justify-around    md:3/6 lg:w-2/6">
           <div className="flex items-center border-r  ">
             <label htmlFor="projects">Projects</label>
             <select
@@ -252,20 +252,23 @@ const Timetracker = () => {
               </div>
             </div>
             {timeEntries[date].map((entry) => (
-              <div className="flex w-full p-4  border" key={entry._id}>
+              <div
+                className="flex w-full p-4 items-center  justify-around md:justify-between lg-justify-normal border"
+                key={entry._id}
+              >
                 <div className="text-[#707070] truncate font-medium w-2/12">
                   {entry.task}
                 </div>
-                <li className="ml-2 text-[#58c4cc] truncate md-4/12 sm-2/12 font-medium w-6/12">
+                <li className="ml-2 text-[#58c4cc] truncate  font-medium w-2/12 lg:w-5/12 ">
                   Project
                 </li>
-                <div className=" flex items-center text-[#707070] border-r-2 truncate text-sm font-medium  w-2/12">
+                <div className=" inline    md:w-2/12 lg:4/12 lg:truncate lg:flex items-center text-[#707070] border-r-2  text-sm font-medium  ">
                   {`${formatTime(new Date(entry.start_time))} - ${formatTime(
                     new Date(entry.end_time)
                   )}`}
-                  <IoCalendarOutline className="ml-2 w-6 h-6" />
+                  <IoCalendarOutline className="ml-2 w-6 h-6 hidden lg:flex" />
                 </div>
-                <div className=" ml-2 text-black border-r-2 text-center m-0 truncate text-lg font-medium  w-1/12">
+                <div className="  text-black border-r-2 md:px-2 text-clip  justify-center text-center m-0 truncate text-lg font-medium   lg:w-1/12 hidden md:flex ">
                   {convertMillisecondsToTime(entry.duration)}
                 </div>
                 <div className="border-r-2 flex px-3 ">

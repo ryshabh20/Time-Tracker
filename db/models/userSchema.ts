@@ -37,6 +37,13 @@ const userSchema = new mongoose.Schema(
         ref: "TimeEntries",
       },
     ],
+    currentTask: {
+      description: { type: String },
+      currentProject: {
+        projectId: { type: mongoose.Schema.Types.ObjectId },
+        projectTask: { type: String },
+      },
+    },
     projects: [
       {
         type: mongoose.Schema.Types.ObjectId,
