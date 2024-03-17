@@ -20,7 +20,7 @@ const clientSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  projets: [
+  projects: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",

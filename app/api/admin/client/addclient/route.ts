@@ -28,10 +28,9 @@ export async function POST(request: NextRequest) {
       contactnumber,
       email,
       country,
-      creator: userId,
+      adminId: userId,
     });
     const savedClient = newClient.save();
-    console.log("hey", newClient);
 
     return NextResponse.json(
       {

@@ -30,12 +30,14 @@ export async function POST(request: NextRequest) {
       });
       const savedEntry = await newTimeEntry.save();
 
+      const currentTaskDescription = savedEntry.task;
+
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
           $set: {
             isTimer: !userData.isTimer,
-            "currentTask.description": savedEntry.task,
+            "currentTask.description": currentTaskDescription,
           },
           $push: {
             timeentries: savedEntry,
@@ -72,6 +74,7 @@ export async function POST(request: NextRequest) {
         {
           $set: {
             end_time: new Date(),
+            task: reqBody.task,
             duration: durationInMillis,
           },
         },

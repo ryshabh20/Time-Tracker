@@ -3,12 +3,15 @@ import jwt from "jsonwebtoken";
 import { connect } from "@/db/dbConfig";
 import User from "@/db/models/userSchema";
 
-export const tokenDataId = async (request: NextRequest) => {
+export const tokenDataId = async (
+  request: NextRequest,
+  sendUser: boolean = false
+) => {
   try {
     const token = request.cookies.get("authtoken")?.value || "";
     const user: any = jwt.verify(token, process.env.SECRET!);
 
-    const validuser = await ValidUser(user.id);
+    const validuser = await ValidUser(user.id, sendUser);
 
     return validuser;
   } catch (error: any) {
@@ -16,9 +19,14 @@ export const tokenDataId = async (request: NextRequest) => {
   }
 };
 
-export const ValidUser = async (id: string) => {
+export const ValidUser = async (id: string, sendUser: boolean = false) => {
   const validuser = await User.findOne({ _id: id });
-  return validuser._id.toString();
+  if (!sendUser) {
+    return validuser._id.toString();
+  }
+  if (sendUser) {
+    return validuser;
+  }
 };
 
 export const getSessionData = (request: NextRequest) => {
