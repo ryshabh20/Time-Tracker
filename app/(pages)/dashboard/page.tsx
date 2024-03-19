@@ -26,15 +26,9 @@ const dashboard = () => {
     const response = await axios.get("/api/users/getalltimeentries");
     setTimeEntries(response.data.duration);
   };
-  // useEffect(() => {
-  //   const getUserDetails = async () => {
-  //     const response = await axios.get("/api/users/currentUser");
-  //     dispatch(setUserData({ ...response.data.data, currentTask: "" }));
-  //     // setUser(response.data.data);
-  //   };
-  //   getUserDetails();
-  //   getTimeEntries();
-  // }, []);
+  useEffect(() => {
+    getTimeEntries();
+  }, []);
   const lastWeek = [];
   const withoutFormat = [];
 

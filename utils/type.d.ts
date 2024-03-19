@@ -13,3 +13,12 @@ interface Entry {
 interface TimerProps {
   startTiming?: Date;
 }
+
+interface Client {
+  clientname: string;
+  contactnumber: string;
+  country: string;
+  email: string;
+  status: boolean;
+  _id: string;
+}

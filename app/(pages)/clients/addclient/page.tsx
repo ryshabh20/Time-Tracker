@@ -4,7 +4,7 @@ import { useState } from "react";
 import { countryOptions } from "@/helper/countryData";
 import { useAppSelector } from "@/store/store";
 
-const AddClient: React.FC = () => {
+const AddClient = () => {
   const user = useAppSelector((state) => state.userData);
   const [formData, setFormData] = useState({
     clientname: "",
@@ -31,7 +31,7 @@ const AddClient: React.FC = () => {
 
   return (
     <div>
-      Add/Edit Client
+      Add Client
       <form onSubmit={handleSubmit}>
         <div className="bg-white flex mt-4 p-10">
           <div className="flex flex-col space-y-7">
@@ -99,5 +99,4 @@ const AddClient: React.FC = () => {
     </div>
   );
 };
-
 export default AddClient;

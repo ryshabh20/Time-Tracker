@@ -13,6 +13,7 @@ import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { userDetails } from "@/helper/hydrationHelper";
+import { VscAccount } from "react-icons/vsc";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -35,6 +36,11 @@ const sideBarData = [
     page: "/projects",
   },
   {
+    name: "Clients",
+    icon: <VscAccount className=" text-gray-600 w-9 h-9" />,
+    page: "/clients",
+  },
+  {
     name: "Screenshots",
     icon: <ImFilesEmpty className=" text-gray-600 w-9 h-9" />,
     page: "/screenshots",
@@ -42,6 +48,7 @@ const sideBarData = [
 ];
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
+  const [active, setActive] = useState<string>("");
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.userData);
   const [hydrated, setHydtared] = useState(false);
@@ -107,17 +114,37 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className=" flex flex-1 justify-between flex-col ">
             <div>
               {sideBarData.map((data, index) => (
-                <div className="hover:bg-[#00a7b1] " key={index}>
+                <Link href={data.page} key={index}>
                   <div
+                    className={`hover:bg-[#00a7b1]  ${
+                      active === data.name
+                        ? "bg-[#00a7b1] text-white"
+                        : "bg-white text-black"
+                    } `}
                     key={index}
-                    className="flex items-center hover:text-white lg:w-max-content mx-10 pl-1 py-2 my-3  cursor-pointer"
                   >
-                    <div className="">{data.icon}</div>
-                    <div className="ml-4 text-lg ">
-                      <Link href={data.page}> {data.name} </Link>
+                    <div
+                      key={index}
+                      className="flex items-center hover:text-white lg:w-max-content mx-10 pl-1 py-2 my-3  cursor-pointer"
+                    >
+                      <div
+                        className={`${
+                          active === data.name ? "fill-white" : " text-black"
+                        } `}
+                      >
+                        {data.icon}
+                      </div>
+                      <div
+                        className={`ml-4 text-lg`}
+                        onClick={() => {
+                          setActive(data.name);
+                        }}
+                      >
+                        {data.name}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
             <button
