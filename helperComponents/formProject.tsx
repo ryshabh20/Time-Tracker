@@ -191,8 +191,8 @@ const FormProject: React.FC<{
                   clientname: e?.label,
                 });
               }}
-              value={{ label: formData.clientname, value: formData.client }}
               placeholder="Client"
+              value={{ label: formData.clientname, value: formData.client }}
             ></Select>
             <input
               onChange={(e) =>

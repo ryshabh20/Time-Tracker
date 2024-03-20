@@ -4,11 +4,12 @@ import axios from "axios";
 import { useAppSelector } from "@/store/store";
 import { useEffect, useState } from "react";
 import { FaEllipsisV, FaPlusCircle } from "react-icons/fa";
-
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 
 const client = () => {
+  const router = useRouter();
   const [clients, setClients] = useState([]);
   const [error, setError] = useState("");
   const [term, setTerm] = useState("");
@@ -137,8 +138,17 @@ const client = () => {
       </div>
       <form className="flex  bg-white py-2 px-2 h-14">
         <div className="SelectProjets text-gray-600 flex  md:2/12 lg:w-1/12 lg:justify-center border-r  items-center">
-          <label htmlFor="projectswitch">Projects</label>
-          <select name="" id="projectswitch" className="bg-white "></select>
+          <select
+            onChange={(e) => {
+              const { value } = e.target;
+
+              router.push(`/${value}`);
+            }}
+            className="bg-white "
+          >
+            <option value={`clients`}>Clients</option>
+            <option value={`projects`}>Projects</option>
+          </select>
         </div>
         <div className=" lg:w-5/6 ml-auto">
           <input

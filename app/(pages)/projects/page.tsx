@@ -4,11 +4,13 @@ import axios from "axios";
 import { useAppSelector } from "@/store/store";
 import { useEffect, useState } from "react";
 import { FaEllipsisV, FaPlusCircle } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 
 const project = () => {
+  const router = useRouter();
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState("");
   const [term, setTerm] = useState("");
@@ -95,7 +97,9 @@ const project = () => {
       return p + 1;
     });
   };
-
+  const HandleClientClick = () => {
+    router.push("/clients");
+  };
   const pageRender = () => {
     if (pagesToRender) {
       return (
@@ -129,7 +133,7 @@ const project = () => {
   return (
     <div className="flex flex-col max-h-screen space-y-10">
       <div className="flex justify-between items-center ">
-        <span className="text-2xl ">Project</span>
+        <span className="text-2xl">Project</span>
         <Link href="/projects/addproject">
           <button className="text-white flex items-center bg-custom-green p-3">
             <FaPlusCircle /> &nbsp; Add a new Project
@@ -138,9 +142,16 @@ const project = () => {
       </div>
       <form className="flex  bg-white py-2 px-2 h-14">
         <div className="SelectProjets text-gray-600 flex  md:2/12 lg:w-1/12 lg:justify-center border-r  items-center">
-          <select className="bg-white ">
-            <option> Clients</option>
-            <option>Projects</option>
+          <select
+            onChange={(e) => {
+              const { value } = e.target;
+
+              router.push(`/${value}`);
+            }}
+            className="bg-white "
+          >
+            <option value={`clients`}>Clients</option>
+            <option value={`projects`}>Projects</option>
           </select>
         </div>
         <div className=" lg:w-5/6 ml-auto">
@@ -189,7 +200,7 @@ const project = () => {
                     <FaEllipsisV onClick={() => openModal(project._id)} />
                     {showModal === project._id && (
                       <div className="absolute bg-white z-10  shadow-lg border ">
-                        <Link href={`/projects/tryproject/${project._id}`}>
+                        <Link href={`/projects/editproject/${project._id}`}>
                           <div className="px-2 py-1 border-b hover:bg-gray-400 ">
                             Edit
                           </div>
