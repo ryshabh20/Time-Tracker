@@ -22,3 +22,15 @@ interface Client {
   status: boolean;
   _id: string;
 }
+
+interface Project {
+  projectname: string;
+  client: string;
+  clientname: string;
+  technology: string;
+  hoursAlloted: number | null;
+  hoursConsumed: number | null;
+  hoursLeft: number | null;
+  description: string;
+  assignedTeam: string[];
+}

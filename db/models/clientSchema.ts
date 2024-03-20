@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Project from "./projectSchema";
+
 const clientSchema = new mongoose.Schema({
   clientname: {
     type: String,
@@ -23,11 +23,12 @@ const clientSchema = new mongoose.Schema({
   projects: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Project",
+      ref: "projects",
     },
   ],
   adminId: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
     required: true,
   },
   status: {

@@ -3,19 +3,26 @@ import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useAppSelector, useAppDispatch, RootState } from "@/store/store";
 import { useState, useEffect } from "react";
-import { UserData, setUserData } from "@/store/slices/userSlice";
+import { UserData, fetchUser, setUserData } from "@/store/slices/userSlice";
 import { IoCalendarOutline } from "react-icons/io5";
 import { CiPlay1 } from "react-icons/ci";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import Timer from "@/helperComponents/Timer";
+import Select from "react-select";
+
 import { groupBy } from "@/helper/groupBy";
 import {
   convertMillisecondsToTime,
   formatDate,
 } from "@/helper/convertMillisecondsToTime";
+import SearchableDropdown from "@/helper/searchableSelect";
 // import { AiTwotoneAlert } from "react-icons/ai";
 
 type DailyEntries = Record<string, Entry[]>;
+interface project {
+  projectname: string;
+  projectId: string;
+}
 
 const Timetracker = () => {
   const [timeEntries, setTimeEntries] = useState<DailyEntries>({});
@@ -27,6 +34,7 @@ const Timetracker = () => {
   >([]);
   const [totalDuration, setTotalDuration] = useState<String>("");
   const [errorMessage, setErrorMessage] = useState(false);
+  const [project, setProject] = useState<project>();
   const user = useAppSelector((state: RootState) => state.userData);
   const [task, setTask] = useState(user?.currentTask?.description);
   const dispatch = useAppDispatch();
@@ -46,6 +54,12 @@ const Timetracker = () => {
       toast.error(message);
     }
   };
+  const projectSet = (id: string, name: string) => {
+    setProject({
+      projectname: name,
+      projectId: id,
+    });
+  };
 
   const renderTotalDuration = (date: string): string => {
     const foundItem = duration.find(
@@ -61,48 +75,67 @@ const Timetracker = () => {
   }
   const handleOnClick = async () => {
     if (task?.trim() !== "") {
-      const bodydata = { task, user };
+      const bodydata = { task, user, project };
 
-      const response = await axios.post("/api/users/timeentry", bodydata);
-      if (user && response) {
-        if (!user?.isTimer) {
-          const newTaskId = response.data.savedEntry._id.toString();
-          const allTimeEntries = user.timeentries;
-          dispatch(
-            setUserData({
-              ...user,
-              isTimer: response.data.updatedTimer,
-              currentTask: {
-                ...user.currentTask,
-                description: response.data.task,
-              },
-              timeentries: [...allTimeEntries, newTaskId],
-            })
-          );
-        } else {
-          dispatch(
-            setUserData({
-              ...user,
-              isTimer: response.data.updatedTimer,
-              currentTask: {
-                ...user.currentTask,
-                description: response.data.task,
-              },
-            })
-          );
+      try {
+        const response = await axios.post("/api/users/timeentry", bodydata);
+        if (user && response) {
+          if (!user?.isTimer) {
+            const newTaskId = response.data.savedEntry._id.toString();
+            const allTimeEntries = user.timeentries;
+            dispatch(
+              setUserData({
+                ...user,
+                isTimer: response.data.updatedTimer,
+                currentTask: {
+                  ...user.currentTask,
+                  description: response.data.task,
+                  currentProject: {
+                    projectId: response.data.projectID,
+                    projectName: "",
+                    projectTask: "",
+                  },
+                },
+                timeentries: [...allTimeEntries, newTaskId],
+              })
+            );
+          } else {
+            dispatch(
+              setUserData({
+                ...user,
+                isTimer: response.data.updatedTimer,
+                currentTask: {
+                  ...user.currentTask,
+                  description: response.data.task,
+                  currentProject: {
+                    projectId: "",
+                    projectName: "",
+                    projectTask: "",
+                  },
+                },
+              })
+            );
+          }
         }
-      }
-      if (response.data.success) {
-        notify(response.data.success, response.data.message);
-      }
+        if (response.data.success) {
+          notify(response.data.success, response.data.message);
+        }
 
-      setTask(response.data.task);
+        setTask(response.data.task);
+      } catch (err: any) {
+        console.log("error", err);
+        notify(err.response.data.success, err.response.data.error);
+      }
     } else {
-      setErrorMessage(true);
+      notify(false, "Please fill all fields and try again");
     }
   };
-  const updateHandler = async (id: string) => {
-    const data = { id };
+  const updateHandler = async (
+    id: string,
+    projectId: string,
+    projectname: string
+  ) => {
+    const data = { id, projectId, projectname };
 
     try {
       const response = await axios.post("/api/users/updatetimeentry", data);
@@ -117,6 +150,15 @@ const Timetracker = () => {
           setUserData({
             ...user,
             isTimer: response.data.updatedTimer,
+            currentTask: {
+              ...user.currentTask,
+              description: response.data.task,
+              currentProject: {
+                projectId: response.data.projectID,
+                projectName: "",
+                projectTask: "",
+              },
+            },
             timeentries: [...allTimeEntries, newTaskId],
           })
         );
@@ -188,10 +230,27 @@ const Timetracker = () => {
       console.error(error);
     }
   };
-  console.log("The time in state thats passed down is ", seconds / 1000);
-  const loadMoreData = () => {};
+  // const fetchingProject = async () => {
+  //   const response = await axios.get(
+  //     `/api/admin/project/getprojects?items=100`
+  //   );
+  //   setProjectOptions((prevProjects) => [
+  //     ...prevProjects,
+  //     ...response.data.projects.map((project: any) => ({
+  //       label: project.clientname,
+  //       value: project._id,
+  //     })),
+  //   ]);
+  // };
+  const latestDetails = async () => {
+    await dispatch(fetchUser());
+    setTask(user?.currentTask?.description);
+  };
+
   useEffect(() => {
+    latestDetails();
     currentEntry();
+    // fetchingProject();
     fetchingData();
   }, [user?.isTimer]);
   useEffect(() => {
@@ -199,6 +258,8 @@ const Timetracker = () => {
   }, []);
 
   if (!hydrated) return null;
+
+  console.log("task", task);
   return (
     <div>
       <div className="flex bg-white h-14 md:justify-between ">
@@ -227,11 +288,12 @@ const Timetracker = () => {
         </div>
         <div className="flex p-2 md:justify-evenly justify-around    md:3/6 lg:w-2/6">
           <div className="flex items-center border-r  ">
-            <label htmlFor="projects">Projects</label>
+            {/* <label htmlFor="projects">Projects</label>
             <select
               id="projects"
               className="bg-white text-custom-green mr-4 "
-            ></select>
+            ></select> */}
+            <SearchableDropdown projectfn={projectSet} />
           </div>
           <Timer startTime={seconds} />
           <button
@@ -267,7 +329,7 @@ const Timetracker = () => {
                   {entry.task}
                 </div>
                 <li className="ml-2 text-[#58c4cc] truncate  font-medium w-2/12 lg:w-5/12 ">
-                  Project
+                  {entry?.project_id?.projectname}
                 </li>
                 <div className=" inline    md:w-2/12 lg:4/12 lg:truncate lg:flex items-center text-[#707070] border-r-2  text-sm font-medium  ">
                   {`${formatTime(new Date(entry.start_time))} - ${formatTime(
@@ -281,7 +343,13 @@ const Timetracker = () => {
                 <div className="border-r-2 flex px-3 ">
                   <CiPlay1
                     className="w-6  h-6 "
-                    onClick={() => updateHandler(entry._id)}
+                    onClick={() =>
+                      updateHandler(
+                        entry._id,
+                        entry.project_id._id,
+                        entry.project_id?.projectname
+                      )
+                    }
                   />
                 </div>
                 <div

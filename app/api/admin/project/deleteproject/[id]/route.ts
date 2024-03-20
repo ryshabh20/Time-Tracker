@@ -1,5 +1,5 @@
 import { connect } from "@/db/dbConfig";
-import Client from "@/db/models/clientSchema";
+import Project from "@/db/models/projectSchema";
 import { tokenDataId } from "@/helper/tokenData";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -15,16 +15,16 @@ export async function DELETE(
     if (!user || user.role !== "admin") {
       return NextResponse.json(
         {
-          message: "You are not authorized to delete this client",
+          message: "You are not authorized to delete this project",
           success: true,
         },
         { status: 401 }
       );
     }
-    await Client.findByIdAndDelete(clientId);
+    await Project.findByIdAndDelete(clientId);
     return NextResponse.json(
       {
-        message: "Client deleted successfully",
+        message: "Project deleted successfully",
         success: true,
       },
       { status: 200 }

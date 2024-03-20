@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
       {
         message: "Client created successfully",
         success: true,
+        savedClient,
       },
       { status: 200 }
     );

@@ -8,6 +8,7 @@ interface UserState {
 interface currentProject {
   projectId: string;
   projectTask: string;
+  projectName: string;
 }
 interface currentTask {
   description: string;

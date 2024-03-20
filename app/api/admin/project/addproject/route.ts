@@ -1,30 +1,31 @@
 import { connect } from "@/db/dbConfig";
-import Client from "@/db/models/clientSchema";
+import Project from "@/db/models/projectSchema";
 import { tokenDataId } from "@/helper/tokenData";
+
 import { NextRequest, NextResponse } from "next/server";
 
 connect();
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+
   try {
     const user = await tokenDataId(request, true);
-    const clientId = params.id;
     if (!user || user.role !== "admin") {
       return NextResponse.json(
         {
-          message: "You are not authorized to delete this client",
-          success: true,
+          message: "Only an admin can create a project",
+          success: "true",
         },
         { status: 401 }
       );
     }
-    await Client.findByIdAndDelete(clientId);
+    const newProject = await new Project({ ...body, adminId: user._id });
+
+    const savedProject = await newProject.save();
     return NextResponse.json(
       {
-        message: "Client deleted successfully",
+        message: "Project created successfully",
         success: true,
       },
       { status: 200 }

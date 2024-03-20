@@ -49,13 +49,12 @@ const dashboard = () => {
 
     withoutFormat.push(date.toLocaleDateString());
   }
-  console.log(lastWeek);
 
   const durationData = withoutFormat.map((day) => {
     const entry = timeEntries.find(
       (entry) => new Date(entry._id).toLocaleDateString() === day
     );
-    return entry ? entry.totalDuration : 0;
+    return entry ? entry?.totalDuration : 0;
   });
   const maxDuration = Math.max(...durationData);
   let totalHours = convertMillisecondsToTime(

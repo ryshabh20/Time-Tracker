@@ -16,9 +16,13 @@ export async function GET(request: NextRequest) {
       start_time: {
         $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
       },
-    }).sort({
-      createdAt: -1,
-    });
+    })
+      .sort({
+        createdAt: -1,
+      })
+      .populate("project_id", ["projectname"])
+      .lean();
+    console.log(",timeEntries", timeEntries);
 
     const objectId = new mongoose.Types.ObjectId(userId);
     const duration = await TimeEntries.aggregate([

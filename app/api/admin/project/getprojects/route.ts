@@ -2,20 +2,19 @@ import { connect } from "@/db/dbConfig";
 
 import { NextRequest, NextResponse } from "next/server";
 
-import Client from "@/db/models/clientSchema";
+import Project from "@/db/models/projectSchema";
 
 import { tokenDataId } from "@/helper/tokenData";
 connect();
 export async function GET(request: NextRequest) {
   const items_per_page: number =
     Number(request.nextUrl.searchParams.get("items")) || 7;
-  console.log(items_per_page);
+
   const page: number = Number(request.nextUrl.searchParams.get("page")) || 1;
   const search: string = request.nextUrl.searchParams.get("search") || "";
 
   try {
     const user = await tokenDataId(request, true);
-    // if (!user || user.role !== "admin")
     if (!user) {
       return NextResponse.json(
         { message: "You are not authorized", success: false },
@@ -25,25 +24,23 @@ export async function GET(request: NextRequest) {
 
     const query = {
       adminId: user._id,
-      status: true,
     };
     if (search) {
       const skip = (page - 1) * items_per_page;
-      const countPromise = Client.countDocuments({
+      const countPromise = Project.countDocuments({
         adminId: user._id,
-        status: true,
-        clientname: { $regex: search, $options: "i" },
+
+        projectname: { $regex: search, $options: "i" },
       });
-      const clientsPromise = Client.find({
+      const projectsPromise = Project.find({
         adminId: user._id,
-        status: true,
-        clientname: { $regex: search, $options: "i" },
+        projectname: { $regex: search, $options: "i" },
       })
         .limit(items_per_page)
         .skip(skip);
-      const [count, clients] = await Promise.all([
+      const [count, projects] = await Promise.all([
         countPromise,
-        clientsPromise,
+        projectsPromise,
       ]);
       const pageCount = count / items_per_page;
       console.log(
@@ -57,25 +54,32 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         message: "all entries fetched",
         success: true,
-        clients,
+        projects,
         pagination: {
           count,
           pageCount,
         },
       });
     }
+
+    // Not necessary
     if (!page) {
-      const clients = await Client.find(query);
+      const projects = await Project.find(query);
       return NextResponse.json({
         message: "all entries fetched",
         success: true,
-        clients,
+        projects,
       });
     }
     const skip = (page - 1) * items_per_page;
-    const countPromise = Client.countDocuments(query);
-    const clientsPromise = Client.find(query).limit(items_per_page).skip(skip);
-    const [count, clients] = await Promise.all([countPromise, clientsPromise]);
+    const countPromise = Project.countDocuments(query);
+    const projectsPromise = Project.find(query)
+      .limit(items_per_page)
+      .skip(skip);
+    const [count, projects] = await Promise.all([
+      countPromise,
+      projectsPromise,
+    ]);
     const pageCount = count / items_per_page;
 
     // if (userId !== tokenId || userRole !== "admin") {
@@ -87,7 +91,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       message: "all entries fetched",
       success: true,
-      clients,
+      projects,
       pagination: {
         count,
         pageCount,

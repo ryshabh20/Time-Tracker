@@ -1,11 +1,11 @@
 import { connect } from "@/db/dbConfig";
-import Client from "@/db/models/clientSchema";
+import Project from "@/db/models/projectSchema";
 import { tokenDataId } from "@/helper/tokenData";
 import { NextRequest, NextResponse } from "next/server";
 
 connect();
 
-export async function DELETE(
+export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -15,17 +15,27 @@ export async function DELETE(
     if (!user || user.role !== "admin") {
       return NextResponse.json(
         {
-          message: "You are not authorized to delete this client",
+          message: "Please login to access this account ",
           success: true,
         },
         { status: 401 }
       );
     }
-    await Client.findByIdAndDelete(clientId);
+    const project = await Project.findById(clientId);
+    if (!project) {
+      return NextResponse.json(
+        {
+          message: "Project does not exits",
+          success: false,
+        },
+        { status: 404 }
+      );
+    }
     return NextResponse.json(
       {
-        message: "Client deleted successfully",
+        message: "Project fetched successfully",
         success: true,
+        project,
       },
       { status: 200 }
     );

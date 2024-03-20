@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { countryOptions } from "@/helper/countryData";
 import { useAppSelector } from "@/store/store";
 
-import { AddClient } from "@/helperComponents/AddClient";
 import toast, { Toaster } from "react-hot-toast";
 const addeditclient = ({ params }: { params: { id: string } }) => {
   const [formData, setFormData] = useState({
@@ -50,7 +49,6 @@ const addeditclient = ({ params }: { params: { id: string } }) => {
         email: response.data.savedClient.email,
         country: response.data.savedClient.country,
       });
-      console.log("response.data.success", response.data.success);
       notify(response.data.success, response.data.message);
     } catch (err: any) {
       notify(err.response.data.success, err.response.data.message);

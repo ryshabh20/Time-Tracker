@@ -27,10 +27,12 @@ export async function POST(request: NextRequest) {
         user_id: userId,
         start_time: new Date(),
         task: reqBody.task,
+        project_id: reqBody.project.projectId,
       });
       const savedEntry = await newTimeEntry.save();
 
       const currentTaskDescription = savedEntry.task;
+      const currentProject = savedEntry.project_id;
 
       const updatedUser = await User.findByIdAndUpdate(
         userId,
@@ -38,9 +40,13 @@ export async function POST(request: NextRequest) {
           $set: {
             isTimer: !userData.isTimer,
             "currentTask.description": currentTaskDescription,
+            "currentTask.currentProject.projectId": currentProject,
+            "currentTask.currentProject.projectName":
+              reqBody.project.projectname,
           },
           $push: {
             timeentries: savedEntry,
+            projects: currentProject,
           },
         },
         { new: true }
@@ -53,6 +59,7 @@ export async function POST(request: NextRequest) {
         task: savedEntry.task,
         success: true,
         savedEntry,
+        projectID: savedEntry.project_id,
         updatedTimer,
       });
     }
@@ -86,6 +93,8 @@ export async function POST(request: NextRequest) {
           $set: {
             isTimer: !userData.isTimer,
             "currentTask.description": "",
+            "currentTask.currentProject.projectId": null,
+            "currentTask.currentProject.projectName": "",
           },
         },
         { new: true }
@@ -96,6 +105,7 @@ export async function POST(request: NextRequest) {
         task: "",
         success: true,
         updatedTimer,
+        projectID: "",
       });
     }
     return NextResponse.json({
@@ -103,6 +113,9 @@ export async function POST(request: NextRequest) {
       success: false,
     });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message, success: false },
+      { status: 500 }
+    );
   }
 }

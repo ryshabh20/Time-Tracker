@@ -10,9 +10,9 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const userId = await tokenDataId(request);
+    const user = await tokenDataId(request, true);
     const clientId = params.id;
-    if (!userId) {
+    if (!user || user.role !== "admin") {
       return NextResponse.json(
         {
           message: "Please login to access this account ",

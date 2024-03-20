@@ -50,13 +50,19 @@ export async function POST(request: NextRequest) {
         user_id: userId,
         start_time: new Date(),
         task: timeEntry.task,
+        project_id: reqBody.projectId,
       });
       const savedEntry = await newTimeEntry.save();
+      const currentTaskDescription = savedEntry.task;
+      const currentProject = savedEntry.project_id;
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
           $set: {
             isTimer: !userData.isTimer,
+            "currentTask.description": currentTaskDescription,
+            "currentTask.currentProject.projectId": currentProject,
+            "currentTask.currentProject.projectName": reqBody.projectname,
           },
           $push: {
             timeentries: savedEntry,
@@ -70,6 +76,7 @@ export async function POST(request: NextRequest) {
         task: savedEntry.task,
         success: true,
         savedEntry,
+        projectID: savedEntry.project_id,
         updatedTimer,
       });
     }
@@ -101,6 +108,9 @@ export async function POST(request: NextRequest) {
         {
           $set: {
             isTimer: !userData.isTimer,
+            "currentTask.description": "",
+            "currentTask.currentProject.projectId": null,
+            "currentTask.currentProject.projectName": "",
           },
         },
         { new: true }
@@ -111,6 +121,7 @@ export async function POST(request: NextRequest) {
         task: "",
         success: true,
         updatedTimer,
+        projectID: "",
       });
     }
     return NextResponse.json({
