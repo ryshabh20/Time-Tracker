@@ -18,6 +18,8 @@ const project = () => {
   const [pageCount, setPageCount] = useState(0);
   const [active, setActive] = useState<number>();
   const [showModal, setShowModal] = useState(null);
+  const [sortBy, setSortBy] = useState<string>("projectname");
+  const [order, setOrder] = useState<string>("asc");
 
   const notify = (status: boolean, message: string) => {
     if (status) {
@@ -65,7 +67,12 @@ const project = () => {
   useEffect(() => {
     fetchingProject();
     setActive(page);
-  }, [page]);
+  }, [page, order]);
+
+  const handleSort = (sort: string, order: string) => {
+    setSortBy(sort);
+    setOrder(order);
+  };
   // const sortHandler = async () => {
   //   // const query;
   //   const response = await axios.post("/api/admin/client/getclients");
@@ -97,9 +104,7 @@ const project = () => {
       return p + 1;
     });
   };
-  const HandleClientClick = () => {
-    router.push("/clients");
-  };
+
   const pageRender = () => {
     if (pagesToRender) {
       return (
@@ -150,8 +155,8 @@ const project = () => {
             }}
             className="bg-white "
           >
-            <option value={`clients`}>Clients</option>
             <option value={`projects`}>Projects</option>
+            <option value={`clients`}>Clients</option>
           </select>
         </div>
         <div className=" lg:w-5/6 ml-auto">
@@ -179,8 +184,79 @@ const project = () => {
         <table className="table-auto text-gray-600 font-light w-full text-left">
           <thead className="bg-[#e9e9e9]  h-10">
             <tr>
-              <th className="px-5">Project</th>
-              <th className="px-5">Client</th>
+              <th className="px-5">
+                Project{" "}
+                <span
+                  onClick={() => handleSort("projectname", "asc")}
+                  className={`text-2xl ${
+                    sortBy === "projectname" && order === "asc"
+                      ? "text-3xl"
+                      : "text-2xl"
+                  }`}
+                >
+                  ↑{" "}
+                </span>
+                <span
+                  onClick={() => handleSort("projectname", "desc")}
+                  className={`text-2xl ${
+                    sortBy === "projectname" && order === "desc"
+                      ? "text-3xl"
+                      : "text-2xl"
+                  }`}
+                >
+                  {" "}
+                  ↓
+                </span>
+              </th>
+              <th className="px-5">
+                Client{" "}
+                <span
+                  onClick={() => handleSort("clientname", "asc")}
+                  className={`text-2xl ${
+                    sortBy === "clientname" && order === "asc"
+                      ? "text-3xl"
+                      : "text-2xl"
+                  }`}
+                >
+                  ↑{" "}
+                </span>
+                <span
+                  onClick={() => handleSort("clientname", "desc")}
+                  className={`text-2xl ${
+                    sortBy === "clientname" && order === "desc"
+                      ? "text-3xl"
+                      : "text-2xl"
+                  }`}
+                >
+                  {" "}
+                  ↓
+                </span>
+              </th>
+              <th className="px-5">
+                Hours{" "}
+                <span
+                  onClick={() => handleSort("hoursLeft", "asc")}
+                  className={`text-2xl ${
+                    sortBy === "hoursLeft" && order === "asc"
+                      ? "text-3xl"
+                      : "text-2xl"
+                  }`}
+                >
+                  ↑{" "}
+                </span>
+                <span
+                  onClick={() => handleSort("hoursLeft", "desc")}
+                  className={`text-2xl ${
+                    sortBy === "hoursLeft" && order === "desc"
+                      ? "text-3xl"
+                      : "text-2xl"
+                  }`}
+                >
+                  {" "}
+                  ↓
+                </span>
+              </th>
+
               <th className="px-5">Hours</th>
               <th className="px-5">Team</th>
               <th className="px-5"></th>

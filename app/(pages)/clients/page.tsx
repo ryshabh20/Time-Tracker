@@ -1,5 +1,4 @@
 "use client";
-import AddClient from "@/components/AdminClient";
 import axios from "axios";
 import { useAppSelector } from "@/store/store";
 import { useEffect, useState } from "react";
@@ -17,6 +16,8 @@ const client = () => {
   const [pageCount, setPageCount] = useState(0);
   const [active, setActive] = useState<number>();
   const [showModal, setShowModal] = useState(null);
+  const [sortBy, setSortBy] = useState<string>("clientname");
+  const [order, setOrder] = useState<string>("asc");
 
   const notify = (status: boolean, message: string) => {
     if (status) {
@@ -35,7 +36,7 @@ const client = () => {
   const user = useAppSelector((state) => state.userData);
   const fetchingClient = async () => {
     const response = await axios.get(
-      `/api/admin/client/getclients?search=${term}&page=${page}`
+      `/api/admin/client/getclients?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
     );
     if (response.data) {
       setPageCount(response.data.pagination.pageCount);
@@ -44,11 +45,12 @@ const client = () => {
   };
   const pagesToRender = Math.ceil(pageCount);
   const pagesarr = Array.from({ length: pagesToRender }, (_, i) => i + 1);
+
   const handleClick = async (e: any) => {
     e.preventDefault();
     try {
       const response = await axios.get(
-        `/api/admin/client/getclients?search=${term}&page=${page}`
+        `/api/admin/client/getclients?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
       if (response.data) {
         console.log(
@@ -63,11 +65,11 @@ const client = () => {
   useEffect(() => {
     fetchingClient();
     setActive(page);
-  }, [page]);
-  // const sortHandler = async () => {
-  //   // const query;
-  //   const response = await axios.post("/api/admin/client/getclients");
-  // };
+  }, [page, order]);
+  const handleSort = (sort: string, order: string) => {
+    setSortBy(sort);
+    setOrder(order);
+  };
   const deleteHandler = async () => {
     try {
       const response = await axios.delete(
@@ -95,7 +97,7 @@ const client = () => {
       return p + 1;
     });
   };
-  console.log(page);
+
   const pageRender = () => {
     if (pagesToRender) {
       return (
@@ -175,9 +177,55 @@ const client = () => {
         <table className="table-auto text-gray-600 font-light w-full text-left">
           <thead className="bg-[#e9e9e9]  h-10">
             <tr>
-              <th className="px-5">Client</th>
+              <th className="px-5">
+                Client{" "}
+                <span
+                  onClick={() => handleSort("clientname", "asc")}
+                  className={`text-2xl ${
+                    sortBy === "clientname" && order === "asc"
+                      ? "text-3xl"
+                      : "text-2xl"
+                  }`}
+                >
+                  ↑{" "}
+                </span>
+                <span
+                  onClick={() => handleSort("clientname", "desc")}
+                  className={`text-2xl ${
+                    sortBy === "clientname" && order === "desc"
+                      ? "text-3xl"
+                      : "text-2xl"
+                  }`}
+                >
+                  {" "}
+                  ↓
+                </span>
+              </th>
               <th className="px-5">Contact</th>
-              <th className="px-5">Email</th>
+              <th className="px-5">
+                Email{" "}
+                <span
+                  onClick={() => handleSort("email", "asc")}
+                  className={`text-2xl ${
+                    sortBy === "email" && order === "asc"
+                      ? "text-3xl"
+                      : "text-2xl"
+                  }`}
+                >
+                  ↑{" "}
+                </span>
+                <span
+                  onClick={() => handleSort("email", "desc")}
+                  className={`text-2xl ${
+                    sortBy === "email" && order === "asc"
+                      ? "text-3xl"
+                      : "text-2xl"
+                  }`}
+                >
+                  {" "}
+                  ↓
+                </span>
+              </th>
               <th className="px-5">Country</th>
               <th className="px-5"></th>
             </tr>
@@ -214,15 +262,17 @@ const client = () => {
           </tbody>
         </table>
       </div>
-      <div className="flex justify-center space-x-4">
-        <button disabled={page === 1} onClick={handlePrevious}>
-          &lt;&lt;
-        </button>
-        <div>{pageRender()}</div>
-        <button disabled={page === pageCount} onClick={handleNext}>
-          &gt;&gt;
-        </button>
-      </div>
+      {pageCount > 1 && (
+        <div className="flex justify-center space-x-4">
+          <button disabled={page === 1} onClick={handlePrevious}>
+            &lt;&lt;
+          </button>
+          <div>{pageRender()}</div>
+          <button disabled={page === pageCount} onClick={handleNext}>
+            &gt;&gt;
+          </button>
+        </div>
+      )}
       <Toaster position="bottom-right" />
     </div>
   );
