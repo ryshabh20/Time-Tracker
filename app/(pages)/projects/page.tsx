@@ -38,7 +38,7 @@ const project = () => {
   const user = useAppSelector((state) => state.userData);
   const fetchingProject = async () => {
     const response = await axios.get(
-      `/api/admin/project/getprojects?search=${term}&page=${page}`
+      `/api/admin/project/getprojects?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
     );
     console.log("response.data", response.data);
     if (response.data) {
@@ -52,13 +52,9 @@ const project = () => {
     e.preventDefault();
     try {
       const response = await axios.get(
-        `/api/admin/project/getprojects?search=${term}&page=${page}`
+        `/api/admin/project/getprojects?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
       if (response.data) {
-        console.log(
-          "response.data.pagination.pageCount",
-          response.data.pagination.pageCount
-        );
         setPageCount(response.data.pagination.pageCount);
         setProjects(response.data.projects);
       }
@@ -184,7 +180,7 @@ const project = () => {
         <table className="table-auto text-gray-600 font-light w-full text-left">
           <thead className="bg-[#e9e9e9]  h-10">
             <tr>
-              <th className="px-5">
+              <th className=" px-5">
                 Project{" "}
                 <span
                   onClick={() => handleSort("projectname", "asc")}
@@ -232,7 +228,7 @@ const project = () => {
                   ↓
                 </span>
               </th>
-              <th className="px-5">
+              <th className="  px-5">
                 Hours{" "}
                 <span
                   onClick={() => handleSort("hoursLeft", "asc")}
@@ -257,7 +253,6 @@ const project = () => {
                 </span>
               </th>
 
-              <th className="px-5">Hours</th>
               <th className="px-5">Team</th>
               <th className="px-5"></th>
             </tr>

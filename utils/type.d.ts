@@ -5,11 +5,16 @@ interface Entry {
   task: string;
   createdAt: string;
   updatedAt: string;
+  project_id: EntryProjectDetails;
   __v: number;
   duration: number;
   end_time: string;
 }
 
+interface EntryProjectDetails {
+  _id: string;
+  projectname: string;
+}
 interface TimerProps {
   startTiming?: Date;
 }

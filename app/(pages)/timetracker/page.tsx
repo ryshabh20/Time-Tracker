@@ -73,6 +73,7 @@ const Timetracker = () => {
   function formatTimePart(timePart: number) {
     return timePart < 10 ? `0${timePart}` : timePart;
   }
+
   const handleOnClick = async () => {
     if (task?.trim() !== "") {
       const bodydata = { task, user, project };
@@ -91,8 +92,8 @@ const Timetracker = () => {
                   ...user.currentTask,
                   description: response.data.task,
                   currentProject: {
-                    projectId: response.data.projectID,
-                    projectName: "",
+                    projectId: response.data.project.projectId,
+                    projectName: response.data.project.projectName,
                     projectTask: "",
                   },
                 },
@@ -108,8 +109,8 @@ const Timetracker = () => {
                   ...user.currentTask,
                   description: response.data.task,
                   currentProject: {
-                    projectId: "",
-                    projectName: "",
+                    projectId: response.data.project.projectId,
+                    projectName: response.data.project.projectName,
                     projectTask: "",
                   },
                 },
@@ -259,7 +260,6 @@ const Timetracker = () => {
 
   if (!hydrated) return null;
 
-  console.log("task", task);
   return (
     <div>
       <div className="flex bg-white h-14 md:justify-between ">

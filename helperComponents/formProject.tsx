@@ -22,7 +22,6 @@ const FormProject: React.FC<{
   edit?: boolean;
   id?: string;
 }> = ({ edit, id }) => {
-  console.log("this is the id", id);
   const [formData, setFormData] = useState<form>({
     projectname: "",
     client: "",
@@ -83,6 +82,15 @@ const FormProject: React.FC<{
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const totalUsedHours =
+      (formData?.hoursConsumed || 0) + (formData?.hoursLeft || 0);
+    if (totalUsedHours >= (formData?.hoursAlloted || 0)) {
+      notify(
+        false,
+        "Hours consumed and hoursLeft should be less than hours alloted combined"
+      );
+      return;
+    }
     if (edit) {
       try {
         const response = await axios.post(
@@ -129,7 +137,6 @@ const FormProject: React.FC<{
       }
     }
   };
-  let debounceTimer: NodeJS.Timeout;
   const addTags = (event: any) => {
     if (
       event.target.value !== "" &&
@@ -139,7 +146,6 @@ const FormProject: React.FC<{
         ...formData,
         assignedTeam: [...formData.assignedTeam, event.target.value],
       });
-      event.target.value = "";
     }
   };
   const removeTags = (index: number) => {
@@ -152,25 +158,26 @@ const FormProject: React.FC<{
       ],
     });
   };
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    clearTimeout(debounceTimer);
-    const value: string = event.target.value;
-    debounceTimer = setTimeout(async () => {
-      try {
-        const response = await axios.get(
-          `/api/admin/client/getclients?search=${value}&items=100`
-        );
-      } catch (error) {}
-    }, 500);
-    setFormData({ ...formData, client: value });
-  };
+  //   let debounceTimer: NodeJS.Timeout;
+  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  //   clearTimeout(debounceTimer);
+  //   const value: string = event.target.value;
+  //   debounceTimer = setTimeout(async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `/api/admin/client/getclients?search=${value}&items=100`
+  //       );
+  //     } catch (error) {}
+  //   }, 500);
+  //   setFormData({ ...formData, client: value });
+  // };
 
   return (
     <div>
       {edit ? "Edit Project" : " Add Project"}
       <form onSubmit={handleSubmit}>
         <div className="bg-white flex mt-4 p-10">
-          <div className="flex flex-col space-y-7">
+          <div className="flex flex-col md:w-full lg:w-auto space-y-7">
             <input
               onChange={(e) =>
                 setFormData({ ...formData, projectname: e.target.value })
@@ -183,6 +190,7 @@ const FormProject: React.FC<{
               required
             />
             <Select
+              id="ClientId"
               options={clientOptions}
               onChange={(e: any) => {
                 setFormData({
@@ -192,7 +200,10 @@ const FormProject: React.FC<{
                 });
               }}
               placeholder="Client"
-              value={{ label: formData.clientname, value: formData.client }}
+              value={{
+                label: formData.clientname,
+                value: formData.client,
+              }}
             ></Select>
             <input
               onChange={(e) =>
@@ -223,7 +234,7 @@ const FormProject: React.FC<{
               name="allotedhours"
               required
             />
-            <div className=" flex w-full  space-x-2 ">
+            <div className=" flex w-full space-x-2 ">
               <input
                 type="number"
                 value={formData.hoursConsumed ? formData.hoursConsumed : ""}
@@ -233,7 +244,7 @@ const FormProject: React.FC<{
                     hoursConsumed: Number(e.target.value),
                   })
                 }
-                className="p-2 border rounded-md"
+                className="p-2 w-full border rounded-md"
                 placeholder="Hours Consumed"
                 name="hoursConsumed"
               />
@@ -246,7 +257,7 @@ const FormProject: React.FC<{
                   })
                 }
                 type="number"
-                className="p-2 border rounded-md"
+                className="p-2 border w-full rounded-md"
                 placeholder="Hours left "
                 name="hoursleft"
               />
@@ -273,19 +284,19 @@ const FormProject: React.FC<{
                 multiple
                 onChange={addTags}
               >
-                <option className="p-2" value="design">
+                <option className="p-2 border " value="design">
                   Design
                 </option>
-                <option className="p-2" value="QA">
+                <option className="p-2 border " value="QA">
                   QA
                 </option>
-                <option className="p-2" value="developer">
+                <option className="p-2 border " value="developer">
                   Developer
                 </option>
-                <option className="p-2" value="marketing">
+                <option className="p-2 border " value="marketing">
                   Marketing
                 </option>
-                <option className="p-2" value="HR">
+                <option className="p-2 border " value="HR">
                   HR
                 </option>
               </select>
@@ -293,7 +304,7 @@ const FormProject: React.FC<{
             <div className="flex ml-auto space-x-2">
               {formData?.assignedTeam?.map((tag, index) => (
                 <div
-                  className="flex items-center space-x-2 py-1 text-gray-600 rounded-lg bg-gray-200 px-2"
+                  className="flex items-center space-x-2 py-1  text-gray-600 rounded-lg bg-gray-200 px-2"
                   key={index}
                 >
                   <span>{tag}</span>

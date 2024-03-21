@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import TimeEntries from "@/db/models/timeEntries";
 import { tokenDataId } from "@/helper/tokenData";
 import User from "@/db/models/userSchema";
+import Project from "@/db/models/projectSchema";
 
 connect();
 
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
     if (userData.isTimer === true) {
       const timeEntryId = userData.timeentries[userData.timeentries.length - 1];
       const timeEntry = await TimeEntries.findOne({ _id: timeEntryId });
-      console.log(timeEntry, timeEntryId);
+      const projectId = reqBody.projectId;
 
       if (!timeEntry) {
         return NextResponse.json({
@@ -93,6 +94,8 @@ export async function POST(request: NextRequest) {
       }
       const durationInMillis =
         new Date().getTime() - timeEntry.start_time.getTime();
+      const durationInHours = durationInMillis / (1000 * 60 * 60);
+
       const updatedTimeEntry = await TimeEntries.findByIdAndUpdate(
         timeEntryId,
         {
@@ -114,6 +117,18 @@ export async function POST(request: NextRequest) {
           },
         },
         { new: true }
+      );
+      const updatedProject = await Project.findByIdAndUpdate(
+        projectId,
+        {
+          $inc: {
+            hoursLeft: -durationInHours,
+            hoursConsumed: durationInHours,
+          },
+        },
+        {
+          new: true,
+        }
       );
       const updatedTimer = updatedUser.isTimer;
       return NextResponse.json({

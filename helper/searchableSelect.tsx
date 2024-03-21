@@ -6,7 +6,6 @@ import { useAppSelector, RootState } from "@/store/store";
 const SearchableDropdown = ({ projectfn }) => {
   const [cloptions, setOptions] = useState<string[]>([]);
   const user = useAppSelector((state: RootState) => state.userData);
-
   const fetchingProject = async () => {
     const response = await axios.get(
       `/api/admin/project/getprojects?items=100`
@@ -33,6 +32,12 @@ const SearchableDropdown = ({ projectfn }) => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    setSelectedOption({
+      label: user?.currentTask?.currentProject?.projectName || "Project",
+      value: user?.currentTask?.currentProject?.projectId || "",
+    });
+  }, [user]);
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -46,7 +51,7 @@ const SearchableDropdown = ({ projectfn }) => {
   const filteredOptions = cloptions.filter((option) =>
     option.label.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  console.log("filteredOptions", filteredOptions);
+
   return (
     <div className="relative ">
       <div
