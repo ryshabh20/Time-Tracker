@@ -225,7 +225,6 @@ const Timetracker = () => {
         const startTime = new Date(response.data.data.start_time).getTime();
         const timeinMilli = currentTime - startTime;
         setSeconds(timeinMilli);
-        console.log("Entry started ", timeinMilli / 1000, " seconds ago.");
       }
     } catch (error: any) {
       console.error(error);

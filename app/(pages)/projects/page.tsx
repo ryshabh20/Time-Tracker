@@ -261,11 +261,13 @@ const project = () => {
             {projects.map((project: any) => {
               return (
                 <tr className="bg-white h-12 border" key={project._id}>
-                  <td className="px-5 text-custom-green">
-                    <li>{project.projectname}</li>
+                  <td className="px-5  text-custom-green">
+                    <li className="md:list-none lg:list-disc">
+                      <span className="">{project.projectname}</span>
+                    </li>
                   </td>
                   <td className="px-5">{project.clientname}</td>
-                  <td className="px-5">{project.hoursLeft}</td>
+                  <td className="px-5">{project.hoursLeft.toFixed(2)}</td>
                   <td className="px-5">{project.assignedTeam.join(" , ")}</td>
                   <td className="relative">
                     <FaEllipsisV onClick={() => openModal(project._id)} />

@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
         new Date().getTime() - timeEntry.start_time.getTime();
       const durationInHours = durationInMillis / (1000 * 60 * 60);
 
-      const updatedTimeEntry = await TimeEntries.findByIdAndUpdate(
+      const updatedOldTimeEntry = await TimeEntries.findByIdAndUpdate(
         timeEntryId,
         {
           $set: {
@@ -106,19 +106,8 @@ export async function POST(request: NextRequest) {
         },
         { new: true }
       );
-      const updatedUser = await User.findByIdAndUpdate(
-        userId,
-        {
-          $set: {
-            isTimer: !userData.isTimer,
-            "currentTask.description": "",
-            "currentTask.currentProject.projectId": null,
-            "currentTask.currentProject.projectName": "",
-          },
-        },
-        { new: true }
-      );
-      const updatedProject = await Project.findByIdAndUpdate(
+
+      const updatedOldProject = await Project.findByIdAndUpdate(
         projectId,
         {
           $inc: {
@@ -130,13 +119,37 @@ export async function POST(request: NextRequest) {
           new: true,
         }
       );
+      const newTimeEntry = await new TimeEntries({
+        user_id: userId,
+        start_time: new Date(),
+        task: timeEntry.task,
+        project_id: reqBody.projectId,
+      });
+      const savedEntry = await newTimeEntry.save();
+      const currentTaskDescription = savedEntry.task;
+      const currentProject = savedEntry.project_id;
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            "currentTask.description": currentTaskDescription,
+            "currentTask.currentProject.projectId": currentProject,
+            "currentTask.currentProject.projectName": reqBody.projectname,
+          },
+          $push: {
+            timeentries: savedEntry,
+          },
+        },
+        { new: true }
+      );
       const updatedTimer = updatedUser.isTimer;
       return NextResponse.json({
-        message: "time entry stopped successfully",
-        task: "",
+        message: "time entry created and started successfully",
+        task: savedEntry.task,
         success: true,
+        savedEntry,
+        projectID: savedEntry.project_id,
         updatedTimer,
-        projectID: "",
       });
     }
     return NextResponse.json({

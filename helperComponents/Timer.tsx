@@ -4,7 +4,6 @@ const Timer = ({ startTime }: { startTime: number }) => {
   const [seconds, setSeconds] = useState<number>(startTime);
   const user = useAppSelector((state: RootState) => state.userData);
 
-  console.log("startTime", startTime);
   let intervalId: NodeJS.Timeout | undefined;
   useEffect(() => {
     if (user?.isTimer) {
@@ -30,7 +29,7 @@ const Timer = ({ startTime }: { startTime: number }) => {
         intervalId = undefined;
       }
     };
-  }, [user?.isTimer, startTime]);
+  }, [user?.currentTask, startTime]);
   const hours: number = Math.floor(seconds / 3600);
   const minutes: number = Math.floor((seconds % 3600) / 60);
   const remainingSeconds: number = seconds % 60;
