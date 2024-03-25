@@ -156,7 +156,7 @@ const Timetracker = () => {
               description: response.data.task,
               currentProject: {
                 projectId: response.data.projectID,
-                projectName: "",
+                projectName: response.data.projectName,
                 projectTask: "",
               },
             },

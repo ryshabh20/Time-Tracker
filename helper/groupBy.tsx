@@ -22,6 +22,7 @@ interface TimeEntry {
 }
 
 export const groupBy = (data: TimeEntry[]) => {
+  // @ts-ignore
   const result = Object.groupBy(data, (data: Entry) => {
     return new Date(data.start_time).toLocaleDateString();
   });

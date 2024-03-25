@@ -149,6 +149,7 @@ export async function POST(request: NextRequest) {
         success: true,
         savedEntry,
         projectID: savedEntry.project_id,
+        projectName: reqBody.projectname,
         updatedTimer,
       });
     }

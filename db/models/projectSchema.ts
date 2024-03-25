@@ -8,12 +8,12 @@ const projectSchema = new mongoose.Schema(
     },
     adminId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "users",
       required: true,
     },
     client: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Client",
+      ref: "clients",
       required: [true, "Project should have a client Id"],
     },
     clientname: {

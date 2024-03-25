@@ -1,6 +1,6 @@
 import { connect } from "@/db/dbConfig";
 import { NextRequest, NextResponse } from "next/server";
-import Client from "@/db/models/clientSchema";
+import Employee from "@/db/models/employeeSchema";
 import { tokenDataId } from "@/helper/tokenData";
 
 connect();
@@ -13,7 +13,7 @@ export async function POST(
     const userId = await tokenDataId(request);
     const body = await request.json();
     const user = body.user._id;
-    const clientId = params.id;
+    const employeeId = params.id;
     const updatedData = body.formData;
 
     if (!userId || userId !== user) {
@@ -25,8 +25,8 @@ export async function POST(
         { status: 401 }
       );
     }
-    const updatedClient = await Client.findByIdAndUpdate(
-      clientId,
+    const updatedClient = await Employee.findByIdAndUpdate(
+      employeeId,
       {
         $set: {
           ...updatedData,
@@ -37,19 +37,19 @@ export async function POST(
     if (!updatedClient) {
       return NextResponse.json(
         {
-          message: "Client doesnot exists",
+          message: "Employee doesnot exists",
           success: false,
         },
         { status: 400 }
       );
     }
-    const savedClient = updatedClient.save();
-    console.log("savedClient", savedClient);
+    const savedEmployee = updatedClient.save();
+    console.log("savedEmployee", savedEmployee);
     return NextResponse.json(
       {
-        message: "Client updated successfully",
+        message: "Employee updated successfully",
         success: true,
-        savedClient,
+        savedEmployee,
       },
       { status: 200 }
     );

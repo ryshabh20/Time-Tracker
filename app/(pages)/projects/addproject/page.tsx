@@ -1,7 +1,7 @@
 import FormProject from "@/helperComponents/formProject";
 
-const Tryproject = () => {
+const Addproject = () => {
   return <FormProject edit={false} />;
 };
 
-export default Tryproject;
+export default Addproject;

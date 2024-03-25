@@ -11,7 +11,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 const project = () => {
   const router = useRouter();
-  const [projects, setProjects] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [error, setError] = useState("");
   const [term, setTerm] = useState("");
   const [page, setPage] = useState(1);
@@ -36,14 +36,14 @@ const project = () => {
     setShowModal(null);
   };
   const user = useAppSelector((state) => state.userData);
-  const fetchingProject = async () => {
+  const fetchingEmployee = async () => {
     const response = await axios.get(
-      `/api/admin/project/getprojects?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
+      `/api/admin/employee/getemployees?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
     );
     console.log("response.data", response.data);
     if (response.data) {
       setPageCount(response.data.pagination.pageCount);
-      setProjects(response.data.projects);
+      setEmployees(response.data.employees);
     }
   };
   const pagesToRender = Math.ceil(pageCount);
@@ -52,16 +52,17 @@ const project = () => {
     e.preventDefault();
     try {
       const response = await axios.get(
-        `/api/admin/project/getprojects?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
+        `/api/admin/employee/getemployees?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
+      console.log("response", response);
       if (response.data) {
         setPageCount(response.data.pagination.pageCount);
-        setProjects(response.data.projects);
+        setEmployees(response.data.employees);
       }
     } catch (error) {}
   };
   useEffect(() => {
-    fetchingProject();
+    fetchingEmployee();
     setActive(page);
   }, [page, order]);
 
@@ -76,12 +77,12 @@ const project = () => {
   const deleteHandler = async () => {
     try {
       const response = await axios.delete(
-        `/api/admin/project/deleteproject/${showModal}`
+        `/api/admin/employee/deleteemployee/${showModal}`
       );
       if (response.data.success) {
         notify(response.data.success, response.data.message);
       }
-      fetchingProject();
+      fetchingEmployee();
       setShowModal(null);
     } catch (err: any) {
       notify(err.response.data.success, err.response.data.message);
@@ -134,10 +135,10 @@ const project = () => {
   return (
     <div className="flex flex-col max-h-screen space-y-10">
       <div className="flex justify-between items-center ">
-        <span className="text-2xl">Project</span>
-        <Link href="/projects/addproject">
+        <span className="text-2xl">Employee</span>
+        <Link href="/employees/addemployee">
           <button className="text-white flex items-center bg-custom-green p-3">
-            <FaPlusCircle /> &nbsp; Add a new Project
+            <FaPlusCircle /> &nbsp; Add a new Employee
           </button>
         </Link>
       </div>
@@ -163,7 +164,7 @@ const project = () => {
               setTerm(e.target.value);
             }}
             className=" h-full w-4/6 mr-2 px-2 float-right  bg-[#f6f6f6]"
-            placeholder="Search by project name..."
+            placeholder="Search by employee name..."
           />
         </div>
         <div>
@@ -183,9 +184,9 @@ const project = () => {
               <th className=" px-5">
                 Project{" "}
                 <span
-                  onClick={() => handleSort("projectname", "asc")}
+                  onClick={() => handleSort("employeename", "asc")}
                   className={`text-2xl ${
-                    sortBy === "projectname" && order === "asc"
+                    sortBy === "employeename" && order === "asc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
@@ -193,9 +194,9 @@ const project = () => {
                   ↑{" "}
                 </span>
                 <span
-                  onClick={() => handleSort("projectname", "desc")}
+                  onClick={() => handleSort("employeename", "desc")}
                   className={`text-2xl ${
-                    sortBy === "projectname" && order === "desc"
+                    sortBy === "employeename" && order === "desc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
@@ -207,9 +208,9 @@ const project = () => {
               <th className="px-5">
                 Client{" "}
                 <span
-                  onClick={() => handleSort("clientname", "asc")}
+                  onClick={() => handleSort("employeename", "asc")}
                   className={`text-2xl ${
-                    sortBy === "clientname" && order === "asc"
+                    sortBy === "employeename" && order === "asc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
@@ -217,9 +218,9 @@ const project = () => {
                   ↑{" "}
                 </span>
                 <span
-                  onClick={() => handleSort("clientname", "desc")}
+                  onClick={() => handleSort("employeename", "desc")}
                   className={`text-2xl ${
-                    sortBy === "clientname" && order === "desc"
+                    sortBy === "employeename" && order === "desc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
@@ -258,12 +259,12 @@ const project = () => {
             </tr>
           </thead>
           <tbody>
-            {projects.map((project: any) => {
+            {employees.map((employee: any) => {
               return (
-                <tr className="bg-white h-12 border" key={project._id}>
+                <tr className="bg-white h-12 border" key={employee._id}>
                   <td className="px-5  text-custom-green">
                     <li className="md:list-none lg:list-disc">
-                      <span className="">{project.projectname}</span>
+                      <span className="">{employee.employeename}</span>
                     </li>
                   </td>
                   <td className="px-5">{project.clientname}</td>
