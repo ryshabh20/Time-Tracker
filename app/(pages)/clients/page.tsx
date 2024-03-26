@@ -6,11 +6,12 @@ import { FaEllipsisV, FaPlusCircle } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import ListingLoader from "@/helperComponents/ListingLoader";
 
 const client = () => {
   const router = useRouter();
   const [clients, setClients] = useState([]);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [term, setTerm] = useState("");
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
@@ -35,13 +36,16 @@ const client = () => {
   };
   const user = useAppSelector((state) => state.userData);
   const fetchingClient = async () => {
+    setLoading(true);
     const response = await axios.get(
       `/api/admin/client/getclients?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
     );
     if (response.data) {
+      setLoading(false);
       setPageCount(response.data.pagination.pageCount);
       setClients(response.data.clients);
     }
+    setLoading(false);
   };
   const pagesToRender = Math.ceil(pageCount);
   const pagesarr = Array.from({ length: pagesToRender }, (_, i) => i + 1);
@@ -49,18 +53,21 @@ const client = () => {
   const handleClick = async (e: any) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const response = await axios.get(
         `/api/admin/client/getclients?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
       if (response.data) {
-        console.log(
-          "response.data.pagination.pageCount",
-          response.data.pagination.pageCount
-        );
+        setLoading(false);
+
         setPageCount(response.data.pagination.pageCount);
         setClients(response.data.clients);
       }
-    } catch (error) {}
+      setLoading(false);
+    } catch (err: any) {
+      setLoading(false);
+      notify(err.response.data.success, err.response.data.message);
+    }
   };
   useEffect(() => {
     fetchingClient();
@@ -174,7 +181,13 @@ const client = () => {
         </div>
       </form>
       <div>
-        <table className="table-auto text-gray-600 font-light w-full text-left">
+        <table
+          className={`table-auto text-gray-600 ${
+            loading
+              ? "border-separate border-spacing-x-1 border-spacing-y-3"
+              : ""
+          } font-light w-full text-left`}
+        >
           <thead className="bg-[#e9e9e9]  h-10">
             <tr>
               <th className="px-5">
@@ -230,36 +243,40 @@ const client = () => {
               <th className="px-5"></th>
             </tr>
           </thead>
-          <tbody>
-            {clients.map((client: any) => {
-              return (
-                <tr className="bg-white h-12 border" key={client._id}>
-                  <td className="px-5">{client.clientname}</td>
-                  <td className="px-5">{client.contactnumber}</td>
-                  <td className="px-5">{client.email}</td>
-                  <td className="px-5">{client.country}</td>
-                  <td className="relative">
-                    <FaEllipsisV onClick={() => openModal(client._id)} />
-                    {showModal === client._id && (
-                      <div className="absolute bg-white z-10  shadow-lg border ">
-                        <Link href={`/clients/editclient/${client._id}`}>
-                          <div className="px-2 py-1 border-b hover:bg-gray-400 ">
-                            Edit
+          {loading ? (
+            <ListingLoader />
+          ) : (
+            <tbody>
+              {clients.map((client: any) => {
+                return (
+                  <tr className="bg-white h-12 border" key={client._id}>
+                    <td className="px-5">{client.clientname}</td>
+                    <td className="px-5">{client.contactnumber}</td>
+                    <td className="px-5">{client.email}</td>
+                    <td className="px-5">{client.country}</td>
+                    <td className="relative">
+                      <FaEllipsisV onClick={() => openModal(client._id)} />
+                      {showModal === client._id && (
+                        <div className="absolute bg-white z-10  shadow-lg border ">
+                          <Link href={`/clients/editclient/${client._id}`}>
+                            <div className="px-2 py-1 border-b hover:bg-gray-400 ">
+                              Edit
+                            </div>
+                          </Link>
+                          <div
+                            onClick={deleteHandler}
+                            className="px-2 py-1  hover:bg-red-400"
+                          >
+                            Delete
                           </div>
-                        </Link>
-                        <div
-                          onClick={deleteHandler}
-                          className="px-2 py-1  hover:bg-red-400"
-                        >
-                          Delete
                         </div>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          )}
         </table>
       </div>
       {pageCount > 1 && (

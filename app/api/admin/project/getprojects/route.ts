@@ -27,13 +27,13 @@ export async function GET(request: NextRequest) {
     const countPromise = Project.countDocuments({
       adminId: user._id,
       status: true,
-      clientname: { $regex: search, $options: "i" },
+      projectname: { $regex: search, $options: "i" },
     });
 
     const projectsPromise = Project.find({
       adminId: user._id,
 
-      clientname: { $regex: search, $options: "i" },
+      projectname: { $regex: search, $options: "i" },
     })
       .sort({ [sort]: order })
       .limit(items_per_page)

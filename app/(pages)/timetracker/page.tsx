@@ -16,6 +16,7 @@ import {
   formatDate,
 } from "@/helper/convertMillisecondsToTime";
 import SearchableDropdown from "@/helper/searchableSelect";
+import Loader from "@/helperComponents/Loader";
 // import { AiTwotoneAlert } from "react-icons/ai";
 
 type DailyEntries = Record<string, Entry[]>;
@@ -28,6 +29,7 @@ const Timetracker = () => {
   const [timeEntries, setTimeEntries] = useState<DailyEntries>({});
   const [seconds, setSeconds] = useState<number>(0);
   const [hydrated, setHydtared] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [offset, setoffset] = useState(1);
   const [duration, setDuration] = useState<
     { _id: string; totalDuration: number }[]
@@ -202,15 +204,19 @@ const Timetracker = () => {
   };
   const fetchingData = async () => {
     try {
+      setLoading(true);
       const params = { loadweek: offset };
       const response = await axios.get("/api/users/getalltimeentries");
       if (!response.data.success) {
+        setLoading(false);
         notify(response.data.success, response.data.error);
       }
+      setLoading(false);
       const result = groupBy(response.data.data);
       setTimeEntries(result);
       setDuration(response.data.duration);
     } catch (error) {
+      setLoading(false);
       notify(false, "please reload the page");
       console.error("Error fetching the entries");
     }
@@ -304,65 +310,70 @@ const Timetracker = () => {
           </button>
         </div>
       </div>
-      {Object.keys(timeEntries)?.map((date: string) => {
-        if (timeEntries[date].length === 0) {
-          return null;
-        }
-        return (
-          <div className="flex flex-col " key={date}>
-            <div className="bg-[#e9e9e9] items-center flex justify-between mt-7 pl-4 py-2">
-              <span className="text-[#868686]">{formatDate(date)}</span>
-              <div className="flex items-center pr-4">
-                <span className="text-[#868686] mr-2">Total:</span>
-                <span className="text-xl font-medium">
-                  {renderTotalDuration(date)}
-                </span>
+      {loading ? (
+        <Loader />
+      ) : (
+        Object.keys(timeEntries)?.map((date: string) => {
+          if (timeEntries[date].length === 0) {
+            return null;
+          }
+          return (
+            <div className="flex flex-col " key={date}>
+              <div className="bg-[#e9e9e9] items-center flex justify-between mt-7 pl-4 py-2">
+                <span className="text-[#868686]">{formatDate(date)}</span>
+                <div className="flex items-center pr-4">
+                  <span className="text-[#868686] mr-2">Total:</span>
+                  <span className="text-xl font-medium">
+                    {renderTotalDuration(date)}
+                  </span>
+                </div>
               </div>
-            </div>
-            {timeEntries[date].map((entry) => (
-              <div
-                className="flex w-full p-4 items-center  justify-around md:justify-between lg-justify-normal border"
-                key={entry._id}
-              >
-                <div className="text-[#707070] truncate font-medium w-2/12">
-                  {entry.task}
-                </div>
-                <li className="ml-2 text-[#58c4cc] truncate  font-medium w-2/12 lg:w-5/12 ">
-                  {entry?.project_id?.projectname}
-                </li>
-                <div className=" inline    md:w-2/12 lg:4/12 lg:truncate lg:flex items-center text-[#707070] border-r-2  text-sm font-medium  ">
-                  {`${formatTime(new Date(entry.start_time))} - ${formatTime(
-                    new Date(entry.end_time)
-                  )}`}
-                  <IoCalendarOutline className="ml-2 w-6 h-6 hidden lg:flex" />
-                </div>
-                <div className="  text-black border-r-2 md:px-2 text-clip  justify-center text-center m-0 truncate text-lg font-medium   lg:w-1/12 hidden md:flex ">
-                  {convertMillisecondsToTime(entry.duration)}
-                </div>
-                <div className="border-r-2 flex px-3 ">
-                  <CiPlay1
-                    className="w-6  h-6 "
-                    onClick={() =>
-                      updateHandler(
-                        entry._id,
-                        entry.project_id._id,
-                        entry.project_id?.projectname
-                      )
-                    }
-                  />
-                </div>
+              {timeEntries[date].map((entry) => (
                 <div
-                  className="px-3"
-                  onClick={() => deleteHandler(entry._id, entry.start_time)}
+                  className="flex w-full p-4 items-center  justify-around md:justify-between lg-justify-normal border"
+                  key={entry._id}
                 >
-                  <RiDeleteBin6Fill className="w-6 h-6" />
+                  <div className="text-[#707070] truncate font-medium w-2/12">
+                    {entry.task}
+                  </div>
+                  <li className="ml-2 text-[#58c4cc] truncate  font-medium w-2/12 lg:w-5/12 ">
+                    {entry?.project_id?.projectname}
+                  </li>
+                  <div className=" inline    md:w-2/12 lg:4/12 lg:truncate lg:flex items-center text-[#707070] border-r-2  text-sm font-medium  ">
+                    {`${formatTime(new Date(entry.start_time))} - ${formatTime(
+                      new Date(entry.end_time)
+                    )}`}
+                    <IoCalendarOutline className="ml-2 w-6 h-6 hidden lg:flex" />
+                  </div>
+                  <div className="  text-black border-r-2 md:px-2 text-clip  justify-center text-center m-0 truncate text-lg font-medium   lg:w-1/12 hidden md:flex ">
+                    {convertMillisecondsToTime(entry.duration)}
+                  </div>
+                  <div className="border-r-2 flex px-3 ">
+                    <CiPlay1
+                      className="w-6  h-6 "
+                      onClick={() =>
+                        updateHandler(
+                          entry._id,
+                          entry.project_id._id,
+                          entry.project_id?.projectname
+                        )
+                      }
+                    />
+                  </div>
+                  <div
+                    className="px-3"
+                    onClick={() => deleteHandler(entry._id, entry.start_time)}
+                  >
+                    <RiDeleteBin6Fill className="w-6 h-6" />
+                  </div>
                 </div>
-              </div>
-            ))}
-            {/* <button onClick={loadMoreData}>Load more data</button> */}
-          </div>
-        );
-      })}
+              ))}
+              {/* <button onClick={loadMoreData}>Load more data</button> */}
+            </div>
+          );
+        })
+      )}
+
       <Toaster position="bottom-right" />
     </div>
   );

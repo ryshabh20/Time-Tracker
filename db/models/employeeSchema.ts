@@ -26,7 +26,7 @@ const employeeSchema = new mongoose.Schema({
     type: [String],
     required: true,
   },
-  adminId: {
+  createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     required: true,

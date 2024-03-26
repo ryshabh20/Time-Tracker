@@ -8,11 +8,12 @@ import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import ListingLoader from "@/helperComponents/ListingLoader";
 
 const project = () => {
   const router = useRouter();
   const [projects, setProjects] = useState([]);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [term, setTerm] = useState("");
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
@@ -37,28 +38,40 @@ const project = () => {
   };
   const user = useAppSelector((state) => state.userData);
   const fetchingProject = async () => {
+    setLoading(true);
+
     const response = await axios.get(
       `/api/admin/project/getprojects?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
     );
     console.log("response.data", response.data);
     if (response.data) {
+      setLoading(false);
+
       setPageCount(response.data.pagination.pageCount);
       setProjects(response.data.projects);
     }
+    setLoading(false);
   };
   const pagesToRender = Math.ceil(pageCount);
   const pagesarr = Array.from({ length: pagesToRender }, (_, i) => i + 1);
   const handleClick = async (e: any) => {
     e.preventDefault();
     try {
+      setLoading(true);
+
       const response = await axios.get(
         `/api/admin/project/getprojects?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
       if (response.data) {
+        setLoading(false);
+
         setPageCount(response.data.pagination.pageCount);
         setProjects(response.data.projects);
       }
-    } catch (error) {}
+    } catch (err: any) {
+      setLoading(false);
+      notify(err.response.data.success, err.response.data.message);
+    }
   };
   useEffect(() => {
     fetchingProject();
@@ -177,7 +190,13 @@ const project = () => {
         </div>
       </form>
       <div>
-        <table className="table-auto text-gray-600 font-light w-full text-left">
+        <table
+          className={`table-auto text-gray-600 ${
+            loading
+              ? "border-separate border-spacing-x-1 border-spacing-y-3"
+              : ""
+          } font-light w-full text-left`}
+        >
           <thead className="bg-[#e9e9e9]  h-10">
             <tr>
               <th className=" px-5">
@@ -257,40 +276,44 @@ const project = () => {
               <th className="px-5"></th>
             </tr>
           </thead>
-          <tbody>
-            {projects.map((project: any) => {
-              return (
-                <tr className="bg-white h-12 border" key={project._id}>
-                  <td className="px-5  text-custom-green">
-                    <li className="md:list-none lg:list-disc">
-                      <span className="">{project.projectname}</span>
-                    </li>
-                  </td>
-                  <td className="px-5">{project.clientname}</td>
-                  <td className="px-5">{project.hoursLeft.toFixed}</td>
-                  <td className="px-5">{project.assignedTeam.join(" , ")}</td>
-                  <td className="relative">
-                    <FaEllipsisV onClick={() => openModal(project._id)} />
-                    {showModal === project._id && (
-                      <div className="absolute bg-white z-10  shadow-lg border ">
-                        <Link href={`/projects/editproject/${project._id}`}>
-                          <div className="px-2 py-1 border-b hover:bg-gray-400 ">
-                            Edit
+          {loading ? (
+            <ListingLoader />
+          ) : (
+            <tbody>
+              {projects.map((project: any) => {
+                return (
+                  <tr className="bg-white h-12 border" key={project._id}>
+                    <td className="px-5  text-custom-green">
+                      <li className="md:list-none lg:list-disc">
+                        <span className="">{project.projectname}</span>
+                      </li>
+                    </td>
+                    <td className="px-5">{project.clientname}</td>
+                    <td className="px-5">{project.hoursLeft.toFixed(2)}</td>
+                    <td className="px-5">{project.assignedTeam.join(" , ")}</td>
+                    <td className="relative">
+                      <FaEllipsisV onClick={() => openModal(project._id)} />
+                      {showModal === project._id && (
+                        <div className="absolute bg-white z-10  shadow-lg border ">
+                          <Link href={`/projects/editproject/${project._id}`}>
+                            <div className="px-2 py-1 border-b hover:bg-gray-400 ">
+                              Edit
+                            </div>
+                          </Link>
+                          <div
+                            onClick={deleteHandler}
+                            className="px-2 py-1  hover:bg-red-400"
+                          >
+                            Delete
                           </div>
-                        </Link>
-                        <div
-                          onClick={deleteHandler}
-                          className="px-2 py-1  hover:bg-red-400"
-                        >
-                          Delete
                         </div>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          )}
         </table>
       </div>
       {pageCount > 1 && (

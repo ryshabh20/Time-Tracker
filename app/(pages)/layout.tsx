@@ -50,8 +50,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
   const [active, setActive] = useState<string>("");
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.userData);
-  const [hydrated, setHydtared] = useState(false);
+
+  // const user = useAppSelector((state) => state.userData);
+
+  // const [hydrated, setHydtared] = useState(false);
 
   // useEffect(() => {
   //   setHydtared(true);
@@ -109,6 +111,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 {user?.team || "loading"}
               </span>
             </div> */}
+
             {userDetails()}
           </div>
           <div className=" flex flex-1 justify-between flex-col ">
