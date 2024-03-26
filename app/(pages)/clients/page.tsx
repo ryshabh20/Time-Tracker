@@ -12,6 +12,7 @@ const client = () => {
   const router = useRouter();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [role, setRole] = useState<string | undefined>("user");
   const [term, setTerm] = useState("");
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
@@ -34,7 +35,7 @@ const client = () => {
   const closeModal = () => {
     setShowModal(null);
   };
-  const user = useAppSelector((state) => state.userData);
+
   const fetchingClient = async () => {
     setLoading(true);
     const response = await axios.get(
@@ -47,6 +48,7 @@ const client = () => {
     }
     setLoading(false);
   };
+  const userRole = useAppSelector((state) => state?.userData?.role);
   const pagesToRender = Math.ceil(pageCount);
   const pagesarr = Array.from({ length: pagesToRender }, (_, i) => i + 1);
 
@@ -69,7 +71,9 @@ const client = () => {
       notify(err.response.data.success, err.response.data.message);
     }
   };
+
   useEffect(() => {
+    setRole(userRole);
     fetchingClient();
     setActive(page);
   }, [page, order]);
@@ -139,11 +143,15 @@ const client = () => {
     <div className="flex flex-col max-h-screen space-y-10">
       <div className="flex justify-between items-center ">
         <span className="text-2xl ">Client</span>
-        <Link href="/clients/addclient">
-          <button className="text-white flex items-center bg-custom-green p-3">
-            <FaPlusCircle /> &nbsp; Add a new client
-          </button>
-        </Link>
+        {role === "admin" ? (
+          <Link href="/clients/admin/addclient">
+            <button className="text-white flex items-center bg-custom-green p-3">
+              <FaPlusCircle /> &nbsp; Add a new client
+            </button>
+          </Link>
+        ) : (
+          ""
+        )}
       </div>
       <form className="flex  bg-white py-2 px-2 h-14">
         <div className="SelectProjets text-gray-600 flex  md:2/12 lg:w-1/12 lg:justify-center border-r  items-center">
@@ -258,7 +266,9 @@ const client = () => {
                       <FaEllipsisV onClick={() => openModal(client._id)} />
                       {showModal === client._id && (
                         <div className="absolute bg-white z-10  shadow-lg border ">
-                          <Link href={`/clients/editclient/${client._id}`}>
+                          <Link
+                            href={`/clients/admin/editclient/${client._id}`}
+                          >
                             <div className="px-2 py-1 border-b hover:bg-gray-400 ">
                               Edit
                             </div>

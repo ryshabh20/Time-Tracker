@@ -14,6 +14,7 @@ const project = () => {
   const router = useRouter();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [role, setRole] = useState<string | undefined>("user");
   const [term, setTerm] = useState("");
   const [page, setPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
@@ -36,7 +37,7 @@ const project = () => {
   const closeModal = () => {
     setShowModal(null);
   };
-  const user = useAppSelector((state) => state.userData);
+  const userRole = useAppSelector((state) => state?.userData?.role);
   const fetchingProject = async () => {
     setLoading(true);
 
@@ -74,6 +75,8 @@ const project = () => {
     }
   };
   useEffect(() => {
+    setRole(userRole);
+
     fetchingProject();
     setActive(page);
   }, [page, order]);
@@ -148,11 +151,15 @@ const project = () => {
     <div className="flex flex-col max-h-screen space-y-10">
       <div className="flex justify-between items-center ">
         <span className="text-2xl">Project</span>
-        <Link href="/projects/addproject">
-          <button className="text-white flex items-center bg-custom-green p-3">
-            <FaPlusCircle /> &nbsp; Add a new Project
-          </button>
-        </Link>
+        {role === "admin" ? (
+          <Link href="/projects/addproject">
+            <button className="text-white flex items-center bg-custom-green p-3">
+              <FaPlusCircle /> &nbsp; Add a new Project
+            </button>
+          </Link>
+        ) : (
+          ""
+        )}
       </div>
       <form className="flex  bg-white py-2 px-2 h-14">
         <div className="SelectProjets text-gray-600 flex  md:2/12 lg:w-1/12 lg:justify-center border-r  items-center">

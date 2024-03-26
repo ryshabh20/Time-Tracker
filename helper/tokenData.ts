@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
-import { connect } from "@/db/dbConfig";
+
 import User from "@/db/models/userSchema";
 
 export const tokenDataId = async (
@@ -10,7 +10,6 @@ export const tokenDataId = async (
   try {
     const token = request.cookies.get("authtoken")?.value || "";
     const user: any = jwt.verify(token, process.env.SECRET!);
-    console.log("user from auth token", user);
     if (token && !user) {
       request.cookies.delete("authtoken");
     }

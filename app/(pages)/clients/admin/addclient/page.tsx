@@ -1,62 +1,38 @@
 "use client";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { countryOptions } from "@/helper/countryData";
 import { useAppSelector } from "@/store/store";
+import AdminRoute from "@/helperComponents/AdminRoute";
 
-import toast, { Toaster } from "react-hot-toast";
-const addeditclient = ({ params }: { params: { id: string } }) => {
+const AddClient = () => {
+  const user = useAppSelector((state) => state.userData);
   const [formData, setFormData] = useState({
     clientname: "",
     contactnumber: "",
     email: "",
     country: "",
   });
-  const notify = (status: boolean, message: string) => {
-    if (status) {
-      toast.success(message);
-    } else {
-      toast.error(message);
-    }
-  };
-
-  const fetchClient = async () => {
-    const response = await axios.get(
-      `/api/admin/client/getclient/${params.id}`
-    );
-    console.log("response.data.client", response.data.client);
-    const { clientname, country, email, contactnumber } = response.data.client;
-
-    setFormData({ clientname, country, email, contactnumber });
-  };
-
-  useEffect(() => {
-    fetchClient();
-  }, []);
-  const user = useAppSelector((state) => state.userData);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const data = { formData, user };
-      const response = await axios.post(
-        `/api/admin/client/updateclient/${params.id}`,
-        data
-      );
-      setFormData({
-        clientname: response.data.savedClient.clientname,
-        contactnumber: response.data.savedClient.contactnumber,
-        email: response.data.savedClient.email,
-        country: response.data.savedClient.country,
-      });
-      notify(response.data.success, response.data.message);
-    } catch (err: any) {
-      notify(err.response.data.success, err.response.data.message);
+    if (formData.country === "" || formData.country === "placeholder") {
+      console.error("Please select a country.");
+      return;
     }
+    const data = { formData, user };
+    const response = await axios.post("/api/admin/client/addclient", data);
+    setFormData({
+      clientname: "",
+      contactnumber: "",
+      email: "",
+      country: "",
+    });
   };
+
   return (
     <div>
-      Edit Client
+      Add Client
       <form onSubmit={handleSubmit}>
         <div className="bg-white flex mt-4 p-10">
           <div className="flex flex-col space-y-7">
@@ -118,11 +94,10 @@ const addeditclient = ({ params }: { params: { id: string } }) => {
           type="submit"
           className="bg-custom-green p-2 ml-auto float-right text-white align-right rounded-sm"
         >
-          Edit Client
+          Add Client
         </button>
       </form>
-      <Toaster position="bottom-right" />
     </div>
   );
 };
-export default addeditclient;
+export default AdminRoute(AddClient, "clients");
