@@ -236,7 +236,7 @@ const EmployeeForm: React.FC<{
               value={formData.department}
               required
             >
-              <option value="" style={{ color: "gray" }} disabled hidden>
+              <option value="" disabled hidden>
                 Department
               </option>
               <option value="Marketing">Marketing</option>

@@ -256,7 +256,7 @@ const Timetracker = () => {
   useEffect(() => {
     latestDetails();
     currentEntry();
-    // fetchingProject();
+
     fetchingData();
   }, [user?.isTimer]);
   useEffect(() => {

@@ -182,7 +182,7 @@ const project = () => {
           <thead className="bg-[#e9e9e9]  h-10">
             <tr>
               <th className=" px-5">
-                Project{" "}
+                Name{" "}
                 <span
                   onClick={() => handleSort("employeename", "asc")}
                   className={`text-2xl ${
@@ -205,8 +205,9 @@ const project = () => {
                   ↓
                 </span>
               </th>
+              <th className="px-5">Code</th>
               <th className="px-5">
-                Client{" "}
+                Designation{" "}
                 <span
                   onClick={() => handleSort("employeename", "asc")}
                   className={`text-2xl ${
@@ -230,7 +231,7 @@ const project = () => {
                 </span>
               </th>
               <th className="  px-5">
-                Hours{" "}
+                Department{" "}
                 <span
                   onClick={() => handleSort("hoursLeft", "asc")}
                   className={`text-2xl ${
@@ -254,7 +255,7 @@ const project = () => {
                 </span>
               </th>
 
-              <th className="px-5">Team</th>
+              <th className="px-5">Technologies</th>
               <th className="px-5"></th>
             </tr>
           </thead>

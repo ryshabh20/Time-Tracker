@@ -5,53 +5,21 @@ import { useAppDispatch } from "@/store/store";
 import { setUserData } from "@/store/slices/userSlice";
 import { useAppSelector } from "@/store/store";
 import Image from "next/image";
-import { RxDashboard } from "react-icons/rx";
-import { LuClock } from "react-icons/lu";
-import { GrNotes } from "react-icons/gr";
-import { ImFilesEmpty } from "react-icons/im";
+
 import axios from "axios";
-import Link from "next/link";
+
 import { useRouter } from "next/navigation";
 import { userDetails } from "@/helper/hydrationHelper";
-import { VscAccount } from "react-icons/vsc";
+import SideBarData from "@/helperComponents/SideBarData";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-const sideBarData = [
-  {
-    name: "Dashboard",
-    icon: <RxDashboard className=" text-gray-600 w-9 h-9" />,
-    page: "/dashboard",
-  },
-  {
-    name: "Time Tracker",
-    icon: <LuClock className=" text-gray-600 w-9 h-9" />,
-    page: "/timetracker",
-  },
-  {
-    name: "Projects",
-    icon: <GrNotes className=" text-gray-600 w-9 h-9" />,
-    page: "/projects",
-  },
-  {
-    name: "Clients",
-    icon: <VscAccount className=" text-gray-600 w-9 h-9" />,
-    page: "/clients",
-  },
-  {
-    name: "Screenshots",
-    icon: <ImFilesEmpty className=" text-gray-600 w-9 h-9" />,
-    page: "/screenshots",
-  },
-];
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
-  const [active, setActive] = useState<string>("");
-  const dispatch = useAppDispatch();
 
-  // const user = useAppSelector((state) => state.userData);
+  const dispatch = useAppDispatch();
 
   // const [hydrated, setHydtared] = useState(false);
 
@@ -115,8 +83,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {userDetails()}
           </div>
           <div className=" flex flex-1 justify-between flex-col ">
-            <div>
-              {sideBarData.map((data, index) => (
+            <SideBarData />
+            {/* <div> */}
+            {/* {sideBarData.map((data, index) => (
                 <Link href={data.page} key={index}>
                   <div
                     className={`hover:bg-[#00a7b1]  ${
@@ -148,8 +117,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     </div>
                   </div>
                 </Link>
-              ))}
-            </div>
+              ))} */}
+            {/* </div> */}
             <button
               onClick={logoutHandler}
               className=" bg-custom-green m-2  text-white hover:text-black p-3 text-xl"
