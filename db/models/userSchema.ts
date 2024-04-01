@@ -9,8 +9,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
-      default: "user",
+      enum: ["user", "admin", "employee"],
+      required: true,
     },
     email: {
       type: String,
@@ -24,8 +24,7 @@ const userSchema = new mongoose.Schema(
     },
     team: {
       type: String,
-      enum: ["Developer", "Designing", "Sales"],
-      default: "Developer",
+      default: "HR",
     },
     isTimer: {
       type: Boolean,
@@ -45,7 +44,10 @@ const userSchema = new mongoose.Schema(
         projectName: { type: String, default: "" },
       },
     },
-
+    employee: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "employees",
+    },
     projects: [
       {
         type: mongoose.Schema.Types.ObjectId,

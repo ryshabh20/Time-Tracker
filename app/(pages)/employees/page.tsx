@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 
-const project = () => {
+const employee = () => {
   const router = useRouter();
   const [employees, setEmployees] = useState([]);
   const [error, setError] = useState("");
@@ -268,14 +268,16 @@ const project = () => {
                       <span className="">{employee.employeename}</span>
                     </li>
                   </td>
-                  <td className="px-5">{project.clientname}</td>
-                  <td className="px-5">{project.hoursLeft.toFixed}</td>
-                  <td className="px-5">{project.assignedTeam.join(" , ")}</td>
+
+                  <td className="px-5">{employee.code}</td>
+                  <td className="px-5">{employee.designation}</td>
+                  <td className="px-5">{employee.department}</td>
+                  <td className="px-5">{employee.technologies.join(" , ")}</td>
                   <td className="relative">
-                    <FaEllipsisV onClick={() => openModal(project._id)} />
-                    {showModal === project._id && (
+                    <FaEllipsisV onClick={() => openModal(employee._id)} />
+                    {showModal === employee._id && (
                       <div className="absolute bg-white z-10  shadow-lg border ">
-                        <Link href={`/projects/editproject/${project._id}`}>
+                        <Link href={`/employees/editemployee/${employee._id}`}>
                           <div className="px-2 py-1 border-b hover:bg-gray-400 ">
                             Edit
                           </div>
@@ -311,4 +313,4 @@ const project = () => {
   );
 };
 
-export default project;
+export default employee;

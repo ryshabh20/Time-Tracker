@@ -25,15 +25,15 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * items_per_page;
     const countPromise = Employee.countDocuments({
-      adminId: user._id,
+      createdBy: user._id,
 
-      clientname: { $regex: search, $options: "i" },
+      employeename: { $regex: search, $options: "i" },
     });
 
     const employeesPromise = Employee.find({
-      adminId: user._id,
+      createdBy: user._id,
 
-      clientname: { $regex: search, $options: "i" },
+      employeename: { $regex: search, $options: "i" },
     })
       .sort({ [sort]: order })
       .limit(items_per_page)
