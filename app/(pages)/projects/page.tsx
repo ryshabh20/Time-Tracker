@@ -152,7 +152,7 @@ const project = () => {
       <div className="flex justify-between items-center ">
         <span className="text-2xl">Project</span>
         {role === "admin" ? (
-          <Link href="/projects/addproject">
+          <Link href="/projects/admin/addproject">
             <button className="text-white flex items-center bg-custom-green p-3">
               <FaPlusCircle /> &nbsp; Add a new Project
             </button>
@@ -302,7 +302,9 @@ const project = () => {
                       <FaEllipsisV onClick={() => openModal(project._id)} />
                       {showModal === project._id && (
                         <div className="absolute bg-white z-10  shadow-lg border ">
-                          <Link href={`/projects/editproject/${project._id}`}>
+                          <Link
+                            href={`/projects/admin/editproject/${project._id}`}
+                          >
                             <div className="px-2 py-1 border-b hover:bg-gray-400 ">
                               Edit
                             </div>

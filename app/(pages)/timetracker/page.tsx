@@ -8,7 +8,6 @@ import { IoCalendarOutline } from "react-icons/io5";
 import { CiPlay1 } from "react-icons/ci";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 import Timer from "@/helperComponents/Timer";
-import Select from "react-select";
 
 import { groupBy } from "@/helper/groupBy";
 import {

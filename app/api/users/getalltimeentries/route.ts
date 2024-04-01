@@ -22,7 +22,6 @@ export async function GET(request: NextRequest) {
       })
       .populate("project_id", ["projectname"])
       .lean();
-    console.log(",timeEntries", timeEntries);
 
     const objectId = new mongoose.Types.ObjectId(userId);
     const duration = await TimeEntries.aggregate([
@@ -35,12 +34,15 @@ export async function GET(request: NextRequest) {
       {
         $group: {
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$start_time" } },
+
           totalDuration: {
             $sum: {
               $subtract: ["$end_time", "$start_time"],
             },
           },
-          createdAt: { $first: "$createdAt" },
+          entries: { $push: "$$ROOT" },
+
+          // createdAt: { $first: "$createdAt" },
         },
       },
       {

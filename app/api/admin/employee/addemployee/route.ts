@@ -20,7 +20,19 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-    const newEmployee = await new Employee({ ...body, adminId: user._id });
+
+    console.log(body);
+    const employeeemail = (body.employeename + body.code + "@tt.com")
+      .split(" ")
+      .join("");
+    const employeepassword = (body.employeename + "1234").split(" ").join("");
+
+    const newEmployee = await new Employee({
+      ...body,
+      createdBy: user._id,
+      employeeemail,
+      employeepassword,
+    });
 
     const savedEmployee = await newEmployee.save();
     return NextResponse.json(

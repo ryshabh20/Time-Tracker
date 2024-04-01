@@ -1,7 +1,18 @@
 import mongoose, { Mongoose } from "mongoose";
 import User from "./userSchema";
+import { MdEmail } from "react-icons/md";
 const employeeSchema = new mongoose.Schema({
   employeename: {
+    type: String,
+    required: true,
+  },
+  employeeemail: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+  },
+  employeepassword: {
     type: String,
     required: true,
   },

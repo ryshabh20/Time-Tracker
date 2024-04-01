@@ -10,13 +10,13 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const userId = await tokenDataId(request);
+    const user = await tokenDataId(request, true);
     const body = await request.json();
-    const user = body.user._id;
+
     const clientId = params.id;
     const updatedData = body.formData;
 
-    if (!userId || userId !== user) {
+    if (!user || user.role !== "admin") {
       return NextResponse.json(
         {
           message: "You are not authorized",

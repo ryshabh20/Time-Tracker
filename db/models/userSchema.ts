@@ -45,6 +45,7 @@ const userSchema = new mongoose.Schema(
         projectName: { type: String, default: "" },
       },
     },
+
     projects: [
       {
         type: mongoose.Schema.Types.ObjectId,

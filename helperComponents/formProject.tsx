@@ -110,6 +110,8 @@ const FormProject: React.FC<{
         });
         notify(response.data.success, response.data.message);
       } catch (err: any) {
+        console.log("err.repsonse", err);
+
         notify(err.response.data.success, err.response.data.message);
       }
     } else {
@@ -133,6 +135,7 @@ const FormProject: React.FC<{
           notify(response.data.success, response.data.message);
         }
       } catch (err: any) {
+        console.log("err.repsonse", err.repsonse);
         notify(err.response.data.success, err.response.data.message);
       }
     }

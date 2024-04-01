@@ -10,14 +10,15 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const userId = await tokenDataId(request);
+    const user = await tokenDataId(request, true);
     const body = await request.json();
 
     const projectId = params.id;
-    const updatedData = body.formData;
 
-    console.log("updatedData", updatedData);
-    if (!userId) {
+    console.log("body", body);
+    console.log("updatedData", body);
+
+    if (!user || user.role !== "admin") {
       return NextResponse.json(
         {
           message: "You are not authorized",
@@ -30,11 +31,13 @@ export async function POST(
       projectId,
       {
         $set: {
-          ...updatedData,
+          ...body,
         },
       },
       { new: true }
     );
+
+    console.log("updatedProject", updatedProject);
     if (!updatedProject) {
       return NextResponse.json(
         {
@@ -45,6 +48,7 @@ export async function POST(
       );
     }
     const project = updatedProject.save();
+
     return NextResponse.json(
       {
         message: "Project updated successfully",

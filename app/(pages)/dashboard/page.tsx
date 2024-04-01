@@ -7,7 +7,6 @@ import {
   convertMillisecondsToTime,
 } from "@/helper/convertMillisecondsToTime";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { setUserData } from "@/store/slices/userSlice";
 import { useAppDispatch } from "@/store/store";
 
 import axios from "axios";
@@ -19,13 +18,14 @@ Chart.register(ChartDataLabels);
 
 const dashboard = () => {
   const [timeEntries, setTimeEntries] = useState<
-    { _id: string; totalDuration: number }[]
+    { _id: string; totalDuration: number; entries: any }[]
   >([]);
   const dispatch = useAppDispatch();
   const getTimeEntries = async () => {
     const response = await axios.get("/api/users/getalltimeentries");
     setTimeEntries(response.data.duration);
   };
+
   useEffect(() => {
     getTimeEntries();
   }, []);
@@ -56,6 +56,7 @@ const dashboard = () => {
     );
     return entry ? entry?.totalDuration : 0;
   });
+
   const maxDuration = Math.max(...durationData);
   let totalHours = convertMillisecondsToTime(
     durationData[durationData.length - 1]
@@ -128,6 +129,16 @@ const dashboard = () => {
   };
   return (
     <div className="space-y-5 font-medium">
+      <div className="bg-white flex flex-col">
+        {timeEntries.map((time, index) => {
+          return (
+            <div className="flex">
+              <span>Session {index + 1} </span>
+              <span>{time?.entries[index]?.duration}</span>
+            </div>
+          );
+        })}
+      </div>
       <div className="align-left">Dashboard</div>
       <div>
         <div className="flex bg-[#e9e9e9] p-3 rounded-sm items-center justify-between">
