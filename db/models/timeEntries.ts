@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import User from "./userSchema";
 import Project from "./projectSchema";
 
 const timeEntriesSchema = new mongoose.Schema(

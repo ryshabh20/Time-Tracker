@@ -1,18 +1,41 @@
+import TimeEntries from "@/db/models/timeEntries";
 import { connect } from "@/db/dbConfig";
-
 import { NextRequest, NextResponse } from "next/server";
-
-import Client from "@/db/models/clientSchema";
-
 import { tokenDataId } from "@/helper/tokenData";
+
 connect();
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  // const user = await tokenDataId(request, true);
+  // if (!user || user.role !== "admin") {
+  //   return NextResponse.json(
+  //     {
+  //       message: "You are not authorized to access this route",
+  //       status: false,
+  //     },
+  //     { status: 401 }
+  //   );
+  // }
+  // const entries = await TimeEntries.find({ user_id: user._id })
+  //   .populate("project_id")
+  //   .exec();
+
+  // return NextResponse.json(
+  //   {
+  //     message: "User time entries",
+  //     status: true,
+  //     entries,
+  //   },
+  //   { status: 200 }
+  // );
   const items_per_page: number =
     Number(request.nextUrl.searchParams.get("items")) || 7;
   const page: number = Number(request.nextUrl.searchParams.get("page")) || 1;
   const search: string = request.nextUrl.searchParams.get("search") || "";
-  const sort = request.nextUrl.searchParams.get("sort") || "clientname";
+  const sort = request.nextUrl.searchParams.get("sort") || "technologies";
   // const order = request.nextUrl.searchParams.get("order") === "asc" ? 1 : -1;
   const order = request.nextUrl.searchParams.get("order") || "asc";
 
@@ -24,32 +47,30 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
-    const query = {
-      adminId: user._id,
-      status: true,
-    };
+
     const skip = (page - 1) * items_per_page;
-    const countPromise = Client.countDocuments({
-      adminId: user._id,
-      status: true,
-      clientname: { $regex: search, $options: "i" },
+    const count = await TimeEntries.countDocuments({
+      user_id: params.id,
+
+      // technologies: { $regex: search, $options: "i" },
     });
 
-    const clientsPromise = Client.find({
-      adminId: user._id,
-      status: true,
-      clientname: { $regex: search, $options: "i" },
+    const employees = await TimeEntries.find({
+      user_id: params.id,
     })
+      .populate("project_id")
       .sort({ [sort]: order })
       .limit(items_per_page)
       .skip(skip);
-    const [count, clients] = await Promise.all([countPromise, clientsPromise]);
-    const pageCount = count / items_per_page;
 
+    const pageCount = count / items_per_page;
+    const filteredEmployees = employees.filter((entry: any) =>
+      entry.project_id.technology.includes(search)
+    );
     return NextResponse.json({
       message: "all entries fetched",
       success: true,
-      clients,
+      employees: filteredEmployees,
       pagination: {
         count,
         pageCount,

@@ -10,7 +10,28 @@ interface Entry {
   duration: number;
   end_time: string;
 }
-
+interface TimeEntryDetails {
+  _id: string;
+  user_id: {
+    _id: string;
+    name: string;
+    employee?: {
+      _id: string;
+      designation: string;
+    };
+  };
+  project_id: {
+    _id: string;
+    projectname: string;
+  };
+  start_time: string;
+  task: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  duration: number;
+  end_time: string;
+}
 interface EntryProjectDetails {
   _id: string;
   projectname: string;
@@ -38,4 +59,43 @@ interface Project {
   hoursLeft: number | null;
   description: string;
   assignedTeam: string[];
+}
+
+interface PopulatedTimeEntry {
+  _id: string;
+  user_id: {
+    _id: string;
+    name: string;
+  };
+
+  project_id: {
+    id: string;
+    projectname: string;
+    hoursConsumed: number;
+    hoursLeft: number;
+    hoursAlloted: number;
+  };
+
+  start_time: string;
+  task: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  duration: number;
+  end_time: string;
+}
+
+interface TimeEntry {
+  _id: string;
+  user_id: string;
+
+  project_id: strig;
+
+  start_time: string;
+  task: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  duration: number;
+  end_time: string;
 }

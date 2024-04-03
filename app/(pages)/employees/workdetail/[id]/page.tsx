@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 
-const employee = () => {
+const WorkDetail = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const [employees, setEmployees] = useState([]);
   const [error, setError] = useState("");
@@ -38,21 +38,21 @@ const employee = () => {
   const user = useAppSelector((state) => state.userData);
   const fetchingEmployee = async () => {
     const response = await axios.get(
-      `/api/admin/employee/getemployees?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
+      `/api/admin/employee/workdetails/${params.id}`
     );
-    console.log("response.data", response.data);
     if (response.data) {
       setPageCount(response.data.pagination.pageCount);
       setEmployees(response.data.employees);
     }
   };
+
   const pagesToRender = Math.ceil(pageCount);
   const pagesarr = Array.from({ length: pagesToRender }, (_, i) => i + 1);
   const handleClick = async (e: any) => {
     e.preventDefault();
     try {
       const response = await axios.get(
-        `/api/admin/employee/getemployees?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
+        `/api/admin/employee/workdetails//${params.id}?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
       console.log("response", response);
       if (response.data) {
@@ -164,7 +164,7 @@ const employee = () => {
               setTerm(e.target.value);
             }}
             className=" h-full w-4/6 mr-2 px-2 float-right  bg-[#f6f6f6]"
-            placeholder="Search by employee name..."
+            placeholder="Search by technologies..."
           />
         </div>
         <div>
@@ -182,11 +182,11 @@ const employee = () => {
           <thead className="bg-[#e9e9e9]  h-10">
             <tr>
               <th className=" px-5">
-                Name{" "}
+                Project{" "}
                 <span
-                  onClick={() => handleSort("employeename", "asc")}
+                  onClick={() => handleSort("projectname", "asc")}
                   className={`text-2xl ${
-                    sortBy === "employeename" && order === "asc"
+                    sortBy === "projectname" && order === "asc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
@@ -194,9 +194,9 @@ const employee = () => {
                   ↑{" "}
                 </span>
                 <span
-                  onClick={() => handleSort("employeename", "desc")}
+                  onClick={() => handleSort("projectname", "desc")}
                   className={`text-2xl ${
-                    sortBy === "employeename" && order === "desc"
+                    sortBy === "projectname" && order === "desc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
@@ -205,13 +205,13 @@ const employee = () => {
                   ↓
                 </span>
               </th>
-              <th className="px-5">Code</th>
+
               <th className="px-5">
-                Designation{" "}
+                Client{" "}
                 <span
-                  onClick={() => handleSort("designation", "asc")}
+                  onClick={() => handleSort("clientname", "asc")}
                   className={`text-2xl ${
-                    sortBy === "designation" && order === "asc"
+                    sortBy === "clientname" && order === "asc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
@@ -219,9 +219,9 @@ const employee = () => {
                   ↑{" "}
                 </span>
                 <span
-                  onClick={() => handleSort("designation", "desc")}
+                  onClick={() => handleSort("clientname", "desc")}
                   className={`text-2xl ${
-                    sortBy === "designation" && order === "desc"
+                    sortBy === "clientname" && order === "desc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
@@ -231,11 +231,11 @@ const employee = () => {
                 </span>
               </th>
               <th className="  px-5">
-                Department{" "}
+                Hours{" "}
                 <span
-                  onClick={() => handleSort("department", "asc")}
+                  onClick={() => handleSort("hours", "asc")}
                   className={`text-2xl ${
-                    sortBy === "department" && order === "asc"
+                    sortBy === "hours" && order === "asc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
@@ -243,9 +243,9 @@ const employee = () => {
                   ↑{" "}
                 </span>
                 <span
-                  onClick={() => handleSort("department", "desc")}
+                  onClick={() => handleSort("hours", "desc")}
                   className={`text-2xl ${
-                    sortBy === "department" && order === "desc"
+                    sortBy === "hours" && order === "desc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
@@ -255,7 +255,7 @@ const employee = () => {
                 </span>
               </th>
 
-              <th className="px-5">Technologies</th>
+              <th className="px-5">Task</th>
               <th className="px-5"></th>
             </tr>
           </thead>
@@ -264,20 +264,22 @@ const employee = () => {
               return (
                 <tr className="bg-white h-12 border" key={employee._id}>
                   <td className="px-5  text-custom-green">
-                    <Link href={`/employees/workdetail/${employee._id}`}>
-                      <li className="md:list-none lg:list-disc">
-                        <span className="">{employee.employeename}</span>
-                      </li>
-                    </Link>
+                    <li className="md:list-none lg:list-disc">
+                      <span className="">
+                        {employee?.project_id?.projectname}
+                      </span>
+                    </li>
                   </td>
 
-                  <td className="px-5">{employee.code}</td>
-                  <td className="px-5">{employee.designation}</td>
-                  <td className="px-5">{employee.department}</td>
-                  <td className="px-5">{employee.technologies.join(" , ")}</td>
+                  <td className="px-5">{employee.project_id.clientname}</td>
+                  <td className="px-5">
+                    {employee.project_id.hoursLeft.toFixed(2)}
+                  </td>
+                  <td className="px-5">{employee.task}</td>
                   <td className="relative">
-                    <FaEllipsisV onClick={() => openModal(employee._id)} />
-                    {showModal === employee._id && (
+                    <FaEllipsisV />
+                    {/* <FaEllipsisV onClick={() => openModal(employee._id)} /> */}
+                    {/* {showModal === employee._id && (
                       <div className="absolute bg-white z-10  shadow-lg border ">
                         <Link href={`/employees/editemployee/${employee._id}`}>
                           <div className="px-2 py-1 border-b hover:bg-gray-400 ">
@@ -291,7 +293,7 @@ const employee = () => {
                           Delete
                         </div>
                       </div>
-                    )}
+                    )} */}
                   </td>
                 </tr>
               );
@@ -315,4 +317,4 @@ const employee = () => {
   );
 };
 
-export default employee;
+export default WorkDetail;

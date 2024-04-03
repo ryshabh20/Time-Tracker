@@ -8,7 +8,9 @@ connect();
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
+  const { hoursConsumed, hoursAlloted, hoursLeft } = body;
 
+  const calculatedHoursLeft = hoursAlloted - hoursConsumed;
   try {
     const user = await tokenDataId(request, true);
     if (!user || user.role !== "admin") {
@@ -20,7 +22,11 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-    const newProject = await new Project({ ...body, adminId: user._id });
+    const newProject = await new Project({
+      ...body,
+      adminId: user._id,
+      hoursLeft: calculatedHoursLeft,
+    });
 
     const savedProject = await newProject.save();
     return NextResponse.json(

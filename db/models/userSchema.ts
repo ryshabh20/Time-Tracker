@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import Project from "./projectSchema";
 import TimeEntries from "./timeEntries";
+import Employee from "./employeeSchema";
+
 const userSchema = new mongoose.Schema(
   {
     name: {

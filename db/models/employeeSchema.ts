@@ -1,5 +1,6 @@
 import mongoose, { Mongoose } from "mongoose";
-
+import User from "./userSchema";
+import Project from "./projectSchema";
 const employeeSchema = new mongoose.Schema({
   employeename: {
     type: String,

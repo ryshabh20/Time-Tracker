@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import Project from "./projectSchema";
+import User from "./userSchema";
 
 const clientSchema = new mongoose.Schema({
   clientname: {

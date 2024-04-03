@@ -4,9 +4,13 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
+import { fetchUser } from "@/store/slices/userSlice";
 
 export default function LoginPage() {
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const [loading, setLoading] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [user, setUser] = React.useState({
@@ -24,6 +28,7 @@ export default function LoginPage() {
     try {
       setLoading(true);
       const response = await axios.post("/api/users/login", user);
+      await dispatch(fetchUser());
 
       router.push("/dashboard");
     } catch (error: any) {

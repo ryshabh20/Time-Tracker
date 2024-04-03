@@ -1,0 +1,195 @@
+"use server";
+
+import {
+  convertMillisecondsToTime,
+  formatDate,
+} from "@/helper/convertMillisecondsToTime";
+import { groupBy } from "@/helper/groupBy";
+import DeleteButton from "@/helperComponents/DeleteButton";
+import GetCookie from "@/helperComponents/getcookies";
+import { IoCalendarOutline } from "react-icons/io5";
+import { RiDeleteBin6Fill } from "react-icons/ri";
+
+interface CombinedInterfaces {
+  timeEntry: PopulatedTimeEntry[];
+  uniqueName: [string, string][];
+}
+export async function getData(id: string) {
+  const cookie = await GetCookie();
+  try {
+    const res = await fetch(
+      `http://localhost:3000/api/admin/project/projectdetail/${id}`,
+      {
+        headers: {
+          Cookie: `authtoken=${cookie}`,
+        },
+        next: { tags: ["collection"], revalidate: 0 },
+        cache: "no-store",
+      }
+    );
+    const data = await res.json();
+
+    const name: { [key: string]: string }[] = data.timeEntry.map(
+      (employee: TimeEntryDetails) => [
+        employee?.user_id?.employee?.designation || "HR",
+        employee.user_id.name,
+      ]
+    );
+
+    const uniqueName = [...new Set(name)];
+
+    return { ...data, uniqueName };
+  } catch (error) {
+    console.log("error", error);
+    throw new Error("Error fetching the data from the route");
+  }
+}
+
+export async function deleteEntry(id: string) {
+  try {
+    const cookie = await GetCookie();
+    const res = await fetch(
+      `http://localhost:3000/api/admin/project/deleteprojectdetail/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Cookie: `authtoken=${cookie}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const ProjectDetail = async ({ params }: { params: { id: string } }) => {
+  const { duration, timeEntry, uniqueName, groupedTimeEntries } = await getData(
+    params.id
+  );
+  function formatTime(date: Date) {
+    let hours = date.getHours();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const minutes = formatTimePart(date.getMinutes());
+    return `${hours}:${minutes} ${ampm}`;
+  }
+  function formatTimePart(timePart: number) {
+    return timePart < 10 ? `0${timePart}` : timePart;
+  }
+
+  const renderTotalDuration = (date: string): string => {
+    const foundItem = duration.find(
+      (d: any) =>
+        new Date(d._id).toLocaleDateString() ===
+        new Date(date).toLocaleDateString()
+    );
+
+    return foundItem
+      ? convertMillisecondsToTime(foundItem.totalDuration)
+      : "00:00:00";
+  };
+
+  return (
+    <div className="space-y-2">
+      <span> {timeEntry[0]?.project_id?.projectname}</span>
+      <div className="bg-white flex flex-col justify-between   h-3/6 p-10">
+        <div className="flex space-x-10  ">
+          <div>AssignedTeam :</div>
+          <div>
+            <table>
+              <tbody>
+                {uniqueName.length > 0 ? (
+                  uniqueName.map((info: any, index: number) => {
+                    return (
+                      <tr key={index}>
+                        <td className="border md:px-10 lg:px-20">{info[0]}</td>
+                        <td className="border md:px-10 lg:px-20">{info[1]}</td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td>No Team Assigned</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="  space-y-5">
+          <table className="border-separate border-spacing-y-5">
+            <tbody>
+              <tr>
+                <td className="pr-7">Hours Alloted :</td>
+                <td>{timeEntry[0]?.project_id.hoursAlloted || "00.00"} Hr</td>
+              </tr>
+              <tr>
+                <td className="pr-7">Hours Consumed :</td>
+                <td>
+                  {timeEntry[0]?.project_id.hoursConsumed.toFixed(2) || "00.00"}{" "}
+                  Hr
+                </td>
+              </tr>
+              <tr>
+                <td className="pr-7">Hours Left :</td>
+                <td>
+                  {timeEntry[0]?.project_id.hoursLeft.toFixed(2) || "00.00"} Hr
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {/* <Entries data={timeEntry as any} /> */}
+      {groupedTimeEntries.map((entry: any) => {
+        return (
+          <div className="flex flex-col " key={entry._id}>
+            <div className="bg-[#e9e9e9] items-center flex justify-between mt-7 pl-4 py-2">
+              <span className="text-[#868686]">{formatDate(entry._id)}</span>
+              <div className="flex items-center pr-4">
+                <span className="text-[#868686] mr-2">Total:</span>
+                <span className="text-xl font-medium">
+                  {renderTotalDuration(entry._id)}
+                </span>
+              </div>
+            </div>
+            {entry.entries.map((entry: any) => (
+              <div
+                className="flex w-full p-4 items-center  justify-around md:justify-between lg-justify-normal border"
+                key={entry._id}
+              >
+                <div className="text-[#707070] truncate font-medium w-2/12">
+                  {entry.task}
+                </div>
+                <li className="ml-2 text-[#58c4cc] truncate  font-medium w-2/12 lg:w-5/12 ">
+                  {entry?.userDetails[0]?.name}
+                </li>
+                <div className=" inline    md:w-2/12 lg:4/12 lg:truncate lg:flex items-center text-[#707070] border-r-2  text-sm font-medium  ">
+                  {`${formatTime(new Date(entry.start_time))} - ${formatTime(
+                    new Date(entry.end_time)
+                  )}`}
+                  <IoCalendarOutline className="ml-2 w-6 h-6 hidden lg:flex" />
+                </div>
+                <div className="  text-black border-r-2 md:px-2 text-clip  justify-center text-center m-0 truncate text-lg font-medium   lg:w-1/12 hidden md:flex ">
+                  {convertMillisecondsToTime(entry.duration)}
+                </div>
+                <div className="border-r-2 flex px-3 ">
+                  <DeleteButton
+                    deleteEntry={deleteEntry}
+                    getData={getData}
+                    entry_id={entry._id}
+                    project_id={params.id}
+                  />
+                </div>
+              </div>
+            ))}
+            {/* <button onClick={loadMoreData}>Load more data</button> */}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+export default ProjectDetail;

@@ -10,11 +10,10 @@ const AdminRoute = (Component: any, page: string) => {
 
     useEffect(() => {
       if (!isAdmin) {
-        console.log(user?.role);
         router.push(`/${page}`);
       }
     }, [isAdmin, router]);
-    return isAdmin ? <Component {...props} /> : null;
+    return isAdmin ? <Component {...props} /> : <></>;
   };
 };
 
