@@ -8,8 +8,9 @@ import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import { millisecondsToTime } from "@/helper/convertMillisecondsToTime";
 
-const employee = () => {
+const IdleTime = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const [employees, setEmployees] = useState([]);
   const [error, setError] = useState("");
@@ -37,13 +38,17 @@ const employee = () => {
   };
   const user = useAppSelector((state) => state.userData);
   const fetchingEmployee = async () => {
-    const response = await axios.get(
-      `/api/admin/employee/getemployees?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
-    );
-    console.log("response.data", response.data);
-    if (response.data) {
-      setPageCount(response.data.pagination.pageCount);
-      setEmployees(response.data.employees);
+    try {
+      const response = await axios.get(
+        `/api/admin/employee/idletime/${params.id}?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
+      );
+      console.log("response.data", response.data);
+      if (response.data) {
+        setPageCount(response.data.pagination.pageCount);
+        setEmployees(response.data.duration);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
   const pagesToRender = Math.ceil(pageCount);
@@ -52,14 +57,16 @@ const employee = () => {
     e.preventDefault();
     try {
       const response = await axios.get(
-        `/api/admin/employee/getemployees?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
+        `/api/admin/employee/idletime/${params.id}?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
       console.log("response", response);
       if (response.data) {
         setPageCount(response.data.pagination.pageCount);
-        setEmployees(response.data.employees);
+        setEmployees(response.data.duration);
       }
-    } catch (error) {}
+    } catch (error: any) {
+      notify(false, error.response.data.message);
+    }
   };
   useEffect(() => {
     fetchingEmployee();
@@ -74,20 +81,6 @@ const employee = () => {
   //   // const query;
   //   const response = await axios.post("/api/admin/client/getclients");
   // };
-  const deleteHandler = async () => {
-    try {
-      const response = await axios.delete(
-        `/api/admin/employee/deleteemployee/${showModal}`
-      );
-      if (response.data.success) {
-        notify(response.data.success, response.data.message);
-      }
-      fetchingEmployee();
-      setShowModal(null);
-    } catch (err: any) {
-      notify(err.response.data.success, err.response.data.message);
-    }
-  };
 
   const handlePrevious = () => {
     setPage((p) => {
@@ -135,36 +128,18 @@ const employee = () => {
   return (
     <div className="flex flex-col max-h-screen space-y-10">
       <div className="flex justify-between items-center ">
-        <span className="text-2xl">Employee</span>
-        <Link href="/employees/addemployee">
-          <button className="text-white flex items-center bg-custom-green p-3">
-            <FaPlusCircle /> &nbsp; Add a new Employee
-          </button>
-        </Link>
+        <span className="text-2xl">Idle Time</span>
       </div>
       <form className="flex  bg-white py-2 px-2 h-14">
-        <div className="SelectProjets text-gray-600 flex  md:2/12 lg:w-1/12 lg:justify-center border-r  items-center">
-          <select
-            onChange={(e) => {
-              const { value } = e.target;
-
-              router.push(`/${value}`);
-            }}
-            className="bg-white "
-          >
-            <option value={`projects`}>Projects</option>
-            <option value={`clients`}>Clients</option>
-          </select>
-        </div>
-        <div className=" lg:w-5/6 ml-auto">
+        <div className=" w-full ml-2">
           <input
             type="text"
             required
             onChange={(e) => {
               setTerm(e.target.value);
             }}
-            className=" h-full w-4/6 mr-2 px-2 float-right  bg-[#f6f6f6]"
-            placeholder="Search by employee name..."
+            className=" h-full w-full mr-2 px-2 float-right  bg-[#f6f6f6]"
+            placeholder="Search by date..."
           />
         </div>
         <div>
@@ -182,7 +157,7 @@ const employee = () => {
           <thead className="bg-[#e9e9e9]  h-10">
             <tr>
               <th className=" px-5">
-                Name{" "}
+                Date{" "}
                 <span
                   onClick={() => handleSort("employeename", "asc")}
                   className={`text-2xl ${
@@ -205,57 +180,9 @@ const employee = () => {
                   ↓
                 </span>
               </th>
-              <th className="px-5">Code</th>
-              <th className="px-5">
-                Designation{" "}
-                <span
-                  onClick={() => handleSort("designation", "asc")}
-                  className={`text-2xl ${
-                    sortBy === "designation" && order === "asc"
-                      ? "text-3xl"
-                      : "text-2xl"
-                  }`}
-                >
-                  ↑{" "}
-                </span>
-                <span
-                  onClick={() => handleSort("designation", "desc")}
-                  className={`text-2xl ${
-                    sortBy === "designation" && order === "desc"
-                      ? "text-3xl"
-                      : "text-2xl"
-                  }`}
-                >
-                  {" "}
-                  ↓
-                </span>
-              </th>
-              <th className="  px-5">
-                Department{" "}
-                <span
-                  onClick={() => handleSort("department", "asc")}
-                  className={`text-2xl ${
-                    sortBy === "department" && order === "asc"
-                      ? "text-3xl"
-                      : "text-2xl"
-                  }`}
-                >
-                  ↑{" "}
-                </span>
-                <span
-                  onClick={() => handleSort("department", "desc")}
-                  className={`text-2xl ${
-                    sortBy === "department" && order === "desc"
-                      ? "text-3xl"
-                      : "text-2xl"
-                  }`}
-                >
-                  {" "}
-                  ↓
-                </span>
-              </th>
-
-              <th className="px-5">Technologies</th>
+              <th className="px-5">Up Time </th>
+              <th className="px-5">Idle Time</th>
+              <th className="px-5">Total</th>
               <th className="px-5"></th>
             </tr>
           </thead>
@@ -264,39 +191,19 @@ const employee = () => {
               return (
                 <tr className="bg-white h-12 border" key={employee._id}>
                   <td className="px-5  text-custom-green">
-                    <Link href={`/employees/workdetail/${employee._id}`}>
-                      <li className="md:list-none lg:list-disc">
-                        <span className="">{employee.employeename}</span>
-                      </li>
-                    </Link>
+                    {new Date(employee._id).toLocaleDateString()}
                   </td>
 
-                  <td className="px-5">{employee.code}</td>
-                  <td className="px-5">{employee.designation}</td>
-                  <td className="px-5">{employee.department}</td>
-                  <td className="px-5">{employee.technologies.join(" , ")}</td>
+                  <td className="px-5">
+                    {millisecondsToTime(employee.totalDuration)}
+                  </td>
+                  <td className="px-5">
+                    {millisecondsToTime(28800000 - employee.totalDuration)}
+                  </td>
+                  <td className="px-5">08:00</td>
+
                   <td className="relative">
-                    <FaEllipsisV onClick={() => openModal(employee._id)} />
-                    {showModal === employee._id && (
-                      <div className="absolute bg-white z-10  shadow-lg border ">
-                        <Link href={`/employees/idletime/${employee._id}`}>
-                          <div className="px-2 py-1 border-b hover:bg-gray-400 ">
-                            Details
-                          </div>
-                        </Link>
-                        <Link href={`/employees/editemployee/${employee._id}`}>
-                          <div className="px-2 py-1 border-b hover:bg-gray-400 ">
-                            Edit
-                          </div>
-                        </Link>
-                        <div
-                          onClick={deleteHandler}
-                          className="px-2 py-1  hover:bg-red-400"
-                        >
-                          Delete
-                        </div>
-                      </div>
-                    )}
+                    <FaEllipsisV />
                   </td>
                 </tr>
               );
@@ -320,4 +227,4 @@ const employee = () => {
   );
 };
 
-export default employee;
+export default IdleTime;

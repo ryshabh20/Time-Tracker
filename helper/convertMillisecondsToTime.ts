@@ -46,3 +46,15 @@ export function formatDate(dateString: string) {
 
   return formattedDate;
 }
+export function millisecondsToTime(ms: number) {
+  const seconds = Math.floor(ms / 1000);
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+
+  // Format hours and minutes with leading zeros
+  const formattedHours = String(hours).padStart(2, "0");
+  const formattedMinutes = String(minutes).padStart(2, "0");
+
+  return `${formattedHours}:${formattedMinutes}`;
+}

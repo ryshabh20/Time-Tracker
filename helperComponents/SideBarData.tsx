@@ -21,11 +21,6 @@ const sideBarDataAdmin = [
     page: "/timetracker",
   },
   {
-    name: "Screenshots",
-    icon: <ImFilesEmpty className=" text-gray-600 w-9 h-9" />,
-    page: "/screenshots",
-  },
-  {
     name: "Projects",
     icon: <GrNotes className=" text-gray-600 w-9 h-9" />,
     page: "/projects",
@@ -39,6 +34,11 @@ const sideBarDataAdmin = [
     name: "Employees",
     icon: <MdPeopleOutline className=" text-gray-600 w-9 h-9" />,
     page: "/employees",
+  },
+  {
+    name: "Screenshots",
+    icon: <ImFilesEmpty className=" text-gray-600 w-9 h-9" />,
+    page: "/screenshots",
   },
 ];
 

@@ -25,13 +25,13 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * items_per_page;
     const countPromise = Project.countDocuments({
-      adminId: user._id,
+      // adminId: user._id,
       status: true,
       projectname: { $regex: search, $options: "i" },
     });
 
     const projectsPromise = Project.find({
-      adminId: user._id,
+      // adminId: user._id,
 
       projectname: { $regex: search, $options: "i" },
     })

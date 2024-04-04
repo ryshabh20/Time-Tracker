@@ -26,7 +26,9 @@ export async function POST(request: NextRequest) {
       .split(" ")
       .join("");
 
-    const password = (body.employeename + "1234").split(" ").join("");
+    const password = (body.employeename.toLowerCase().substring(0, 4) + "1234")
+      .split(" ")
+      .join("");
     console.log("body", body);
     console.log("email,password", email, password);
     const newEmployee = await new Employee({

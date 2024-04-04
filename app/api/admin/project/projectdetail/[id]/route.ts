@@ -12,7 +12,7 @@ export async function GET(
 ) {
   try {
     const user = await tokenDataId(request, true);
-    if (!user || user.role !== "admin") {
+    if (!user) {
       return NextResponse.json(
         { message: "You are not authorized", success: "false" },
         { status: 401 }
@@ -107,7 +107,6 @@ export async function GET(
       { status: 200 }
     );
   } catch (error) {
-    console.log("error", error);
     return NextResponse.json(
       {
         message: error,

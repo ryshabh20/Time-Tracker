@@ -203,10 +203,10 @@ const FormProject: React.FC<{
                 });
               }}
               placeholder="Client"
-              value={{
-                label: formData.clientname,
-                value: formData.client,
-              }}
+              // value={{
+              //   label: formData.clientname,
+              //   value: formData.client,
+              // }}
             ></Select>
             <input
               onChange={(e) =>

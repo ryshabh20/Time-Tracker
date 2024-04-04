@@ -2,6 +2,7 @@ import TimeEntries from "@/db/models/timeEntries";
 import { connect } from "@/db/dbConfig";
 import { NextRequest, NextResponse } from "next/server";
 import { tokenDataId } from "@/helper/tokenData";
+import User from "@/db/models/userSchema";
 
 connect();
 
@@ -54,9 +55,10 @@ export async function GET(
 
       // technologies: { $regex: search, $options: "i" },
     });
-
+    const userId = await User.findOne({ employee: params.id }).select("_id");
+    console.log("userId", userId);
     const employees = await TimeEntries.find({
-      user_id: params.id,
+      user_id: userId._id,
     })
       .populate("project_id")
       .sort({ [sort]: order })
