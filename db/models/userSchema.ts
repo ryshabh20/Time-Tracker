@@ -9,6 +9,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "user must have a name"],
     },
+    avatar: {
+      type: String,
+      default:
+        "https://firebasestorage.googleapis.com/v0/b/time-tracker-4863d.appspot.com/o/9434619.jpg?alt=media&token=c3feb8c6-9dba-43a2-9956-7932b2bf0016",
+    },
+
     role: {
       type: String,
       enum: ["user", "admin", "employee"],
@@ -38,6 +44,12 @@ const userSchema = new mongoose.Schema(
         ref: "TimeEntries",
       },
     ],
+    screenshots: [
+      {
+        type: String,
+      },
+    ],
+
     currentTask: {
       description: { type: String, default: "" },
       currentProject: {

@@ -26,6 +26,8 @@ export interface UserData {
   projects: string[];
   timeentries: string[];
   currentTask?: currentTask;
+  avatar: string;
+  screenshots: string[];
 }
 
 const initialState: UserState = {

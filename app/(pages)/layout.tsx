@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 ("");
 import { useAppDispatch } from "@/store/store";
 import { setUserData } from "@/store/slices/userSlice";
@@ -7,7 +7,7 @@ import { useAppSelector } from "@/store/store";
 import Image from "next/image";
 
 import axios from "axios";
-
+import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { userDetails } from "@/helper/hydrationHelper";
 import SideBarData from "@/helperComponents/SideBarData";
@@ -44,7 +44,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   // const userData = useAppSelector((state) => state.userData);
   // setUser(userData)
   // },[])
+  const pathname = usePathname();
+  useEffect(() => {
+    const intervalId = setInterval(takeScreenshot, 1800000);
 
+    return () => clearInterval(intervalId);
+  }, [pathname]);
   const logoutHandler = async () => {
     try {
       console.log("button was clicked");
@@ -55,6 +60,26 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       console.log(error.message);
     }
   };
+
+  // const Screenshot = async () => {
+  //   const takeScreenshot = async () => {
+  //     const response = await axios.get(`/api/users/screenshot${pathname}`);
+  //   };
+
+  //   const runAndClear = async () => {
+  //     await takeScreenshot();
+  //     clearInterval(intervalId);
+  //   };
+
+  //   await takeScreenshot();
+  //   const intervalId = setTimeout(runAndClear, 1800000);
+  // };
+
+  const takeScreenshot = async () => {
+    console.log("triggered");
+    const response = await axios.get(`/api/users/screenshot${pathname}`);
+  };
+
   return (
     <div className="w-full min-h-screen flex flex-row">
       <div className="md:3/12 lg:w-1/5 h-screen">
@@ -70,7 +95,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
         <div className=" flex  h-4/5 flex-col  ">
           <div className="flex items-center mx-10  space-x-4">
-            <div className="h-12 w-12 rounded-full bg-custom-green"></div>
+            {/* <div className="h-12 w-12 rounded-full bg-custom-green"></div> */}
             {/* <div className="flex flex-col">
               <span className="text-lg float-left">
                 {user?.name || "loading"}

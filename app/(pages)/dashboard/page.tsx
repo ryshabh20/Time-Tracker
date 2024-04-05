@@ -78,7 +78,7 @@ const dashboard = () => {
         datalabels: {
           color: "black",
           anchor: "end",
-          formatter: function (value, context) {
+          formatter: function (value: any, context: any) {
             const formattedValue = convertHoursToTime(value);
 
             return formattedValue;
@@ -110,7 +110,7 @@ const dashboard = () => {
         max: 9,
         stepSize: 1,
         grid: {
-          color: (context) => {
+          color: (context: any) => {
             if (context.index === 0) {
               return "";
             } else {
@@ -120,7 +120,7 @@ const dashboard = () => {
           displayBorder: false,
         },
         ticks: {
-          callback: (value) => {
+          callback: (value: any) => {
             return `${value}h   `;
           },
         },
@@ -132,7 +132,7 @@ const dashboard = () => {
       <div className="bg-white flex flex-col">
         {timeEntries.map((time, index) => {
           return (
-            <div className="flex">
+            <div className="flex" key={index}>
               <span>Session {index + 1} </span>
               <span>{time?.entries[index]?.duration}</span>
             </div>
