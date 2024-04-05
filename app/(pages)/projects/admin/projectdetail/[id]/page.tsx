@@ -4,11 +4,10 @@ import {
   convertMillisecondsToTime,
   formatDate,
 } from "@/helper/convertMillisecondsToTime";
-import { groupBy } from "@/helper/groupBy";
 import DeleteButton from "@/helperComponents/DeleteButton";
 import GetCookie from "@/helperComponents/getcookies";
+
 import { IoCalendarOutline } from "react-icons/io5";
-import { RiDeleteBin6Fill } from "react-icons/ri";
 
 interface CombinedInterfaces {
   timeEntry: PopulatedTimeEntry[];
@@ -23,21 +22,32 @@ export async function getData(id: string) {
         headers: {
           Cookie: `authtoken=${cookie}`,
         },
-        next: { tags: ["collection"], revalidate: 0 },
+        next: { tags: ["collection"] },
         cache: "no-store",
       }
     );
     const data = await res.json();
 
-    const name: { [key: string]: string }[] = data.timeEntry.map(
+    const name: [string, string][] = data?.timeEntry?.map(
       (employee: TimeEntryDetails) => [
         employee?.user_id?.employee?.designation || "HR",
         employee.user_id.name,
       ]
     );
 
-    const uniqueName = [...new Set(name)];
+    const uniqueValues = [...new Set(name)];
+    let uniqueName: [string, string][] = [];
 
+    uniqueValues.forEach((sublist) => {
+      let exists = uniqueName?.some((item) => {
+        return item[0] === sublist[0] && item[1] === sublist[1];
+      });
+
+      if (!exists) {
+        uniqueName.push(sublist);
+      }
+    });
+    console.log(uniqueName);
     return { ...data, uniqueName };
   } catch (error) {
     console.log("error", error);
@@ -57,15 +67,20 @@ export async function deleteEntry(id: string) {
         },
       }
     );
-  } catch (error) {
+    const response = await res.json();
+  } catch (error: any) {
     console.log(error);
   }
 }
 
 const ProjectDetail = async ({ params }: { params: { id: string } }) => {
-  const { duration, timeEntry, uniqueName, groupedTimeEntries } = await getData(
-    params.id
-  );
+  const {
+    duration,
+    timeEntry,
+    uniqueName,
+    groupedTimeEntries,
+    projectDetails,
+  } = await getData(params.id);
   function formatTime(date: Date) {
     let hours = date.getHours();
     const ampm = hours >= 12 ? "PM" : "AM";
@@ -99,8 +114,8 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
           <div>
             <table>
               <tbody>
-                {uniqueName.length > 0 ? (
-                  uniqueName.map((info: any, index: number) => {
+                {uniqueName?.length > 0 ? (
+                  uniqueName?.map((info: any, index: number) => {
                     return (
                       <tr key={index}>
                         <td className="border md:px-10 lg:px-20">{info[0]}</td>
@@ -126,16 +141,11 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
               </tr>
               <tr>
                 <td className="pr-7">Hours Consumed :</td>
-                <td>
-                  {timeEntry[0]?.project_id.hoursConsumed.toFixed(2) || "00.00"}{" "}
-                  Hr
-                </td>
+                <td>{projectDetails.hoursConsumed.toFixed(2) || "00.00"} Hr</td>
               </tr>
               <tr>
                 <td className="pr-7">Hours Left :</td>
-                <td>
-                  {timeEntry[0]?.project_id.hoursLeft.toFixed(2) || "00.00"} Hr
-                </td>
+                <td>{projectDetails.hoursLeft.toFixed(2) || "00.00"} Hr</td>
               </tr>
             </tbody>
           </table>
@@ -177,9 +187,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
                 <div className="border-r-2 flex px-3 ">
                   <DeleteButton
                     deleteEntry={deleteEntry}
-                    getData={getData}
                     entry_id={entry._id}
-                    project_id={params.id}
                   />
                 </div>
               </div>

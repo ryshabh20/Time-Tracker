@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     const user = await tokenDataId(request, true);
-    console.log("user._id", user._id);
+
     if (!user) {
       return NextResponse.json(
         {
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         }
       );
     }
-    console.log("userData", userData);
+
     return NextResponse.json(
       {
         message: "All screenshots1",

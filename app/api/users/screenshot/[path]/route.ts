@@ -20,6 +20,14 @@ export async function GET(
     value: string;
   };
 
+  const cookieObj = {
+    name: cookies.name,
+    value: cookies.value,
+    domain: "localhost",
+    path: "/",
+    expires: Math.floor(Date.now() / 1000) + 3600,
+  };
+
   const user = await tokenDataId(request, true);
   if (!user) {
     return NextResponse.json(
@@ -30,14 +38,6 @@ export async function GET(
       { status: 200 }
     );
   }
-
-  const cookieObj = {
-    name: cookies.name,
-    value: cookies.value,
-    domain: "localhost",
-    path: "/",
-    expires: Math.floor(Date.now() / 1000) + 3600,
-  };
 
   if (!url) {
     return NextResponse.json(

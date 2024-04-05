@@ -16,6 +16,14 @@ export async function GET(request: NextRequest) {
   // const order = request.nextUrl.searchParams.get("order") === "asc" ? 1 : -1;
   const order = request.nextUrl.searchParams.get("order") || "asc";
 
+  let sortvalue;
+  if (order === "asc") {
+    sortvalue = 1;
+  }
+  if (order === "desc") {
+    sortvalue = -1;
+  }
+
   try {
     const user = await tokenDataId(request, true);
     if (!user) {

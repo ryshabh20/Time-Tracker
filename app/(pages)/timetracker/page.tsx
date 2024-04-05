@@ -19,6 +19,7 @@ import Loader from "@/helperComponents/Loader";
 // import { AiTwotoneAlert } from "react-icons/ai";
 
 type DailyEntries = Record<string, Entry[]>;
+
 interface project {
   projectname: string;
   projectId: string;
@@ -212,7 +213,8 @@ const Timetracker = () => {
       }
       setLoading(false);
       const result = groupBy(response.data.data);
-      setTimeEntries(result);
+
+      setTimeEntries(result as DailyEntries);
       setDuration(response.data.duration);
     } catch (error) {
       setLoading(false);

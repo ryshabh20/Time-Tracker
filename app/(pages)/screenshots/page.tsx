@@ -12,7 +12,6 @@ export async function getScreenshots() {
     });
 
     const data = await res.json();
-    console.log("data", data);
     return data.screenshots;
   } catch (error) {
     console.log("error", error);

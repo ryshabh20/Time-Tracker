@@ -14,7 +14,7 @@ const ScreenshotImages = ({ images }: { images: string[] }) => {
 
   return (
     <div className="grid grid-cols-4">
-      {images.map((img: string, index: number) => {
+      {images?.map((img: string, index: number) => {
         return (
           <div
             className=""

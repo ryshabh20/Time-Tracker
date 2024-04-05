@@ -1,4 +1,5 @@
 import { connect } from "@/db/dbConfig";
+import Project from "@/db/models/projectSchema";
 import TimeEntries from "@/db/models/timeEntries";
 import { tokenDataId } from "@/helper/tokenData";
 import mongoose from "mongoose";
@@ -34,6 +35,8 @@ export async function GET(
         },
       },
     ]);
+    const projectDetails = await Project.findById(params.id);
+
     const projectId = new mongoose.Types.ObjectId(params.id);
     const groupedTimeEntries = await TimeEntries.aggregate([
       {
@@ -102,6 +105,7 @@ export async function GET(
         message: "All entries fetched",
         timeEntry,
         groupedTimeEntries,
+        projectDetails,
         duration,
       },
       { status: 200 }

@@ -1,8 +1,8 @@
+import mongoose from "mongoose";
 import { connect } from "@/db/dbConfig";
 import TimeEntries from "@/db/models/timeEntries";
 import { tokenDataId } from "@/helper/tokenData";
-import { truncate } from "fs/promises";
-import mongoose from "mongoose";
+import Project from "@/db/models/projectSchema";
 import { NextRequest, NextResponse } from "next/server";
 
 connect();

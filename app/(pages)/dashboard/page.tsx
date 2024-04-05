@@ -20,7 +20,7 @@ const dashboard = () => {
   const [timeEntries, setTimeEntries] = useState<
     { _id: string; totalDuration: number; entries: any }[]
   >([]);
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
   const getTimeEntries = async () => {
     const response = await axios.get("/api/users/getalltimeentries");
     setTimeEntries(response.data.duration);
@@ -127,6 +127,7 @@ const dashboard = () => {
       },
     },
   };
+
   return (
     <div className="space-y-5 font-medium">
       <div className="bg-white flex flex-col">
@@ -149,7 +150,7 @@ const dashboard = () => {
           </div>
         </div>
         <div className="bg-white">
-          <Bar data={data} options={options} />
+          <Bar data={data as any} options={options as any} />
         </div>
       </div>
     </div>

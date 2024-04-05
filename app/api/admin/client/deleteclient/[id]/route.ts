@@ -16,7 +16,7 @@ export async function DELETE(
       return NextResponse.json(
         {
           message: "You are not authorized to delete this client",
-          success: true,
+          success: false,
         },
         { status: 401 }
       );

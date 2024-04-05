@@ -3,7 +3,13 @@ import action from "@/helper/action";
 import React from "react";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 
-const DeleteButton = ({ deleteEntry, entry_id, project_id, getData }) => {
+const DeleteButton = ({
+  deleteEntry,
+  entry_id,
+}: {
+  deleteEntry: (id: string) => Promise<void>;
+  entry_id: string;
+}) => {
   return (
     <div
       className="px-3"

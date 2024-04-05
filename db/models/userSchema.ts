@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import Project from "./projectSchema";
 import TimeEntries from "./timeEntries";
+import Project from "./projectSchema";
 import Employee from "./employeeSchema";
 
 const userSchema = new mongoose.Schema(
@@ -65,7 +65,7 @@ const userSchema = new mongoose.Schema(
     projects: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Project",
+        ref: "projects",
       },
     ],
   },
