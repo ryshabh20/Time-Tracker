@@ -108,6 +108,7 @@ const FormProject: React.FC<{
           description: response.data.project.description,
           assignedTeam: response.data.project.assignedTeam,
         });
+        console.log("formData", formData);
         notify(response.data.success, response.data.message);
       } catch (err: any) {
         console.log("err.repsonse", err);
@@ -174,7 +175,12 @@ const FormProject: React.FC<{
   //   }, 500);
   //   setFormData({ ...formData, client: value });
   // };
-
+  const selectValue = edit
+    ? {
+        label: formData.clientname,
+        value: formData.client,
+      }
+    : null;
   return (
     <div>
       {edit ? "Edit Project" : " Add Project"}
@@ -202,11 +208,8 @@ const FormProject: React.FC<{
                   clientname: e?.label,
                 });
               }}
-              placeholder="Client"
-              // value={{
-              //   label: formData.clientname,
-              //   value: formData.client,
-              // }}
+              placeholder={edit ? "" : "Client"}
+              value={selectValue}
             ></Select>
             <input
               onChange={(e) =>
