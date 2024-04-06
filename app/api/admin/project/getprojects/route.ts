@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Project from "@/db/models/projectSchema";
 
 import { tokenDataId } from "@/helper/tokenData";
+import { SortOrder } from "mongoose";
 connect();
 export async function GET(request: NextRequest) {
   const items_per_page: number =
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
 
       projectname: { $regex: search, $options: "i" },
     })
-      .sort({ [sort]: order })
+      .sort({ [sort]: order as SortOrder })
       .limit(items_per_page)
       .skip(skip);
     const [count, projects] = await Promise.all([
