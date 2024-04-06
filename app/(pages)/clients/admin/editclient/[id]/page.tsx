@@ -13,6 +13,8 @@ const addeditclient = ({ params }: { params: { id: string } }) => {
     email: "",
     country: "",
   });
+
+  const [hydrate, setHydrate] = useState(false);
   const notify = (status: boolean, message: string) => {
     if (status) {
       toast.success(message);
@@ -32,6 +34,7 @@ const addeditclient = ({ params }: { params: { id: string } }) => {
   };
 
   useEffect(() => {
+    setHydrate(true);
     fetchClient();
   }, []);
   const user = useAppSelector((state) => state.userData);
@@ -55,6 +58,7 @@ const addeditclient = ({ params }: { params: { id: string } }) => {
       notify(err.response.data.success, err.response.data.message);
     }
   };
+  if (!hydrate) return null;
   return (
     <div>
       Edit Client

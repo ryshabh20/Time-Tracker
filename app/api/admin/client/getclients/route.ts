@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Client from "@/db/models/clientSchema";
 
 import { tokenDataId } from "@/helper/tokenData";
+import { SortOrder } from "mongoose";
 connect();
 
 export async function GET(request: NextRequest) {
@@ -15,14 +16,6 @@ export async function GET(request: NextRequest) {
   const sort = request.nextUrl.searchParams.get("sort") || "clientname";
   // const order = request.nextUrl.searchParams.get("order") === "asc" ? 1 : -1;
   const order = request.nextUrl.searchParams.get("order") || "asc";
-
-  let sortvalue;
-  if (order === "asc") {
-    sortvalue = 1;
-  }
-  if (order === "desc") {
-    sortvalue = -1;
-  }
 
   try {
     const user = await tokenDataId(request, true);
@@ -48,7 +41,7 @@ export async function GET(request: NextRequest) {
       status: true,
       clientname: { $regex: search, $options: "i" },
     })
-      .sort({ [sort]: order })
+      .sort({ [sort]: order as SortOrder })
       .limit(items_per_page)
       .skip(skip);
     const [count, clients] = await Promise.all([countPromise, clientsPromise]);
