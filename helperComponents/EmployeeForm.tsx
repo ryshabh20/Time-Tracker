@@ -27,6 +27,7 @@ const EmployeeForm: React.FC<{
     technologies: [],
     permission: [],
   });
+  const [hydrated, setHydrated] = useState(false);
   //   const [clientOptions, setClientOptions] = useState<string[]>([]);
   const notify = (status: boolean, message: string) => {
     if (status) {
@@ -66,10 +67,11 @@ const EmployeeForm: React.FC<{
   };
   useEffect(() => {
     if (edit) {
+      setHydrated(true);
       fetchingemployee();
     }
   }, []);
-
+  if (!hydrated) return null;
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -126,7 +128,7 @@ const EmployeeForm: React.FC<{
     }
     if (
       event.target.value !== "" &&
-      formData.permission.indexOf(event.target.value) === -1 &&
+      formData?.permission?.indexOf(event.target.value) === -1 &&
       event.target.name === "permission"
     ) {
       setFormData({
@@ -135,7 +137,6 @@ const EmployeeForm: React.FC<{
       });
     }
   };
-  console.table([formData.permission, formData.technologies]);
   const removeTags = (index: number, name: string) => {
     if (name === "technologies") {
       setFormData({

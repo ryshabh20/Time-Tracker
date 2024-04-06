@@ -3,7 +3,7 @@ import { LuClock } from "react-icons/lu";
 import { GrNotes } from "react-icons/gr";
 import { ImFilesEmpty } from "react-icons/im";
 import { VscAccount } from "react-icons/vsc";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAppSelector } from "@/store/store";
 
@@ -18,32 +18,40 @@ interface IconType {
 const sideBarDataAdmin = [
   {
     name: "Dashboard",
-    icon: <RxDashboard className=" text-gray-600 w-9 h-9" />,
+    icon: (
+      <RxDashboard
+      // className={`${
+      //   currentPath === data?.page
+      //     ? "text-white w-9 h-9"
+      //     : "text-gray-600 w-9 h-9"
+      // }`}
+      />
+    ),
     page: "/dashboard",
   },
   {
     name: "Time Tracker",
-    icon: <LuClock className=" text-gray-600 w-9 h-9" />,
+    icon: <LuClock />,
     page: "/timetracker",
   },
   {
     name: "Projects",
-    icon: <GrNotes className=" text-gray-600 w-9 h-9" />,
+    icon: <GrNotes />,
     page: "/projects",
   },
   {
     name: "Clients",
-    icon: <VscAccount className=" text-gray-600 w-9 h-9" />,
+    icon: <VscAccount />,
     page: "/clients",
   },
   {
     name: "Employees",
-    icon: <MdPeopleOutline className=" text-gray-600 w-9 h-9" />,
+    icon: <MdPeopleOutline />,
     page: "/employees",
   },
   {
     name: "Screenshots",
-    icon: <ImFilesEmpty className=" text-gray-600 w-9 h-9" />,
+    icon: <ImFilesEmpty />,
     page: "/screenshots",
   },
 ];
@@ -51,23 +59,23 @@ const sideBarDataAdmin = [
 const sideBarDataClient = [
   {
     name: "Dashboard",
-    icon: <RxDashboard className=" text-gray-600 w-9 h-9" />,
+    icon: <RxDashboard />,
     page: "/dashboard",
   },
   {
     name: "Time Tracker",
-    icon: <LuClock className=" text-gray-600 w-9 h-9" />,
+    icon: <LuClock />,
     page: "/timetracker",
   },
   {
     name: "Projects",
-    icon: <GrNotes className=" text-gray-600 w-9 h-9" />,
+    icon: <GrNotes />,
     page: "/projects",
   },
 
   {
     name: "Screenshots",
-    icon: <ImFilesEmpty className=" text-gray-600 w-9 h-9" />,
+    icon: <ImFilesEmpty />,
     page: "/screenshots",
   },
 ];
@@ -120,19 +128,24 @@ const SidebarLink = ({
 }) => (
   <Link href={data.page}>
     <div
-      className={`hover:bg-[#00a7b1] ${
+      className={`hover:bg-[#00a7b1] hover:text-white ${
         currentPath === data.page
           ? "bg-[#00a7b1] text-white"
           : "bg-white text-black"
       }`}
     >
-      <div className="flex items-center hover:text-white lg:w-max-content mx-10 pl-1 py-2 my-3 cursor-pointer">
+      <div className="flex items-center hover:text-white group lg:w-max-content mx-10 pl-1 py-2 my-3 cursor-pointer">
         <div
           className={`${
-            currentPath === data.page ? "fill-white" : "text-black"
+            currentPath === data.page ? "text-white" : "text-black"
           }`}
         >
-          {data.icon}
+          {React.cloneElement(data.icon, {
+            className: `w-9 h-9 group-hover:text-white ${
+              currentPath === data.page ? "text-white" : "text-gray-600 "
+            }`,
+          })}
+          {/* {data.icon} */}
         </div>
         <div
           className="ml-4 text-lg"

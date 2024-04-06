@@ -84,7 +84,7 @@ const FormProject: React.FC<{
     e.preventDefault();
     const totalUsedHours =
       (formData?.hoursConsumed || 0) + (formData?.hoursLeft || 0);
-    if (totalUsedHours >= (formData?.hoursAlloted || 0)) {
+    if (totalUsedHours > (formData?.hoursAlloted || 0)) {
       notify(
         false,
         "Hours consumed and hoursLeft should be less than hours alloted combined"
