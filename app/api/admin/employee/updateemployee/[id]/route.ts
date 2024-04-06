@@ -10,13 +10,13 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const userId = await tokenDataId(request);
+    const user = await tokenDataId(request, true);
     const body = await request.json();
-    const user = body.user._id;
+    console.log(body);
     const employeeId = params.id;
-    const updatedData = body.formData;
+    const updatedData = body;
 
-    if (!userId || userId !== user) {
+    if (!user || user.role !== "admin") {
       return NextResponse.json(
         {
           message: "You are not authorized",
@@ -25,7 +25,7 @@ export async function POST(
         { status: 401 }
       );
     }
-    const updatedClient = await Employee.findByIdAndUpdate(
+    const updatedEmployee = await Employee.findByIdAndUpdate(
       employeeId,
       {
         $set: {
@@ -34,7 +34,7 @@ export async function POST(
       },
       { new: true }
     );
-    if (!updatedClient) {
+    if (!updatedEmployee) {
       return NextResponse.json(
         {
           message: "Employee doesnot exists",
@@ -43,13 +43,13 @@ export async function POST(
         { status: 400 }
       );
     }
-    const savedEmployee = updatedClient.save();
-    console.log("savedEmployee", savedEmployee);
+    const employee = await updatedEmployee.save();
+
     return NextResponse.json(
       {
         message: "Employee updated successfully",
         success: true,
-        savedEmployee,
+        employee,
       },
       { status: 200 }
     );

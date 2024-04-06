@@ -108,7 +108,7 @@ const FormProject: React.FC<{
           description: response.data.project.description,
           assignedTeam: response.data.project.assignedTeam,
         });
-        console.log("formData", formData);
+
         notify(response.data.success, response.data.message);
       } catch (err: any) {
         console.log("err.repsonse", err);

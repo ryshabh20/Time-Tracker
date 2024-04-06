@@ -57,21 +57,24 @@ const EmployeeForm: React.FC<{
           designation: response.data.employee.designation,
           department: response.data.employee.department,
           technologies: response.data.employee.technologies,
-          permission: response.data.employee.permissions,
+          permission: response.data.employee.permission,
         }));
+
+        console.log("response.data.employee", response.data.employee);
         notify(response.data.success, response.data.message);
       }
     } catch (err: any) {
-      notify(err.response.data.success, err.response.data.message);
+      console.log(err);
+      // notify(err.response.data.success, err.response.data.message);
     }
   };
+  console.log("first formData", formData);
   useEffect(() => {
     if (edit) {
       setHydrated(true);
       fetchingemployee();
     }
   }, []);
-  if (!hydrated) return null;
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -81,17 +84,20 @@ const EmployeeForm: React.FC<{
           `/api/admin/employee/updateemployee/${id}`,
           formData
         );
+        console.log(formData);
         setFormData({
           employeename: response.data.employee.employeename,
           code: response.data.employee.code,
           designation: response.data.employee.designation,
           department: response.data.employee.department,
           technologies: response.data.employee.technologies,
-          permission: response.data.employee.permissions,
+          permission: response.data.employee.permission,
         });
+        console.log("formData", formData);
         notify(response.data.success, response.data.message);
       } catch (err: any) {
-        notify(err.response.data.success, err.response.data.message);
+        console.log(err);
+        // notify(err.response.data.success, err.response.data.message);
       }
     } else {
       try {
@@ -172,7 +178,9 @@ const EmployeeForm: React.FC<{
   //   }, 500);
   //   setFormData({ ...formData, client: value });
   // };
-
+  if (edit) {
+    if (!hydrated) return null;
+  }
   return (
     <div>
       {edit ? "Edit Employee" : " Add Employee"}
@@ -255,6 +263,7 @@ const EmployeeForm: React.FC<{
                 name="technologies"
                 multiple
                 onChange={addTags}
+                value={formData.technologies}
                 required
               >
                 <option className="p-2 border " value="Android">
@@ -298,6 +307,7 @@ const EmployeeForm: React.FC<{
                 name="permission"
                 multiple
                 onChange={addTags}
+                value={formData.permission}
                 required
               >
                 <option className="p-2 border " value="design">
