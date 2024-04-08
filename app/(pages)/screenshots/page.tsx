@@ -4,7 +4,14 @@ import GetCookie from "@/helperComponents/getcookies";
 async function getScreenshots() {
   const cookie = await GetCookie();
   try {
-    const res = await fetch(`http://localhost:3000/api/users/getscreenshots/`, {
+    const url =
+      process.env.NODE_ENV === "production"
+        ? "https://time-tracker-xi-three.vercel.app/api/users/getscreenshots/"
+        : "http://localhost:3000/api/users/getscreenshots/";
+
+    console.log(url);
+
+    const res = await fetch(url, {
       headers: {
         Cookie: `authtoken=${cookie}`,
       },

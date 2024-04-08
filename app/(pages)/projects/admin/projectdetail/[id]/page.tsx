@@ -16,6 +16,10 @@ interface CombinedInterfaces {
 async function GetData(id: string) {
   const cookie = await GetCookie();
   try {
+    const url =
+      process.env.NODE_ENV === "production"
+        ? `https://time-tracker-xi-three.vercel.app/api/admin/project/projectdetail/${id}`
+        : `http://localhost:3000/api/admin/project/projectdetail/${id}`;
     const res = await fetch(
       `http://localhost:3000/api/admin/project/projectdetail/${id}`,
       {
