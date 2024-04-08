@@ -5,12 +5,14 @@ import { CategoryScale, LinearScale, BarElement, Chart } from "chart.js";
 import {
   convertHoursToTime,
   convertMillisecondsToTime,
+  millisecondsToTime,
 } from "@/helper/convertMillisecondsToTime";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { useAppDispatch } from "@/store/store";
 
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { model } from "mongoose";
 Chart.register(CategoryScale);
 Chart.register(LinearScale);
 Chart.register(BarElement);
@@ -20,6 +22,8 @@ const dashboard = () => {
   const [timeEntries, setTimeEntries] = useState<
     { _id: string; totalDuration: number; entries: any }[]
   >([]);
+  const [modal, setModal] = useState(false);
+  const dialogRef = useRef<any>();
   // const dispatch = useAppDispatch();
   const getTimeEntries = async () => {
     const response = await axios.get("/api/users/getalltimeentries");
@@ -128,28 +132,93 @@ const dashboard = () => {
     },
   };
 
+  console.log("modal", modal);
   return (
-    <div className="space-y-5 font-medium">
-      <div className="bg-white flex flex-col">
-        {timeEntries.map((time, index) => {
-          return (
-            <div className="flex" key={index}>
-              <span>Session {index + 1} </span>
-              <span>{time?.entries[index]?.duration}</span>
-            </div>
-          );
-        })}
-      </div>
+    <div className="space-y-5 font-medium ">
       <div className="align-left">Dashboard</div>
       <div>
         <div className="flex bg-[#e9e9e9] p-3 rounded-sm items-center justify-between">
           <div>Today</div>
-          <div>
+          <div className="relative " onClick={() => setModal(true)}>
+            <dialog ref={dialogRef} open={modal}>
+              <div
+                onBlur={() => {
+                  setModal(false);
+                }}
+                className="absolute -left-32 space-y-2 "
+              >
+                <div className="bg-white   md:p-1 lg:p-4 md:space-y-1 lg:space-y-2 border md:w-48 lg:w-60  flex flex-col">
+                  <span className="md:text-xl lg:text-2xl  md:py-1 lg:py-2">
+                    Up Time
+                  </span>
+                  {timeEntries
+                    .filter(
+                      (time) =>
+                        new Date(time._id).toLocaleDateString() ===
+                        new Date().toLocaleDateString()
+                    )
+                    .map((time, index) => {
+                      const duration = time.totalDuration;
+                      return (
+                        <div>
+                          {time.entries.map(
+                            (entry: Entry, entryIndex: number) => {
+                              let sessionIndex = entryIndex + 1;
+                              return (
+                                <div
+                                  className="flex border-y-2 justify-between items-center space-y-2"
+                                  key={`${time._id}-${entryIndex}`}
+                                >
+                                  <span>Session {sessionIndex} </span>
+                                  <span>
+                                    {millisecondsToTime(entry.duration)} hr
+                                  </span>
+                                </div>
+                              );
+                            }
+                          )}
+                          <div className="flex justify-between md:py-2 lg:pt-4">
+                            {" "}
+                            <span>Total Up Time:</span>
+                            <span> {millisecondsToTime(duration)} hr</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+                <div className="bg-white   md:p-1 lg:p-4 md:space-y-1 lg:space-y-2 border md:w-48 lg:w-60  flex flex-col">
+                  <span className="md:text-xl lg:text-2xl  md:py-1 lg:py-2">
+                    Idle Time
+                  </span>
+                  {timeEntries
+                    .filter(
+                      (time) =>
+                        new Date(time._id).toLocaleDateString() ===
+                        new Date().toLocaleDateString()
+                    )
+                    .map((time, index) => {
+                      const duration = time.totalDuration;
+                      return (
+                        <div>
+                          <div className="flex justify-between ">
+                            {" "}
+                            <span>Total Idle Time:</span>
+                            <span>
+                              {" "}
+                              {millisecondsToTime(28800000 - duration)} hr
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            </dialog>
             <span className="text-[#868686] mr-2">Total:</span>
             <span className="text-xl font-medium">{totalHours}</span>
           </div>
         </div>
-        <div className="bg-white">
+        <div className="bg-white" onClick={() => setModal(false)}>
           <Bar data={data as any} options={options as any} />
         </div>
       </div>

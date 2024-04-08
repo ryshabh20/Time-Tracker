@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import TimeEntries from "./timeEntries";
 import Project from "./projectSchema";
+import TimeEntries from "./timeEntries";
 import Employee from "./employeeSchema";
 
 const userSchema = new mongoose.Schema(
@@ -73,8 +73,9 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
+console.log("User model REGISTERING");
 const User = mongoose.models.users || mongoose.model("users", userSchema);
+console.log("User model registerd");
 export default User;
 
 //

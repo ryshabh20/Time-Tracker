@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 import { connect } from "@/db/dbConfig";
+import Project from "@/db/models/projectSchema";
 import TimeEntries from "@/db/models/timeEntries";
 import { tokenDataId } from "@/helper/tokenData";
-import Project from "@/db/models/projectSchema";
 import { NextRequest, NextResponse } from "next/server";
 
 connect();
 export async function GET(request: NextRequest) {
   try {
     const userId = await tokenDataId(request);
-
+    const project = await Project.find({});
     const timeEntries = await TimeEntries.find({
       user_id: userId,
       end_time: { $exists: true },

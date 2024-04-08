@@ -75,7 +75,7 @@ const Timetracker = () => {
   function formatTimePart(timePart: number) {
     return timePart < 10 ? `0${timePart}` : timePart;
   }
-
+  console.log("project", project);
   const handleOnClick = async () => {
     if (task?.trim() !== "") {
       const bodydata = { task, user, project };

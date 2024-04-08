@@ -10,6 +10,7 @@ interface Entry {
   duration: number;
   end_time: string;
 }
+
 interface TimeEntryDetails {
   _id: string;
   user_id: {

@@ -2,9 +2,16 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useAppSelector, RootState } from "@/store/store";
-
-const SearchableDropdown = ({ projectfn }) => {
-  const [cloptions, setOptions] = useState<string[]>([]);
+interface projectOptions {
+  label: string;
+  value: string;
+}
+const SearchableDropdown = ({
+  projectfn,
+}: {
+  projectfn: (id: string, name: string) => void;
+}) => {
+  const [cloptions, setOptions] = useState<projectOptions[]>([]);
   const user = useAppSelector((state: RootState) => state.userData);
   const fetchingProject = async () => {
     const response = await axios.get(
@@ -17,9 +24,9 @@ const SearchableDropdown = ({ projectfn }) => {
       })),
     ]);
   };
-  useEffect(() => {
-    fetchingProject();
-  }, []);
+  // useEffect(() => {
+  //   fetchingProject();
+  // }, []);
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,23 +40,26 @@ const SearchableDropdown = ({ projectfn }) => {
   };
 
   useEffect(() => {
+    fetchingProject();
+
     setSelectedOption({
       label: user?.currentTask?.currentProject?.projectName || "Project",
       value: user?.currentTask?.currentProject?.projectId || "",
     });
   }, [user]);
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
-  const handleOptionClick = (option) => {
+  const handleOptionClick = (option: projectOptions) => {
     setSelectedOption(option);
     projectfn(option.value, option.label);
+
     setIsOpen(false);
   };
 
   const filteredOptions = cloptions.filter((option) =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    option?.label?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -75,11 +85,11 @@ const SearchableDropdown = ({ projectfn }) => {
             <ul>
               {filteredOptions.map((option) => (
                 <li
-                  key={option.value}
+                  key={option?.value}
                   className="p-2 hover:bg-custom-green  hover:text-white"
                   onClick={() => handleOptionClick(option)}
                 >
-                  {option.label}
+                  {option?.label}
                 </li>
               ))}
             </ul>

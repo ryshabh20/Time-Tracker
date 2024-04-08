@@ -48,6 +48,10 @@ const projectSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+console.log("Project model REGISTERING");
+
 const Project =
   mongoose.models.projects || mongoose.model("projects", projectSchema);
+console.log("Project model registerd");
+
 export default Project;
