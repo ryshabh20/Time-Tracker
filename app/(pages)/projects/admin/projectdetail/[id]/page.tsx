@@ -111,7 +111,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="space-y-2">
-      <span> {timeEntry[0]?.project_id?.projectname}</span>
+      <span>{projectDetails.projectName}</span>
       <div className="bg-white flex flex-col justify-between   h-3/6 p-10">
         <div className="flex space-x-10  ">
           <div>AssignedTeam :</div>
@@ -141,7 +141,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
             <tbody>
               <tr>
                 <td className="pr-7">Hours Alloted :</td>
-                <td>{timeEntry[0]?.project_id.hoursAlloted || "00.00"} Hr</td>
+                <td>{projectDetails.hoursAlloted || "00.00"} Hr</td>
               </tr>
               <tr>
                 <td className="pr-7">Hours Consumed :</td>

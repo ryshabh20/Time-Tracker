@@ -19,6 +19,7 @@ export async function GET(
         { status: 401 }
       );
     }
+
     const timeEntry = await TimeEntries.find({
       project_id: params.id,
     }).populate([
