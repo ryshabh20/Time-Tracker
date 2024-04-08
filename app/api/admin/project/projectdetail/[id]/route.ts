@@ -20,23 +20,24 @@ export async function GET(
       );
     }
     console.log("projectDetails");
-    // const timeEntry = await TimeEntries.find({
-    //   project_id: params.id,
-    // }).populate([
-    //   {
-    //     path: "project_id",
-    //     select: ["projectname", "hoursLeft", "hoursAlloted", "hoursConsumed"],
-    //   },
-    //   {
-    //     path: "user_id",
-    //     select: ["name"],
-    //     populate: {
-    //       path: "employee",
-    //       select: ["designation"],
-    //     },
-    //   },
-    // ]);
-    console.log("timeEntry");
+    const timeEntry = await TimeEntries.find({
+      project_id: params.id,
+    }).populate([
+      {
+        path: "project_id",
+        select: ["projectname", "hoursLeft", "hoursAlloted", "hoursConsumed"],
+      },
+      {
+        path: "user_id",
+        select: ["name"],
+        populate: {
+          path: "employee",
+        },
+      },
+    ]);
+
+    console.log(timeEntry);
+
     const projectDetails = await Project.find({ _id: params.id });
     console.log("projectDetails", projectDetails);
     const projectId = new mongoose.Types.ObjectId(params.id);
@@ -61,6 +62,11 @@ export async function GET(
           entries: { $addToSet: "$$ROOT" }, // Add all documents to the 'entries' array
         },
       },
+      {
+        $sort: {
+          _id: -1,
+        },
+      },
     ]);
 
     const duration = await TimeEntries.aggregate([
@@ -82,20 +88,13 @@ export async function GET(
             },
           },
           entries: { $push: "$$ROOT" },
-
-          // createdAt: { $first: "$createdAt" },
-        },
-      },
-      {
-        $sort: {
-          createdAt: 1,
         },
       },
     ]);
     return NextResponse.json(
       {
         message: "All entries fetched",
-
+        timeEntry,
         groupedTimeEntries,
         projectDetails,
         duration,

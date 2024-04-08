@@ -39,6 +39,7 @@ async function GetData(id: string) {
       ]
     );
 
+    console.log(data.timeEntry);
     const uniqueValues = [...new Set(name)];
     let uniqueName: [string, string][] = [];
 
@@ -51,6 +52,7 @@ async function GetData(id: string) {
         uniqueName.push(sublist);
       }
     });
+    console.log(uniqueValues);
     console.log(uniqueName);
     return { ...data, uniqueName };
   } catch (error) {
@@ -62,7 +64,8 @@ async function GetData(id: string) {
 const ProjectDetail = async ({ params }: { params: { id: string } }) => {
   const { duration, uniqueName, groupedTimeEntries, projectDetails } =
     await GetData(params.id);
-  console.log("projectDetails", projectDetails);
+
+  console.log("groupedTimeEntries", groupedTimeEntries);
   function formatTime(date: Date) {
     let hours = date.getHours();
     const ampm = hours >= 12 ? "PM" : "AM";
