@@ -31,6 +31,7 @@ async function GetData(id: string) {
       }
     );
     const data = await res.json();
+    console.log("data", data);
 
     const name: [string, string][] = data?.timeEntry?.map(
       (employee: TimeEntryDetails) => [
@@ -52,8 +53,7 @@ async function GetData(id: string) {
         uniqueName.push(sublist);
       }
     });
-    console.log(uniqueValues);
-    console.log(uniqueName);
+
     return { ...data, uniqueName };
   } catch (error) {
     console.log("error", error);
@@ -64,7 +64,7 @@ async function GetData(id: string) {
 const ProjectDetail = async ({ params }: { params: { id: string } }) => {
   const { duration, uniqueName, groupedTimeEntries, projectDetails } =
     await GetData(params.id);
-
+  console.log(projectDetails[0].projectname);
   console.log("groupedTimeEntries", groupedTimeEntries);
   function formatTime(date: Date) {
     let hours = date.getHours();
@@ -93,7 +93,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="space-y-2">
-      <span>{projectDetails[0].projectname}</span>
+      <span>{projectDetails[0]?.projectname}</span>
       <div className="bg-white flex flex-col justify-between   h-3/6 p-10">
         <div className="flex space-x-10  ">
           <div>AssignedTeam :</div>
@@ -123,17 +123,19 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
             <tbody>
               <tr>
                 <td className="pr-7">Hours Alloted :</td>
-                <td>{projectDetails[0].hoursAlloted || "00.00"} Hr</td>
+                <td>{projectDetails[0]?.hoursAlloted || "00.00"} Hr</td>
               </tr>
               <tr>
                 <td className="pr-7">Hours Consumed :</td>
                 <td>
-                  {projectDetails[0].hoursConsumed.toFixed(2) || "00.00"} Hr
+                  {projectDetails[0]?.hoursConsumed?.toFixed(2) || "00.00"} Hr
                 </td>
               </tr>
               <tr>
                 <td className="pr-7">Hours Left :</td>
-                <td>{projectDetails[0].hoursLeft.toFixed(2) || "00.00"} Hr</td>
+                <td>
+                  {projectDetails[0]?.hoursLeft?.toFixed(2) || "00.00"} Hr
+                </td>
               </tr>
             </tbody>
           </table>

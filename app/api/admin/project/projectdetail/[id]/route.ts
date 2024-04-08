@@ -1,4 +1,5 @@
 import { connect } from "@/db/dbConfig";
+import Employee from "@/db/models/employeeSchema";
 import Project from "@/db/models/projectSchema";
 import TimeEntries from "@/db/models/timeEntries";
 import { tokenDataId } from "@/helper/tokenData";
@@ -20,28 +21,10 @@ export async function GET(
       );
     }
     console.log("projectDetails");
-    const timeEntry = await TimeEntries.find({
-      project_id: params.id,
-    }).populate([
-      {
-        path: "project_id",
-        select: ["projectname", "hoursLeft", "hoursAlloted", "hoursConsumed"],
-      },
-      {
-        path: "user_id",
-        select: ["name"],
-        populate: {
-          path: "employee",
-        },
-      },
-    ]);
-
-    console.log(timeEntry);
-
-    const projectDetails = await Project.find({ _id: params.id });
-    console.log("projectDetails", projectDetails);
+    const employee = Employee.find({});
+    const projectDetailsPromise = Project.find({ _id: params.id });
     const projectId = new mongoose.Types.ObjectId(params.id);
-    const groupedTimeEntries = await TimeEntries.aggregate([
+    const groupedTimeEntriesPromise = TimeEntries.aggregate([
       {
         $match: {
           project_id: projectId,
@@ -69,7 +52,7 @@ export async function GET(
       },
     ]);
 
-    const duration = await TimeEntries.aggregate([
+    const durationPromise = TimeEntries.aggregate([
       {
         $match: {
           project_id: projectId,
@@ -91,17 +74,42 @@ export async function GET(
         },
       },
     ]);
+
+    const [groupedTimeEntries, duration, projectDetails] = await Promise.all([
+      groupedTimeEntriesPromise,
+      durationPromise,
+
+      projectDetailsPromise,
+    ]);
+    console.log(projectDetails);
+    console.log(groupedTimeEntries);
+    const timeEntry = await TimeEntries.find({
+      project_id: params.id,
+    }).populate([
+      {
+        path: "project_id",
+        select: ["projectname", "hoursLeft", "hoursAlloted", "hoursConsumed"],
+      },
+      {
+        path: "user_id",
+        select: ["name"],
+        populate: {
+          path: "employee",
+        },
+      },
+    ]);
     return NextResponse.json(
       {
         message: "All entries fetched",
-        timeEntry,
         groupedTimeEntries,
         projectDetails,
         duration,
+        timeEntry,
       },
       { status: 200 }
     );
   } catch (error) {
+    console.log("error", error);
     return NextResponse.json(
       {
         message: error,

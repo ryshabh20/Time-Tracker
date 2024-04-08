@@ -9,7 +9,7 @@ connect();
 export async function GET(request: NextRequest) {
   try {
     const userId = await tokenDataId(request);
-    const project = await Project.find({});
+    // const project = await Project.find({});
     const timeEntries = await TimeEntries.find({
       user_id: userId,
       end_time: { $exists: true },
