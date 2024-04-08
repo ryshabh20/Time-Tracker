@@ -19,25 +19,26 @@ export async function GET(
         { status: 401 }
       );
     }
-
-    const timeEntry = await TimeEntries.find({
-      project_id: params.id,
-    }).populate([
-      {
-        path: "project_id",
-        select: ["projectname", "hoursLeft", "hoursAlloted", "hoursConsumed"],
-      },
-      {
-        path: "user_id",
-        select: ["name"],
-        populate: {
-          path: "employee",
-          select: ["designation"],
-        },
-      },
-    ]);
-    const projectDetails = await Project.findById(params.id);
-
+    console.log("projectDetails");
+    // const timeEntry = await TimeEntries.find({
+    //   project_id: params.id,
+    // }).populate([
+    //   {
+    //     path: "project_id",
+    //     select: ["projectname", "hoursLeft", "hoursAlloted", "hoursConsumed"],
+    //   },
+    //   {
+    //     path: "user_id",
+    //     select: ["name"],
+    //     populate: {
+    //       path: "employee",
+    //       select: ["designation"],
+    //     },
+    //   },
+    // ]);
+    console.log("timeEntry");
+    const projectDetails = await Project.find({ _id: params.id });
+    console.log("projectDetails", projectDetails);
     const projectId = new mongoose.Types.ObjectId(params.id);
     const groupedTimeEntries = await TimeEntries.aggregate([
       {
@@ -61,16 +62,6 @@ export async function GET(
         },
       },
     ]);
-
-    if (!timeEntry) {
-      return NextResponse.json(
-        {
-          message: "No entries for that user",
-          success: false,
-        },
-        { status: 404 }
-      );
-    }
 
     const duration = await TimeEntries.aggregate([
       {
@@ -104,7 +95,7 @@ export async function GET(
     return NextResponse.json(
       {
         message: "All entries fetched",
-        timeEntry,
+
         groupedTimeEntries,
         projectDetails,
         duration,

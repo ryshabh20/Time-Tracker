@@ -59,32 +59,10 @@ async function GetData(id: string) {
   }
 }
 
-async function DeleteEntry(id: string) {
-  try {
-    const cookie = await GetCookie();
-    const res = await fetch(
-      `http://localhost:3000/api/admin/project/deleteprojectdetail/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Cookie: `authtoken=${cookie}`,
-        },
-      }
-    );
-    const response = await res.json();
-  } catch (error: any) {
-    console.log(error);
-  }
-}
-
 const ProjectDetail = async ({ params }: { params: { id: string } }) => {
-  const {
-    duration,
-    timeEntry,
-    uniqueName,
-    groupedTimeEntries,
-    projectDetails,
-  } = await GetData(params.id);
+  const { duration, uniqueName, groupedTimeEntries, projectDetails } =
+    await GetData(params.id);
+  console.log("projectDetails", projectDetails);
   function formatTime(date: Date) {
     let hours = date.getHours();
     const ampm = hours >= 12 ? "PM" : "AM";
@@ -93,6 +71,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
     const minutes = formatTimePart(date.getMinutes());
     return `${hours}:${minutes} ${ampm}`;
   }
+
   function formatTimePart(timePart: number) {
     return timePart < 10 ? `0${timePart}` : timePart;
   }
@@ -111,7 +90,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
 
   return (
     <div className="space-y-2">
-      <span>{projectDetails.projectName}</span>
+      <span>{projectDetails[0].projectname}</span>
       <div className="bg-white flex flex-col justify-between   h-3/6 p-10">
         <div className="flex space-x-10  ">
           <div>AssignedTeam :</div>
@@ -141,15 +120,17 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
             <tbody>
               <tr>
                 <td className="pr-7">Hours Alloted :</td>
-                <td>{projectDetails.hoursAlloted || "00.00"} Hr</td>
+                <td>{projectDetails[0].hoursAlloted || "00.00"} Hr</td>
               </tr>
               <tr>
                 <td className="pr-7">Hours Consumed :</td>
-                <td>{projectDetails.hoursConsumed.toFixed(2) || "00.00"} Hr</td>
+                <td>
+                  {projectDetails[0].hoursConsumed.toFixed(2) || "00.00"} Hr
+                </td>
               </tr>
               <tr>
                 <td className="pr-7">Hours Left :</td>
-                <td>{projectDetails.hoursLeft.toFixed(2) || "00.00"} Hr</td>
+                <td>{projectDetails[0].hoursLeft.toFixed(2) || "00.00"} Hr</td>
               </tr>
             </tbody>
           </table>
@@ -190,7 +171,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
                 </div>
                 <div className="border-r-2 flex px-3 ">
                   <DeleteButton
-                    deleteEntry={DeleteEntry}
+                    // deleteEntry={DeleteEntry}
                     entry_id={entry._id}
                   />
                 </div>

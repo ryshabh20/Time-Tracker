@@ -1,20 +1,24 @@
 "use client";
 import action from "@/helper/action";
+import axios from "axios";
 import React from "react";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 
-const DeleteButton = ({
-  deleteEntry,
-  entry_id,
-}: {
-  deleteEntry: (id: string) => Promise<void>;
-  entry_id: string;
-}) => {
+const DeleteButton = ({ entry_id }: { entry_id: string }) => {
+  async function DeleteEntry(id: string) {
+    try {
+      const res = await axios.delete(
+        `http://localhost:3000/api/admin/project/deleteprojectdetail/${id}`
+      );
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
   return (
     <div
       className="px-3"
       onClick={() => {
-        deleteEntry(entry_id);
+        DeleteEntry(entry_id);
         action();
       }}
     >
