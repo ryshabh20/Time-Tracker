@@ -18,7 +18,7 @@ Chart.register(LinearScale);
 Chart.register(BarElement);
 Chart.register(ChartDataLabels);
 
-const dashboard = () => {
+const Dashboard = () => {
   const [timeEntries, setTimeEntries] = useState<
     { _id: string; totalDuration: number; entries: any }[]
   >([]);
@@ -160,7 +160,7 @@ const dashboard = () => {
                     .map((time, index) => {
                       const duration = time.totalDuration;
                       return (
-                        <div>
+                        <div key={index}>
                           {time.entries.map(
                             (entry: Entry, entryIndex: number) => {
                               let sessionIndex = entryIndex + 1;
@@ -199,7 +199,7 @@ const dashboard = () => {
                     .map((time, index) => {
                       const duration = time.totalDuration;
                       return (
-                        <div>
+                        <div key={index}>
                           <div className="flex justify-between ">
                             {" "}
                             <span>Total Idle Time:</span>
@@ -226,4 +226,4 @@ const dashboard = () => {
   );
 };
 
-export default dashboard;
+export default Dashboard;

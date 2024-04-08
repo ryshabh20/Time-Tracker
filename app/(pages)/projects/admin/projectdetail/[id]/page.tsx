@@ -13,7 +13,7 @@ interface CombinedInterfaces {
   timeEntry: PopulatedTimeEntry[];
   uniqueName: [string, string][];
 }
-export async function getData(id: string) {
+async function GetData(id: string) {
   const cookie = await GetCookie();
   try {
     const res = await fetch(
@@ -55,7 +55,7 @@ export async function getData(id: string) {
   }
 }
 
-export async function deleteEntry(id: string) {
+async function DeleteEntry(id: string) {
   try {
     const cookie = await GetCookie();
     const res = await fetch(
@@ -80,7 +80,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
     uniqueName,
     groupedTimeEntries,
     projectDetails,
-  } = await getData(params.id);
+  } = await GetData(params.id);
   function formatTime(date: Date) {
     let hours = date.getHours();
     const ampm = hours >= 12 ? "PM" : "AM";
@@ -186,7 +186,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
                 </div>
                 <div className="border-r-2 flex px-3 ">
                   <DeleteButton
-                    deleteEntry={deleteEntry}
+                    deleteEntry={DeleteEntry}
                     entry_id={entry._id}
                   />
                 </div>

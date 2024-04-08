@@ -8,7 +8,7 @@ import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import ListingLoader from "@/helperComponents/ListingLoader";
 
-const client = () => {
+const Client = () => {
   const router = useRouter();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -305,4 +305,4 @@ const client = () => {
   );
 };
 
-export default client;
+export default Client;

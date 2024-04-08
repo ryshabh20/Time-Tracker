@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 
-const employee = () => {
+const Employee = () => {
   const router = useRouter();
   const [employees, setEmployees] = useState([]);
   const [error, setError] = useState("");
@@ -320,4 +320,4 @@ const employee = () => {
   );
 };
 
-export default employee;
+export default Employee;

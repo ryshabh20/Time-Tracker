@@ -1,7 +1,7 @@
 import ScreenshotImages from "@/helperComponents/ScreenshotImages";
 import GetCookie from "@/helperComponents/getcookies";
 
-export async function getScreenshots() {
+async function getScreenshots() {
   const cookie = await GetCookie();
   try {
     const res = await fetch(`http://localhost:3000/api/users/getscreenshots/`, {

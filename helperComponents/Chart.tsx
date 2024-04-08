@@ -1,8 +1,17 @@
 import React from "react";
 import { Chart } from "chart.js/auto";
-
-function TimeTrackerChart({ data }) {
-  const chartData = {
+interface ChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: any;
+    backgroundColor: string;
+    borderColor: string;
+    borderWidth: number;
+  }[];
+}
+function TimeTrackerChart({ data }: { data: any }) {
+  const chartData: ChartData = {
     labels: [],
     datasets: [
       {
@@ -19,7 +28,7 @@ function TimeTrackerChart({ data }) {
   for (const date in data) {
     const entries = data[date];
     const totalDuration = entries.reduce(
-      (acc, entry) => acc + entry.duration / (1000 * 60 * 60),
+      (acc: any, entry: any) => acc + entry.duration / (1000 * 60 * 60),
       0
     ); // Convert to hours
 

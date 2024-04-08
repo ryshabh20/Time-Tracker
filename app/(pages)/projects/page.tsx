@@ -10,7 +10,7 @@ import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import ListingLoader from "@/helperComponents/ListingLoader";
 
-const project = () => {
+const Project = () => {
   const router = useRouter();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -346,4 +346,4 @@ const project = () => {
   );
 };
 
-export default project;
+export default Project;

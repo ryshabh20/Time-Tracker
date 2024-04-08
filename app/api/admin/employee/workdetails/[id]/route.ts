@@ -3,6 +3,7 @@ import { connect } from "@/db/dbConfig";
 import { NextRequest, NextResponse } from "next/server";
 import { tokenDataId } from "@/helper/tokenData";
 import User from "@/db/models/userSchema";
+import { SortOrder } from "mongoose";
 
 connect();
 
@@ -61,7 +62,7 @@ export async function GET(
       user_id: userId._id,
     })
       .populate("project_id")
-      .sort({ [sort]: order })
+      .sort({ [sort]: order as SortOrder })
       .limit(items_per_page)
       .skip(skip);
 

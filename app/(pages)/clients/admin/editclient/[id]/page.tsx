@@ -6,7 +6,7 @@ import { useAppSelector } from "@/store/store";
 
 import toast, { Toaster } from "react-hot-toast";
 import AdminRoute from "@/helperComponents/AdminRoute";
-const addeditclient = ({ params }: { params: { id: string } }) => {
+const Addeditclient = ({ params }: { params: { id: string } }) => {
   const [formData, setFormData] = useState({
     clientname: "",
     contactnumber: "",
@@ -23,7 +23,7 @@ const addeditclient = ({ params }: { params: { id: string } }) => {
     }
   };
 
-  const fetchClient = async () => {
+  const FetchClient = async () => {
     const response = await axios.get(
       `/api/admin/client/getclient/${params.id}`
     );
@@ -35,7 +35,7 @@ const addeditclient = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     setHydrate(true);
-    fetchClient();
+    FetchClient();
   }, []);
   const user = useAppSelector((state) => state.userData);
 
@@ -59,6 +59,7 @@ const addeditclient = ({ params }: { params: { id: string } }) => {
     }
   };
   if (!hydrate) return null;
+
   return (
     <div>
       Edit Client
@@ -130,4 +131,4 @@ const addeditclient = ({ params }: { params: { id: string } }) => {
     </div>
   );
 };
-export default AdminRoute(addeditclient, "clients");
+export default AdminRoute(Addeditclient, "clients");
