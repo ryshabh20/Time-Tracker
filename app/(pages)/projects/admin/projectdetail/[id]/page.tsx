@@ -20,16 +20,13 @@ async function GetData(id: string) {
       process.env.NODE_ENV === "production"
         ? `https://time-tracker-xi-three.vercel.app/api/admin/project/projectdetail/${id}`
         : `http://localhost:3000/api/admin/project/projectdetail/${id}`;
-    const res = await fetch(
-      `http://localhost:3000/api/admin/project/projectdetail/${id}`,
-      {
-        headers: {
-          Cookie: `authtoken=${cookie}`,
-        },
-        next: { tags: ["collection"] },
-        cache: "no-store",
-      }
-    );
+    const res = await fetch(url, {
+      headers: {
+        Cookie: `authtoken=${cookie}`,
+      },
+      next: { tags: ["collection"] },
+      cache: "no-store",
+    });
     const data = await res.json();
     console.log("data", data);
 
