@@ -28,6 +28,7 @@ export async function GET(
       {
         $match: {
           project_id: projectId,
+          end_time: { $exists: true },
         },
       },
       {
@@ -85,6 +86,7 @@ export async function GET(
     console.log(groupedTimeEntries);
     const timeEntry = await TimeEntries.find({
       project_id: params.id,
+      end_time: { $exists: true },
     }).populate([
       {
         path: "project_id",
