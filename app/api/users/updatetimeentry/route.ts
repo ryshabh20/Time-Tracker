@@ -11,7 +11,7 @@ connect();
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
-    console.log(reqBody);
+
     const timeEntryId = reqBody.id;
     const timeEntry = await TimeEntries.findById(timeEntryId);
     if (!timeEntry) {
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
       const newTimeEntry = await new TimeEntries({
         user_id: userId,
         start_time: new Date(),
-        task: timeEntry.task,
+        task: reqBody.task,
         project_id: reqBody.projectId,
       });
       const savedEntry = await newTimeEntry.save();

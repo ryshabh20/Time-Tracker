@@ -3,12 +3,13 @@ import action from "@/helper/action";
 import axios from "axios";
 import React from "react";
 import { RiDeleteBin6Fill } from "react-icons/ri";
+import { url } from "@/utils/baseUrl";
 
 const DeleteButton = ({ entry_id }: { entry_id: string }) => {
   async function DeleteEntry(id: string) {
     try {
       const res = await axios.delete(
-        `http://localhost:3000/api/admin/project/deleteprojectdetail/${id}`
+        `${url}api/admin/project/deleteprojectdetail/${id}`
       );
     } catch (error: any) {
       console.log(error);

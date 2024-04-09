@@ -177,7 +177,7 @@ const Employee = () => {
           </button>
         </div>
       </form>
-      <div className="overflow-auto">
+      <div className="overflow-x-auto">
         <table className="table-auto text-gray-600 font-light w-full text-left">
           <thead className="bg-[#e9e9e9]  h-10">
             <tr>

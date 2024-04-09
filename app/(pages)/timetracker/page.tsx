@@ -145,12 +145,71 @@ const Timetracker = () => {
       notify(false, "Please fill all fields and try again");
     }
   };
+  //  const handleOnClick = async () => {
+  //    if (task?.trim() !== "" && user?.currentTask?.currentProject?.projectId) {
+  //      const bodydata = { task, user, project };
+
+  //      try {
+  //        const response = await axios.post("/api/users/timeentry", bodydata);
+  //        if (user && response) {
+  //          if (!user?.isTimer) {
+  //            const newTaskId = response.data.savedEntry._id.toString();
+  //            const allTimeEntries = user.timeentries;
+  //            dispatch(
+  //              setUserData({
+  //                ...user,
+  //                isTimer: response.data.updatedTimer,
+  //                currentTask: {
+  //                  ...user.currentTask,
+  //                  description: response.data.task,
+  //                  currentProject: {
+  //                    projectId: response.data.project.projectId,
+  //                    projectName: response.data.project.projectName,
+  //                    projectTask: "",
+  //                  },
+  //                },
+  //                timeentries: [...allTimeEntries, newTaskId],
+  //              })
+  //            );
+  //          } else {
+  //            dispatch(
+  //              setUserData({
+  //                ...user,
+  //                isTimer: response.data.updatedTimer,
+  //                currentTask: {
+  //                  ...user.currentTask,
+  //                  description: response.data.task,
+  //                  currentProject: {
+  //                    projectId: response.data.project.projectId,
+  //                    projectName: response.data.project.projectName,
+  //                    projectTask: "",
+  //                  },
+  //                },
+  //              })
+  //            );
+  //          }
+  //        }
+  //        if (response.data.success) {
+  //          notify(response.data.success, response.data.message);
+  //        }
+
+  //        setTask(response.data.task);
+  //      } catch (err: any) {
+  //        console.log("error", err);
+
+  //        notify(err.response.data.success, err.response.data.error);
+  //      }
+  //    } else {
+  //      notify(false, "Please fill all fields and try again");
+  //    }
+  //  };
   const updateHandler = async (
     id: string,
     projectId: string,
-    projectname: string
+    projectname: string,
+    task: string
   ) => {
-    const data = { id, projectId, projectname };
+    const data = { id, projectId, projectname, task };
 
     try {
       const response = await axios.post("/api/users/updatetimeentry", data);
@@ -180,6 +239,7 @@ const Timetracker = () => {
         );
       }
       setTask(response.data.task);
+      fetchingData();
     } catch (err: any) {
       notify(err.response.data.success, err.response.data.message);
     }
@@ -217,7 +277,7 @@ const Timetracker = () => {
   };
   const fetchingData = async () => {
     try {
-      // setLoading(true);
+      setLoading(true);
       const params = { loadweek: offset };
       const response = await axios.get("/api/users/getalltimeentries");
       if (!response.data.success) {
@@ -323,6 +383,7 @@ const Timetracker = () => {
             type="submit"
             className="bg-custom-green text-white px-5"
             onClick={handleOnClick}
+            disabled={loading}
           >
             {user?.isTimer ? "Stop" : "Start"}
           </button>
@@ -373,7 +434,8 @@ const Timetracker = () => {
                         updateHandler(
                           entry._id,
                           entry.project_id._id,
-                          entry.project_id?.projectname
+                          entry.project_id?.projectname,
+                          entry?.task
                         )
                       }
                     />

@@ -165,8 +165,8 @@ const Client = () => {
             }}
             className="bg-white "
           >
-            <option value={`clients`}>Clients</option>
             <option value={`projects`}>Projects</option>
+            <option value={`employees`}>Employees</option>
           </select>
         </div>
         <div className=" lg:w-5/6 ml-auto">

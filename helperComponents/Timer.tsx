@@ -29,7 +29,7 @@ const Timer = ({ startTime }: { startTime: number }) => {
         intervalId = undefined;
       }
     };
-  }, [user?.currentTask, startTime]);
+  }, [user?.isTimer, user?.currentTask?.description, startTime]);
   const hours: number = Math.floor(seconds / 3600);
   const minutes: number = Math.floor((seconds % 3600) / 60);
   const remainingSeconds: number = seconds % 60;
