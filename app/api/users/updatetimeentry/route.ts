@@ -11,6 +11,7 @@ connect();
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
+    console.log(reqBody);
     const timeEntryId = reqBody.id;
     const timeEntry = await TimeEntries.findById(timeEntryId);
     if (!timeEntry) {
@@ -78,6 +79,7 @@ export async function POST(request: NextRequest) {
         success: true,
         savedEntry,
         projectID: savedEntry.project_id,
+        projectName: updatedUser.currentTask.currentProject.projectName,
         updatedTimer,
       });
     }

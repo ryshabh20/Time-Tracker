@@ -21,8 +21,8 @@ import Loader from "@/helperComponents/Loader";
 type DailyEntries = Record<string, Entry[]>;
 
 interface project {
-  projectname: string;
-  projectId: string;
+  projectname: string | undefined;
+  projectId: string | undefined;
 }
 
 const Timetracker = () => {
@@ -34,10 +34,15 @@ const Timetracker = () => {
   const [duration, setDuration] = useState<
     { _id: string; totalDuration: number }[]
   >([]);
-  const [totalDuration, setTotalDuration] = useState<String>("");
+  // const [totalDuration, setTotalDuration] = useState<String>("");
   const [errorMessage, setErrorMessage] = useState(false);
-  const [project, setProject] = useState<project>();
   const user = useAppSelector((state: RootState) => state.userData);
+  const project = user?.currentTask?.currentProject;
+
+  // const [project, setProject] = useState<project>({
+  //   projectname: user?.currentTask?.currentProject?.projectName,
+  //   projectId: user?.currentTask?.currentProject?.projectId,
+  // });
   const [task, setTask] = useState(user?.currentTask?.description);
   const dispatch = useAppDispatch();
   function formatTime(date: Date) {
@@ -57,10 +62,16 @@ const Timetracker = () => {
     }
   };
   const projectSet = (id: string, name: string) => {
-    setProject({
-      projectname: name,
-      projectId: id,
-    });
+    dispatch(
+      setUserData({
+        ...user!,
+        currentTask: { currentProject: { projectName: name, projectId: id } },
+      })
+    );
+    // setProject({
+    //   projectname: name,
+    //   projectId: id,
+    // });
   };
 
   const renderTotalDuration = (date: string): string => {
@@ -77,7 +88,7 @@ const Timetracker = () => {
   }
 
   const handleOnClick = async () => {
-    if (task?.trim() !== "") {
+    if (task?.trim() !== "" && user?.currentTask?.currentProject?.projectId) {
       const bodydata = { task, user, project };
 
       try {
@@ -86,6 +97,7 @@ const Timetracker = () => {
           if (!user?.isTimer) {
             const newTaskId = response.data.savedEntry._id.toString();
             const allTimeEntries = user.timeentries;
+            console.log(response.data.project);
             dispatch(
               setUserData({
                 ...user,
@@ -150,6 +162,7 @@ const Timetracker = () => {
       if (user && response) {
         const newTaskId = response.data.savedEntry._id.toString();
         const allTimeEntries = user.timeentries;
+        console.log(response.data.projectId);
         dispatch(
           setUserData({
             ...user,

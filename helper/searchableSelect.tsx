@@ -13,6 +13,8 @@ const SearchableDropdown = ({
 }) => {
   const [cloptions, setOptions] = useState<projectOptions[]>([]);
   const user = useAppSelector((state: RootState) => state.userData);
+
+  const prod = user?.currentTask?.currentProject;
   const fetchingProject = async () => {
     const response = await axios.get(
       `/api/admin/project/getprojects?items=100`
@@ -54,6 +56,7 @@ const SearchableDropdown = ({
   const handleOptionClick = (option: projectOptions) => {
     setSelectedOption(option);
     projectfn(option.value, option.label);
+    console.log(option.label);
 
     setIsOpen(false);
   };
@@ -61,6 +64,7 @@ const SearchableDropdown = ({
   const filteredOptions = cloptions.filter((option) =>
     option?.label?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  console.log(prod);
 
   return (
     <div className="relative ">
@@ -68,7 +72,7 @@ const SearchableDropdown = ({
         className=" bg-white  mr-4   flex items-center text-md  "
         onClick={handleToggleDropdown}
       >
-        {selectedOption ? selectedOption.label : "Project"}
+        {prod?.projectId ? prod?.projectName : "Project"}
         <RiArrowDropDownLine color="#00a8b2" />
       </div>
       {isOpen && (

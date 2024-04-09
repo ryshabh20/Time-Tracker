@@ -11,6 +11,7 @@ connect();
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
+    console.log(reqBody);
     const userId = reqBody.user._id;
     const tokenId = await tokenDataId(request);
     if (tokenId !== userId) {
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
             "currentTask.description": currentTaskDescription,
             "currentTask.currentProject.projectId": currentProject,
             "currentTask.currentProject.projectName":
-              reqBody.project.projectname,
+              reqBody.project.projectName,
           },
           $push: {
             timeentries: savedEntry,
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
         savedEntry,
         project: {
           projectId: savedEntry.project_id,
-          projectName: reqBody.project.projectname,
+          projectName: updatedUser.currentTask.currentProject.projectName,
         },
         updatedTimer,
       });

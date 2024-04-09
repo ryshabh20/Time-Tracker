@@ -24,7 +24,6 @@ export async function GET(
       );
     }
     const timeEntry = await TimeEntries.findById(params.id);
-    console.log("hey this is your timeentry", timeEntry);
     return NextResponse.json({
       message: "Entry successfully fetched",
       data: timeEntry,
