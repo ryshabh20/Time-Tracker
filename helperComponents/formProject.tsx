@@ -180,6 +180,11 @@ const FormProject: React.FC<{
         label: formData.clientname,
         value: formData.client,
       }
+    : formData.client !== ""
+    ? {
+        label: formData.clientname,
+        value: formData.client,
+      }
     : null;
   return (
     <div>
@@ -196,6 +201,7 @@ const FormProject: React.FC<{
               name="projectname"
               className="border w-full p-2 rounded-md"
               placeholder="Project Name"
+              min={2}
               required
             />
             <Select
