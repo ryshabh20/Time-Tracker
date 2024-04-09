@@ -177,11 +177,11 @@ const Employee = () => {
           </button>
         </div>
       </form>
-      <div>
+      <div className="overflow-auto">
         <table className="table-auto text-gray-600 font-light w-full text-left">
           <thead className="bg-[#e9e9e9]  h-10">
             <tr>
-              <th className=" px-5">
+              <th className="  px-5">
                 Name{" "}
                 <span
                   onClick={() => handleSort("employeename", "asc")}

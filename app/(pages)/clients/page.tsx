@@ -188,7 +188,7 @@ const Client = () => {
           </button>
         </div>
       </form>
-      <div>
+      <div className="overflow-auto">
         <table
           className={`table-auto text-gray-600 ${
             loading
@@ -238,7 +238,7 @@ const Client = () => {
                 <span
                   onClick={() => handleSort("email", "desc")}
                   className={`text-2xl ${
-                    sortBy === "email" && order === "asc"
+                    sortBy === "email" && order === "desc"
                       ? "text-3xl"
                       : "text-2xl"
                   }`}
