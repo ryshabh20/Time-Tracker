@@ -97,7 +97,6 @@ const Timetracker = () => {
           if (!user?.isTimer) {
             const newTaskId = response.data.savedEntry._id.toString();
             const allTimeEntries = user.timeentries;
-            console.log(response.data.project);
             dispatch(
               setUserData({
                 ...user,
@@ -218,7 +217,7 @@ const Timetracker = () => {
   };
   const fetchingData = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const params = { loadweek: offset };
       const response = await axios.get("/api/users/getalltimeentries");
       if (!response.data.success) {
@@ -236,6 +235,7 @@ const Timetracker = () => {
       console.error("Error fetching the entries");
     }
   };
+
   const currentEntry = async () => {
     try {
       if (user?.isTimer) {
@@ -275,6 +275,9 @@ const Timetracker = () => {
     fetchingData();
   }, [user?.isTimer]);
   useEffect(() => {
+    setLoading(true);
+
+    // fetchingDataLoading();
     setHydtared(true);
   }, []);
 

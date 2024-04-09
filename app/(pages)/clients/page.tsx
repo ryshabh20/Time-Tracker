@@ -37,7 +37,6 @@ const Client = () => {
   };
 
   const fetchingClient = async () => {
-    setLoading(true);
     const response = await axios.get(
       `/api/admin/client/getclients?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
     );
@@ -55,7 +54,7 @@ const Client = () => {
   const handleClick = async (e: any) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      // setLoading(true);
       const response = await axios.get(
         `/api/admin/client/getclients?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
@@ -77,6 +76,9 @@ const Client = () => {
     fetchingClient();
     setActive(page);
   }, [page, order]);
+  useEffect(() => {
+    setLoading(true);
+  }, []);
   const handleSort = (sort: string, order: string) => {
     setSortBy(sort);
     setOrder(order);

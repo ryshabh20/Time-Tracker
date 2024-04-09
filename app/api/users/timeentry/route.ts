@@ -73,7 +73,6 @@ export async function POST(request: NextRequest) {
     if (userData.isTimer === true) {
       const timeEntryId = userData.timeentries[userData.timeentries.length - 1];
       const projectId = reqBody.project.projectId;
-      console.log("projectId", projectId);
 
       const timeEntry = await TimeEntries.findOne({ _id: timeEntryId });
 
@@ -93,6 +92,7 @@ export async function POST(request: NextRequest) {
             end_time: new Date(),
             task: reqBody.task,
             duration: durationInMillis,
+            project_id: projectId,
           },
         },
         { new: true }
