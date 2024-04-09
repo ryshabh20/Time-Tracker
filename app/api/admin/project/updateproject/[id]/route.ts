@@ -47,7 +47,7 @@ export async function POST(
         { status: 400 }
       );
     }
-    const project = updatedProject.save();
+    const project = await updatedProject.save();
 
     return NextResponse.json(
       {

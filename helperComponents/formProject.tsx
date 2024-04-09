@@ -97,6 +97,7 @@ const FormProject: React.FC<{
           `/api/admin/project/updateproject/${id}`,
           formData
         );
+        console.log(response.data);
         setFormData({
           projectname: response.data.project.projectname,
           client: response.data.project.client,
