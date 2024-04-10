@@ -26,11 +26,17 @@ export async function GET(
     const projectId = new mongoose.Types.ObjectId(params.id);
     const groupedTimeEntriesPromise = TimeEntries.aggregate([
       {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
         $match: {
           project_id: projectId,
           end_time: { $exists: true },
         },
       },
+
       {
         $lookup: {
           from: "users",

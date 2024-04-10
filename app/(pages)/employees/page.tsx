@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import AdminRoute from "@/helperComponents/AdminRoute";
 
 const Employee = () => {
   const router = useRouter();
@@ -320,4 +321,4 @@ const Employee = () => {
   );
 };
 
-export default Employee;
+export default AdminRoute(Employee);

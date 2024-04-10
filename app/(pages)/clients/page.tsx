@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import ListingLoader from "@/helperComponents/ListingLoader";
+import AdminRoute from "@/helperComponents/AdminRoute";
 
 const Client = () => {
   const router = useRouter();
@@ -307,4 +308,4 @@ const Client = () => {
   );
 };
 
-export default Client;
+export default AdminRoute(Client);

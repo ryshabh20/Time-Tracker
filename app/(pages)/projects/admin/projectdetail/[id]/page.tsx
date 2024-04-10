@@ -92,7 +92,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
     <div className="space-y-2">
       <span>{projectDetails[0]?.projectname}</span>
       <div className="bg-white flex flex-col justify-between   h-3/6 p-10">
-        <div className="flex space-x-10  ">
+        <div className="flex md:space-x-1 lg:space-x-10  ">
           <div>AssignedTeam :</div>
           <div>
             <table>

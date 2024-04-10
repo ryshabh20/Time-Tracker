@@ -1,7 +1,9 @@
+"use client";
+import AdminRoute from "@/helperComponents/AdminRoute";
 import EmployeeForm from "@/helperComponents/EmployeeForm";
 
-const Addproject = () => {
+const Addemployee = () => {
   return <EmployeeForm edit={false} />;
 };
 
-export default Addproject;
+export default AdminRoute(Addemployee);

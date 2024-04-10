@@ -345,9 +345,9 @@ const Timetracker = () => {
 
   return (
     <div>
-      <div className="flex bg-white h-14 md:justify-between ">
+      <div className="flex bg-white h-14   md:justify-between ">
         <div className=" flex p-2 w-3/6 ">
-          <div className="w-full">
+          <div className="w-full ">
             <input
               onChange={(e) => {
                 setTask(e.target.value);

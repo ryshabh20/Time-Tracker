@@ -1,18 +1,22 @@
+"use client";
 import { useAppSelector } from "@/store/store";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-const AdminRoute = (Component: any, page: string) => {
+const AdminRoute = (Component: any) => {
   return (props: any) => {
-    const user = useAppSelector((state) => state.userData);
-    const isAdmin = user?.role === "admin";
+    const user = useAppSelector((state) => state?.userData);
+    const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
-
+    // console.log(isAdmin);
     useEffect(() => {
-      if (!isAdmin) {
-        router.push(`/${page}`);
+      const isAdminAv = user?.role === "admin";
+
+      setIsAdmin(isAdminAv);
+      if (!isAdminAv) {
+        router.push(`/`);
       }
-    }, [isAdmin, router]);
+    }, [router, user]);
     return isAdmin ? <Component {...props} /> : <></>;
   };
 };

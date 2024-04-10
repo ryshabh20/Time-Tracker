@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import { millisecondsToTime } from "@/helper/convertMillisecondsToTime";
+import AdminRoute from "@/helperComponents/AdminRoute";
 
 const IdleTime = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -227,4 +228,4 @@ const IdleTime = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default IdleTime;
+export default AdminRoute(IdleTime);

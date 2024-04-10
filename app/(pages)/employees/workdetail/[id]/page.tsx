@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
+import AdminRoute from "@/helperComponents/AdminRoute";
 
 const WorkDetail = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -317,4 +318,4 @@ const WorkDetail = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default WorkDetail;
+export default AdminRoute(WorkDetail);

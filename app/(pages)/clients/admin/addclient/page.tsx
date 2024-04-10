@@ -4,6 +4,12 @@ import { useState } from "react";
 import { countryOptions } from "@/helper/countryData";
 import { useAppSelector } from "@/store/store";
 import AdminRoute from "@/helperComponents/AdminRoute";
+interface AddClientForm {
+  clientname?: string;
+  contactnumber?: string;
+  email?: string;
+  country?: string;
+}
 
 const AddClient = () => {
   const user = useAppSelector((state) => state.userData);
@@ -13,9 +19,44 @@ const AddClient = () => {
     email: "",
     country: "",
   });
+  const [formError, setformError] = useState<AddClientForm>({
+    clientname: "",
+    contactnumber: "",
+    email: "",
+    country: "",
+  });
+  const formValidation = () => {
+    let isValid = true;
+    let errors: AddClientForm = {};
+    if (formData.clientname.trim() === "") {
+      errors.clientname = "Client name cannot be empty";
+      isValid = false;
+    }
+    if (!formData.contactnumber) {
+      errors.contactnumber = "Contact number cannot be empty";
+      isValid = false;
+    } else if (!/^[6-9]\d{9}$/.test(formData.contactnumber)) {
+      errors.contactnumber = "Phone number is not valid";
+      isValid = false;
+    }
+    if (!formData.email) {
+      errors.email = "Email cannot be empty";
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = "Email address is invalid";
+      isValid = false;
+    }
+    if (!formData.country) {
+      errors.country = "Country cannot be empty";
+      isValid = false;
+    }
+    setformError(errors);
+    return isValid;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (formData.country === "" || formData.country === "placeholder") {
       console.error("Please select a country.");
       return;
@@ -43,7 +84,7 @@ const AddClient = () => {
               value={formData.clientname}
               type="text"
               name="clientname"
-              className="border w-full p-2 rounded-md"
+              className={`border w-full p-2 rounded-md `}
               placeholder="Client Name"
               required
             />
@@ -100,4 +141,4 @@ const AddClient = () => {
     </div>
   );
 };
-export default AdminRoute(AddClient, "clients");
+export default AdminRoute(AddClient);
