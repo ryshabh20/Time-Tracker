@@ -82,7 +82,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="w-full min-h-screen flex flex-row">
-      <div className="md:3/12 lg:w-1/5 h-screen sticky top-0">
+      <div className="md:3/12 lg:w-1/5 max-h-screen sticky top-0">
         <div className="h-1/5">
           <Image
             alt="logo"
