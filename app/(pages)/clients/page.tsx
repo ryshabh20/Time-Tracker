@@ -191,7 +191,7 @@ const Client = () => {
           </button>
         </div>
       </form>
-      <div className="overflow-auto">
+      <div className="">
         <table
           className={`table-auto text-gray-600 ${
             loading
@@ -260,10 +260,10 @@ const Client = () => {
             <tbody>
               {clients.map((client: any) => {
                 return (
-                  <tr className="bg-white h-12 border" key={client._id}>
+                  <tr className="bg-white h-10 border" key={client._id}>
                     <td className="px-5">{client.clientname}</td>
                     <td className="px-5">{client.contactnumber}</td>
-                    <td className="px-5">{client.email}</td>
+                    <td className="px-5 break-all">{client.email}</td>
                     <td className="px-5">{client.country}</td>
                     <td className="relative">
                       <FaEllipsisV onClick={() => openModal(client._id)} />

@@ -369,7 +369,7 @@ const Timetracker = () => {
             ></input>
           </div>
         </div>
-        <div className="flex p-2 md:justify-evenly justify-around  md:space-x-3 lg:space-x-0  md:3/6 lg:w-2/6">
+        <div className="flex p-2 md:justify-evenly justify-around  md:space-x-3 lg:space-x-0  lg:w-2/6">
           <div className="flex items-center border-r  ">
             {/* <label htmlFor="projects">Projects</label>
             <select
@@ -415,19 +415,19 @@ const Timetracker = () => {
                   <div className="text-[#707070] truncate font-medium w-2/12">
                     {entry.task}
                   </div>
-                  <li className="ml-2 text-[#58c4cc] truncate  font-medium w-2/12 lg:w-5/12 ">
+                  <li className="md:ml-0 lg:ml-2 text-[#58c4cc] truncate  font-medium w-2/12 lg:w-5/12 ">
                     {entry?.project_id?.projectname}
                   </li>
-                  <div className=" inline    md:w-2/12 lg:4/12 lg:truncate lg:flex items-center text-[#707070] border-r-2  text-sm font-medium  ">
+                  <div className=" inline    md:w-2/12  lg:truncate lg:flex items-center text-[#707070] justify-end  text-sm font-medium  ">
                     {`${formatTime(new Date(entry.start_time))} - ${formatTime(
                       new Date(entry.end_time)
                     )}`}
                     <IoCalendarOutline className="ml-2 w-6 h-6 hidden lg:flex" />
                   </div>
-                  <div className="  text-black border-r-2 md:px-2 text-clip  justify-center text-center m-0 truncate text-lg font-medium   lg:w-1/12 hidden md:flex ">
+                  <div className="  text-black border-x-2 md:px-2 text-clip  justify-center text-center m-0 truncate text-lg font-medium    hidden md:flex ">
                     {convertMillisecondsToTime(entry.duration)}
                   </div>
-                  <div className="border-r-2 flex px-3 ">
+                  <div className="flex px-3 ">
                     <CiPlay1
                       className="w-6  h-6 "
                       onClick={() =>
@@ -441,7 +441,7 @@ const Timetracker = () => {
                     />
                   </div>
                   <div
-                    className="px-3"
+                    className="px-3 border-l-2"
                     onClick={() => deleteHandler(entry._id, entry.start_time)}
                   >
                     <RiDeleteBin6Fill className="w-6 h-6" />
