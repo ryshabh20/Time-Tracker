@@ -4,6 +4,7 @@ import { useState } from "react";
 import { countryOptions } from "@/helper/countryData";
 import { useAppSelector } from "@/store/store";
 import AdminRoute from "@/helperComponents/AdminRoute";
+import toast, { Toaster } from "react-hot-toast";
 interface AddClientForm {
   clientname?: string;
   contactnumber?: string;
@@ -19,6 +20,13 @@ const AddClient = () => {
     email: "",
     country: "",
   });
+  const notify = (status: boolean, message: string) => {
+    if (status) {
+      toast.success(message);
+    } else {
+      toast.error(message);
+    }
+  };
   const [formError, setformError] = useState<AddClientForm>({
     clientname: "",
     contactnumber: "",
@@ -56,19 +64,41 @@ const AddClient = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    const isValid = formValidation();
+    console.log("isValid", isValid);
+    console.log(formData.country);
     if (formData.country === "" || formData.country === "placeholder") {
-      console.error("Please select a country.");
-      return;
+      notify(false, "Please select a country");
     }
-    const data = { formData, user };
-    const response = await axios.post("/api/admin/client/addclient", data);
-    setFormData({
-      clientname: "",
-      contactnumber: "",
-      email: "",
-      country: "",
-    });
+    if (isValid) {
+      const data = { formData, user };
+      try {
+        const response = await axios.post("/api/admin/client/addclient", data);
+        setFormData({
+          clientname: "",
+          contactnumber: "",
+          email: "",
+          country: "",
+        });
+        notify(response.data.success, response.data.message);
+      } catch (err: any) {
+        notify(err.response.data.success, err.response.data.message);
+      }
+    } else {
+      const { clientname, contactnumber, email, country } = formError;
+      if (clientname) {
+        notify(false, clientname);
+      }
+      if (contactnumber) {
+        notify(false, contactnumber);
+      }
+      if (email) {
+        notify(false, email);
+      }
+      if (country) {
+        notify(false, country);
+      }
+    }
   };
 
   return (
@@ -138,6 +168,7 @@ const AddClient = () => {
           Add Client
         </button>
       </form>
+      <Toaster position="bottom-right" />
     </div>
   );
 };

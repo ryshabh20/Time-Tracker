@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { countryOptions } from "@/helper/countryData";
 import { useAppSelector } from "@/store/store";
+import toast, { Toaster } from "react-hot-toast";
 
 const AddClient: React.FC = () => {
   const user = useAppSelector((state) => state.userData);
@@ -12,7 +13,13 @@ const AddClient: React.FC = () => {
     email: "",
     country: "",
   });
-
+  const notify = (status: boolean, message: string) => {
+    if (status) {
+      toast.success(message);
+    } else {
+      toast.error(message);
+    }
+  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formData.country === "" || formData.country === "placeholder") {
@@ -20,13 +27,18 @@ const AddClient: React.FC = () => {
       return;
     }
     const data = { formData, user };
-    const response = await axios.post("/api/admin/client/addclient", data);
-    setFormData({
-      clientname: "",
-      contactnumber: "",
-      email: "",
-      country: "",
-    });
+    try {
+      const response = await axios.post("/api/admin/client/addclient", data);
+      setFormData({
+        clientname: "",
+        contactnumber: "",
+        email: "",
+        country: "",
+      });
+      notify(response.data.success, response.data.message);
+    } catch (err: any) {
+      notify(err.response.data.success, err.response.data.message);
+    }
   };
 
   return (
@@ -96,6 +108,7 @@ const AddClient: React.FC = () => {
           Add Client
         </button>
       </form>
+      <Toaster position="bottom-right" />
     </div>
   );
 };
