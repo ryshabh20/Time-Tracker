@@ -93,6 +93,7 @@ const Dashboard = () => {
   };
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: "top",
@@ -218,8 +219,13 @@ const Dashboard = () => {
             <span className="text-xl font-medium">{totalHours}</span>
           </div>
         </div>
-        <div className="bg-white" onClick={() => setModal(false)}>
-          <Bar data={data as any} options={options as any} />
+        <div className="bg-white " onClick={() => setModal(false)}>
+          <Bar
+            data={data as any}
+            height={500}
+            width={100}
+            options={options as any}
+          />
         </div>
       </div>
     </div>
