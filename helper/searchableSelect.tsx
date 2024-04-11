@@ -69,7 +69,7 @@ const SearchableDropdown = ({
   return (
     <div className="relative ">
       <div
-        className=" bg-white  mr-4   flex items-center text-md  "
+        className=" bg-white  lg:mr-4 md:mr-0  flex items-center text-md  "
         onClick={handleToggleDropdown}
       >
         {prod?.projectId ? prod?.projectName : "Project"}

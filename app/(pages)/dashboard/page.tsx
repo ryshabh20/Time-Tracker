@@ -72,7 +72,7 @@ const Dashboard = () => {
       {
         label: "duration",
         data: durationData.map((duration) => {
-          const seconds = Math.round(duration / 1000);
+          const seconds = Math.floor(duration / 1000);
           const durationHours = seconds / 3600;
 
           return durationHours;

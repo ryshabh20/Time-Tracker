@@ -369,7 +369,7 @@ const Timetracker = () => {
             ></input>
           </div>
         </div>
-        <div className="flex p-2 md:justify-evenly justify-around    md:3/6 lg:w-2/6">
+        <div className="flex p-2 md:justify-evenly justify-around  md:space-x-3 lg:space-x-0  md:3/6 lg:w-2/6">
           <div className="flex items-center border-r  ">
             {/* <label htmlFor="projects">Projects</label>
             <select
