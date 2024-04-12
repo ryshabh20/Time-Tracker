@@ -73,7 +73,7 @@ export async function GET(
     const storageRef = ref(storage, filename);
 
     const uploadTask = uploadBytesResumable(storageRef, screenshot);
-    let downloadUrlFile;
+
     uploadTask.on(
       "state_changed",
       (snapshot) => {
@@ -92,8 +92,6 @@ export async function GET(
             break;
           case "storage/canceled":
             break;
-
-          // ...
 
           case "storage/unknown":
             break;

@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "All screenshots1",
+        message: "All screenshots",
         success: true,
         screenshots: userData.screenshots,
       },

@@ -28,11 +28,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     return () => clearInterval(intervalId);
   }, [pathname]);
   const logoutHandler = async () => {
-    try {
-      await axios.get("/api/users/logout");
-      dispatch(setUserData(null));
-      router.push("/login");
-    } catch (error: any) {}
+    await axios.get("/api/users/logout");
+    dispatch(setUserData(null));
+    router.push("/login");
   };
 
   const takeScreenshot = async () => {

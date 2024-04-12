@@ -12,9 +12,7 @@ export async function GET(
   const items_per_page: number =
     Number(request.nextUrl.searchParams.get("items")) || 7;
   const page: number = Number(request.nextUrl.searchParams.get("page")) || 1;
-  const search: string = request.nextUrl.searchParams.get("search") || "";
-  const sort = request.nextUrl.searchParams.get("sort") || "employeename";
-  const order = request.nextUrl.searchParams.get("order") || "asc";
+
   try {
     const user = await tokenDataId(request, true);
     const employeeId = params.id;
