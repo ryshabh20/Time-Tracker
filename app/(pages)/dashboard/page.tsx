@@ -8,11 +8,9 @@ import {
   millisecondsToTime,
 } from "@/helper/convertMillisecondsToTime";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { useAppDispatch } from "@/store/store";
 
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
-import { model } from "mongoose";
 Chart.register(CategoryScale);
 Chart.register(LinearScale);
 Chart.register(BarElement);
@@ -24,7 +22,6 @@ const Dashboard = () => {
   >([]);
   const [modal, setModal] = useState(false);
   const dialogRef = useRef<any>();
-  // const dispatch = useAppDispatch();
   const getTimeEntries = async () => {
     const response = await axios.get("/api/users/getalltimeentries");
     setTimeEntries(response.data.duration);
@@ -133,7 +130,6 @@ const Dashboard = () => {
     },
   };
 
-  console.log("modal", modal);
   return (
     <div className="space-y-5 font-medium ">
       <div className="align-left">Dashboard</div>

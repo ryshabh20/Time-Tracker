@@ -6,7 +6,7 @@ import { useAppSelector } from "@/store/store";
 import toast, { Toaster } from "react-hot-toast";
 
 const AddClient: React.FC = () => {
-  const user = useAppSelector((state) => state.userData);
+  const user = useAppSelector((state) => state?.userData);
   const [formData, setFormData] = useState({
     clientname: "",
     contactnumber: "",

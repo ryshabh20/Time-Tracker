@@ -1,9 +1,7 @@
 "use client";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { countryOptions } from "@/helper/countryData";
-import { useAppSelector } from "@/store/store";
-import Select from "react-select";
+
 import toast, { Toaster } from "react-hot-toast";
 
 import { MdCancel } from "react-icons/md";
@@ -28,7 +26,6 @@ const EmployeeForm: React.FC<{
     permission: [],
   });
   const [hydrated, setHydrated] = useState(false);
-  //   const [clientOptions, setClientOptions] = useState<string[]>([]);
   const notify = (status: boolean, message: string) => {
     if (status) {
       toast.success(message);
@@ -36,16 +33,7 @@ const EmployeeForm: React.FC<{
       toast.error(message);
     }
   };
-  //   const fetchingClient = async () => {
-  //     const response = await axios.get(`/api/admin/client/getclients?items=100`);
-  //     setClientOptions((prevClients) => [
-  //       ...prevClients,
-  //       ...response.data.clients.map((client: any) => ({
-  //         label: client.clientname,
-  //         value: client._id,
-  //       })),
-  //     ]);
-  //   };
+
   const fetchingemployee = async () => {
     try {
       const response = await axios.get(`/api/admin/employee/getemployee/${id}`);
@@ -60,15 +48,12 @@ const EmployeeForm: React.FC<{
           permission: response.data.employee.permission,
         }));
 
-        console.log("response.data.employee", response.data.employee);
         notify(response.data.success, response.data.message);
       }
     } catch (err: any) {
       console.log(err);
-      // notify(err.response.data.success, err.response.data.message);
     }
   };
-  console.log("first formData", formData);
   useEffect(() => {
     if (edit) {
       setHydrated(true);
@@ -84,7 +69,6 @@ const EmployeeForm: React.FC<{
           `/api/admin/employee/updateemployee/${id}`,
           formData
         );
-        console.log(formData);
         setFormData({
           employeename: response.data.employee.employeename,
           code: response.data.employee.code,
@@ -93,12 +77,8 @@ const EmployeeForm: React.FC<{
           technologies: response.data.employee.technologies,
           permission: response.data.employee.permission,
         });
-        console.log("formData", formData);
         notify(response.data.success, response.data.message);
-      } catch (err: any) {
-        console.log(err);
-        // notify(err.response.data.success, err.response.data.message);
-      }
+      } catch (err: any) {}
     } else {
       try {
         const response = await axios.post(
@@ -165,19 +145,7 @@ const EmployeeForm: React.FC<{
       });
     }
   };
-  //   let debounceTimer: NodeJS.Timeout;
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-  //   clearTimeout(debounceTimer);
-  //   const value: string = event.target.value;
-  //   debounceTimer = setTimeout(async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `/api/admin/client/getclients?search=${value}&items=100`
-  //       );
-  //     } catch (error) {}
-  //   }, 500);
-  //   setFormData({ ...formData, client: value });
-  // };
+
   if (edit) {
     if (!hydrated) return null;
   }

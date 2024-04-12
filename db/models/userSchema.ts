@@ -73,9 +73,7 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-console.log("User model REGISTERING");
-const User = mongoose.models.users || mongoose.model("users", userSchema);
-console.log("User model registerd");
-export default User;
 
-//
+const User = mongoose.models.users || mongoose.model("users", userSchema);
+
+export default User;

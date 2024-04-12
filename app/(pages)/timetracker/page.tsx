@@ -34,15 +34,10 @@ const Timetracker = () => {
   const [duration, setDuration] = useState<
     { _id: string; totalDuration: number }[]
   >([]);
-  // const [totalDuration, setTotalDuration] = useState<String>("");
   const [errorMessage, setErrorMessage] = useState(false);
   const user = useAppSelector((state: RootState) => state.userData);
   const project = user?.currentTask?.currentProject;
 
-  // const [project, setProject] = useState<project>({
-  //   projectname: user?.currentTask?.currentProject?.projectName,
-  //   projectId: user?.currentTask?.currentProject?.projectId,
-  // });
   const [task, setTask] = useState(user?.currentTask?.description);
   const dispatch = useAppDispatch();
   function formatTime(date: Date) {
@@ -68,10 +63,6 @@ const Timetracker = () => {
         currentTask: { currentProject: { projectName: name, projectId: id } },
       })
     );
-    // setProject({
-    //   projectname: name,
-    //   projectId: id,
-    // });
   };
 
   const renderTotalDuration = (date: string): string => {
@@ -137,72 +128,13 @@ const Timetracker = () => {
 
         setTask(response.data.task);
       } catch (err: any) {
-        console.log("error", err);
-
         notify(err.response.data.success, err.response.data.error);
       }
     } else {
       notify(false, "Please fill all fields and try again");
     }
   };
-  //  const handleOnClick = async () => {
-  //    if (task?.trim() !== "" && user?.currentTask?.currentProject?.projectId) {
-  //      const bodydata = { task, user, project };
 
-  //      try {
-  //        const response = await axios.post("/api/users/timeentry", bodydata);
-  //        if (user && response) {
-  //          if (!user?.isTimer) {
-  //            const newTaskId = response.data.savedEntry._id.toString();
-  //            const allTimeEntries = user.timeentries;
-  //            dispatch(
-  //              setUserData({
-  //                ...user,
-  //                isTimer: response.data.updatedTimer,
-  //                currentTask: {
-  //                  ...user.currentTask,
-  //                  description: response.data.task,
-  //                  currentProject: {
-  //                    projectId: response.data.project.projectId,
-  //                    projectName: response.data.project.projectName,
-  //                    projectTask: "",
-  //                  },
-  //                },
-  //                timeentries: [...allTimeEntries, newTaskId],
-  //              })
-  //            );
-  //          } else {
-  //            dispatch(
-  //              setUserData({
-  //                ...user,
-  //                isTimer: response.data.updatedTimer,
-  //                currentTask: {
-  //                  ...user.currentTask,
-  //                  description: response.data.task,
-  //                  currentProject: {
-  //                    projectId: response.data.project.projectId,
-  //                    projectName: response.data.project.projectName,
-  //                    projectTask: "",
-  //                  },
-  //                },
-  //              })
-  //            );
-  //          }
-  //        }
-  //        if (response.data.success) {
-  //          notify(response.data.success, response.data.message);
-  //        }
-
-  //        setTask(response.data.task);
-  //      } catch (err: any) {
-  //        console.log("error", err);
-
-  //        notify(err.response.data.success, err.response.data.error);
-  //      }
-  //    } else {
-  //      notify(false, "Please fill all fields and try again");
-  //    }
-  //  };
   const updateHandler = async (
     id: string,
     projectId: string,
@@ -220,7 +152,6 @@ const Timetracker = () => {
       if (user && response) {
         const newTaskId = response.data.savedEntry._id.toString();
         const allTimeEntries = user.timeentries;
-        console.log(response.data.projectId);
         dispatch(
           setUserData({
             ...user,
@@ -311,18 +242,7 @@ const Timetracker = () => {
       console.error(error);
     }
   };
-  // const fetchingProject = async () => {
-  //   const response = await axios.get(
-  //     `/api/admin/project/getprojects?items=100`
-  //   );
-  //   setProjectOptions((prevProjects) => [
-  //     ...prevProjects,
-  //     ...response.data.projects.map((project: any) => ({
-  //       label: project.clientname,
-  //       value: project._id,
-  //     })),
-  //   ]);
-  // };
+
   const latestDetails = async () => {
     await dispatch(fetchUser());
     setTask(user?.currentTask?.description);
@@ -337,7 +257,6 @@ const Timetracker = () => {
   useEffect(() => {
     setLoading(true);
 
-    // fetchingDataLoading();
     setHydtared(true);
   }, []);
 
@@ -371,11 +290,6 @@ const Timetracker = () => {
         </div>
         <div className="flex p-2 md:justify-evenly justify-around  md:space-x-3 lg:space-x-0  lg:w-2/6">
           <div className="flex items-center border-r  ">
-            {/* <label htmlFor="projects">Projects</label>
-            <select
-              id="projects"
-              className="bg-white text-custom-green mr-4 "
-            ></select> */}
             <SearchableDropdown projectfn={projectSet} />
           </div>
           <Timer startTime={seconds} />

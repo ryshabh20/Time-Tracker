@@ -14,7 +14,6 @@ export async function POST(request: NextRequest) {
     const userId = reqBody.user._id;
     const userRole = reqBody.user.role;
     const tokenId = await tokenDataId(request);
-    console.log(tokenId, userRole, userId, reqBody);
     if (userId !== tokenId || userRole !== "admin") {
       return NextResponse.json(
         { message: "You are not authorized" },
@@ -22,7 +21,6 @@ export async function POST(request: NextRequest) {
       );
     }
     const { clientname, contactnumber, email, country } = reqBody.formData;
-    console.log(clientname, contactnumber, email, country);
     const newClient = await new Client({
       clientname,
       contactnumber,

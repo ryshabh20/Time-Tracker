@@ -9,8 +9,6 @@ async function getScreenshots() {
         ? "https://time-tracker-xi-three.vercel.app/api/users/getscreenshots/"
         : "http://localhost:3000/api/users/getscreenshots/";
 
-    console.log(url);
-
     const res = await fetch(url, {
       headers: {
         Cookie: `authtoken=${cookie}`,
@@ -21,7 +19,6 @@ async function getScreenshots() {
     const data = await res.json();
     return data.screenshots;
   } catch (error) {
-    console.log("error", error);
     throw new Error("Error fetching the data from the route");
   }
 }

@@ -41,7 +41,6 @@ const Employee = () => {
     const response = await axios.get(
       `/api/admin/employee/getemployees?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
     );
-    console.log("response.data", response.data);
     if (response.data) {
       setPageCount(response.data.pagination.pageCount);
       setEmployees(response.data.employees);
@@ -55,7 +54,6 @@ const Employee = () => {
       const response = await axios.get(
         `/api/admin/employee/getemployees?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
-      console.log("response", response);
       if (response.data) {
         setPageCount(response.data.pagination.pageCount);
         setEmployees(response.data.employees);
@@ -71,10 +69,7 @@ const Employee = () => {
     setSortBy(sort);
     setOrder(order);
   };
-  // const sortHandler = async () => {
-  //   // const query;
-  //   const response = await axios.post("/api/admin/client/getclients");
-  // };
+
   const deleteHandler = async () => {
     try {
       const response = await axios.delete(

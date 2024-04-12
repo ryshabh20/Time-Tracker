@@ -11,7 +11,6 @@ connect();
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
-    console.log(reqBody);
     const userId = reqBody.user._id;
     const tokenId = await tokenDataId(request);
     if (tokenId !== userId) {
@@ -55,7 +54,6 @@ export async function POST(request: NextRequest) {
         },
         { new: true }
       );
-      console.log("updatedUser", updatedUser);
 
       const updatedTimer = updatedUser.isTimer;
       return NextResponse.json({

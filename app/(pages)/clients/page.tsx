@@ -55,7 +55,6 @@ const Client = () => {
   const handleClick = async (e: any) => {
     e.preventDefault();
     try {
-      // setLoading(true);
       const response = await axios.get(
         `/api/admin/client/getclients?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );

@@ -41,8 +41,6 @@ export async function GET(request: NextRequest) {
             },
           },
           entries: { $push: "$$ROOT" },
-
-          // createdAt: { $first: "$createdAt" },
         },
       },
       {
@@ -52,14 +50,6 @@ export async function GET(request: NextRequest) {
       },
     ]);
 
-    // const timeEntries = await TimeEntries.aggregate([
-    //   {
-    //     $group: {
-    //       _id: { $dateToString: { format: "%Y-%m-%d", date: "$start_time" } },
-    //       entries: { $addToSet: "$$ROOT" }, // Add all documents to the 'entries' array
-    //     },
-    //   },
-    // ]);
     return NextResponse.json({
       message: "All entries fetched",
       data: timeEntries,

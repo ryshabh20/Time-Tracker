@@ -15,9 +15,6 @@ export async function POST(
 
     const projectId = params.id;
 
-    console.log("body", body);
-    console.log("updatedData", body);
-
     if (!user || user.role !== "admin") {
       return NextResponse.json(
         {
@@ -37,7 +34,6 @@ export async function POST(
       { new: true }
     );
 
-    console.log("updatedProject", updatedProject);
     if (!updatedProject) {
       return NextResponse.json(
         {

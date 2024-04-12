@@ -8,7 +8,6 @@ const AdminRoute = (Component: any) => {
     const user = useAppSelector((state) => state?.userData);
     const [isAdmin, setIsAdmin] = useState(false);
     const router = useRouter();
-    // console.log(isAdmin);
     useEffect(() => {
       const isAdminAv = user?.role === "admin";
 

@@ -43,14 +43,11 @@ const IdleTime = ({ params }: { params: { id: string } }) => {
       const response = await axios.get(
         `/api/admin/employee/idletime/${params.id}?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
-      console.log("response.data", response.data);
       if (response.data) {
         setPageCount(response.data.pagination.pageCount);
         setEmployees(response.data.duration);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
   const pagesToRender = Math.ceil(pageCount);
   const pagesarr = Array.from({ length: pagesToRender }, (_, i) => i + 1);
@@ -60,7 +57,6 @@ const IdleTime = ({ params }: { params: { id: string } }) => {
       const response = await axios.get(
         `/api/admin/employee/idletime/${params.id}?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
-      console.log("response", response);
       if (response.data) {
         setPageCount(response.data.pagination.pageCount);
         setEmployees(response.data.duration);
@@ -78,10 +74,6 @@ const IdleTime = ({ params }: { params: { id: string } }) => {
     setSortBy(sort);
     setOrder(order);
   };
-  // const sortHandler = async () => {
-  //   // const query;
-  //   const response = await axios.post("/api/admin/client/getclients");
-  // };
 
   const handlePrevious = () => {
     setPage((p) => {

@@ -74,8 +74,6 @@ export async function DELETE(
 
     await TimeEntries.findByIdAndDelete(params.id);
 
-    console.log("project,updatedUser", project, updatedUser);
-
     return NextResponse.json({
       message: "Deleted Sucessfully",
       project,

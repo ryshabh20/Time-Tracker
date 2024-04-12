@@ -28,7 +28,6 @@ async function GetData(id: string) {
       cache: "no-store",
     });
     const data = await res.json();
-    console.log("data", data);
 
     const name: [string, string][] = data?.timeEntry?.map(
       (employee: TimeEntryDetails) => [
@@ -37,7 +36,6 @@ async function GetData(id: string) {
       ]
     );
 
-    console.log(data.timeEntry);
     const uniqueValues = [...new Set(name)];
     let uniqueName: [string, string][] = [];
 
@@ -53,7 +51,6 @@ async function GetData(id: string) {
 
     return { ...data, uniqueName };
   } catch (error) {
-    console.log("error", error);
     throw new Error("Error fetching the data from the route");
   }
 }
@@ -61,8 +58,6 @@ async function GetData(id: string) {
 const ProjectDetail = async ({ params }: { params: { id: string } }) => {
   const { duration, uniqueName, groupedTimeEntries, projectDetails } =
     await GetData(params.id);
-  console.log(projectDetails[0].projectname);
-  console.log("groupedTimeEntries", groupedTimeEntries);
   function formatTime(date: Date) {
     let hours = date.getHours();
     const ampm = hours >= 12 ? "PM" : "AM";
@@ -138,7 +133,7 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
           </table>
         </div>
       </div>
-      {/* <Entries data={timeEntry as any} /> */}
+
       {groupedTimeEntries.map((entry: any) => {
         return (
           <div className="flex flex-col " key={entry._id}>
@@ -172,14 +167,10 @@ const ProjectDetail = async ({ params }: { params: { id: string } }) => {
                   {convertMillisecondsToTime(entry.duration)}
                 </div>
                 <div className="border-r-2 flex px-3 ">
-                  <DeleteButton
-                    // deleteEntry={DeleteEntry}
-                    entry_id={entry._id}
-                  />
+                  <DeleteButton entry_id={entry._id} />
                 </div>
               </div>
             ))}
-            {/* <button onClick={loadMoreData}>Load more data</button> */}
           </div>
         );
       })}

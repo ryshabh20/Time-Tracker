@@ -55,7 +55,6 @@ const WorkDetail = ({ params }: { params: { id: string } }) => {
       const response = await axios.get(
         `/api/admin/employee/workdetails//${params.id}?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
       );
-      console.log("response", response);
       if (response.data) {
         setPageCount(response.data.pagination.pageCount);
         setEmployees(response.data.employees);
@@ -71,10 +70,7 @@ const WorkDetail = ({ params }: { params: { id: string } }) => {
     setSortBy(sort);
     setOrder(order);
   };
-  // const sortHandler = async () => {
-  //   // const query;
-  //   const response = await axios.post("/api/admin/client/getclients");
-  // };
+
   const deleteHandler = async () => {
     try {
       const response = await axios.delete(
@@ -279,22 +275,6 @@ const WorkDetail = ({ params }: { params: { id: string } }) => {
                   <td className="px-5">{employee.task}</td>
                   <td className="relative">
                     <FaEllipsisV />
-                    {/* <FaEllipsisV onClick={() => openModal(employee._id)} /> */}
-                    {/* {showModal === employee._id && (
-                      <div className="absolute bg-white z-10  shadow-lg border ">
-                        <Link href={`/employees/editemployee/${employee._id}`}>
-                          <div className="px-2 py-1 border-b hover:bg-gray-400 ">
-                            Edit
-                          </div>
-                        </Link>
-                        <div
-                          onClick={deleteHandler}
-                          className="px-2 py-1  hover:bg-red-400"
-                        >
-                          Delete
-                        </div>
-                      </div>
-                    )} */}
                   </td>
                 </tr>
               );

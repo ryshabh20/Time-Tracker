@@ -8,7 +8,7 @@ connect();
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { hoursConsumed, hoursAlloted, hoursLeft } = body;
+  const { hoursConsumed, hoursAlloted } = body;
 
   const calculatedHoursLeft = hoursAlloted - hoursConsumed;
   try {
@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
       {
         message: "Project created successfully",
         success: true,
+        savedProject,
       },
       { status: 200 }
     );

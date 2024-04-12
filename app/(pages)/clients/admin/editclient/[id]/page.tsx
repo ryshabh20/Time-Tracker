@@ -27,7 +27,6 @@ const Addeditclient = ({ params }: { params: { id: string } }) => {
     const response = await axios.get(
       `/api/admin/client/getclient/${params.id}`
     );
-    console.log("response.data.client", response.data.client);
     const { clientname, country, email, contactnumber } = response.data.client;
 
     setFormData({ clientname, country, email, contactnumber });

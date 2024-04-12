@@ -44,7 +44,6 @@ const Project = () => {
     const response = await axios.get(
       `/api/admin/project/getprojects?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
     );
-    console.log("response.data", response.data);
     if (response.data) {
       setLoading(false);
 
@@ -85,10 +84,7 @@ const Project = () => {
     setSortBy(sort);
     setOrder(order);
   };
-  // const sortHandler = async () => {
-  //   // const query;
-  //   const response = await axios.post("/api/admin/client/getclients");
-  // };
+
   const deleteHandler = async () => {
     try {
       const response = await axios.delete(

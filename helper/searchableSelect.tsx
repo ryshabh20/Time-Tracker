@@ -26,9 +26,6 @@ const SearchableDropdown = ({
       })),
     ]);
   };
-  // useEffect(() => {
-  //   fetchingProject();
-  // }, []);
 
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,7 +53,6 @@ const SearchableDropdown = ({
   const handleOptionClick = (option: projectOptions) => {
     setSelectedOption(option);
     projectfn(option.value, option.label);
-    console.log(option.label);
 
     setIsOpen(false);
   };
@@ -64,7 +60,6 @@ const SearchableDropdown = ({
   const filteredOptions = cloptions.filter((option) =>
     option?.label?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  console.log(prod);
 
   return (
     <div className="relative ">

@@ -65,8 +65,7 @@ const AddClient = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isValid = formValidation();
-    console.log("isValid", isValid);
-    console.log(formData.country);
+
     if (formData.country === "" || formData.country === "placeholder") {
       notify(false, "Please select a country");
     }

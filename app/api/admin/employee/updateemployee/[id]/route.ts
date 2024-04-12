@@ -12,7 +12,6 @@ export async function POST(
   try {
     const user = await tokenDataId(request, true);
     const body = await request.json();
-    console.log(body);
     const employeeId = params.id;
     const updatedData = body;
 

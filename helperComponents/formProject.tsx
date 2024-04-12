@@ -97,7 +97,6 @@ const FormProject: React.FC<{
           `/api/admin/project/updateproject/${id}`,
           formData
         );
-        console.log(response.data);
         setFormData({
           projectname: response.data.project.projectname,
           client: response.data.project.client,
@@ -112,8 +111,6 @@ const FormProject: React.FC<{
 
         notify(response.data.success, response.data.message);
       } catch (err: any) {
-        console.log("err.repsonse", err);
-
         notify(err.response.data.success, err.response.data.message);
       }
     } else {
@@ -137,7 +134,6 @@ const FormProject: React.FC<{
           notify(response.data.success, response.data.message);
         }
       } catch (err: any) {
-        console.log("err.repsonse", err.repsonse);
         notify(err.response.data.success, err.response.data.message);
       }
     }
@@ -163,19 +159,7 @@ const FormProject: React.FC<{
       ],
     });
   };
-  //   let debounceTimer: NodeJS.Timeout;
-  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-  //   clearTimeout(debounceTimer);
-  //   const value: string = event.target.value;
-  //   debounceTimer = setTimeout(async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `/api/admin/client/getclients?search=${value}&items=100`
-  //       );
-  //     } catch (error) {}
-  //   }, 500);
-  //   setFormData({ ...formData, client: value });
-  // };
+
   const selectValue = edit
     ? {
         label: formData.clientname,

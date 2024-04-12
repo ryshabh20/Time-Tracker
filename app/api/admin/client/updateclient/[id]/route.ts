@@ -44,7 +44,6 @@ export async function POST(
       );
     }
     const savedClient = updatedClient.save();
-    console.log("savedClient", savedClient);
     return NextResponse.json(
       {
         message: "Client updated successfully",

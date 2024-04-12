@@ -55,7 +55,6 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.log("error", error);
     return NextResponse.json(
       {
         message: error.message,

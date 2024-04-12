@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
   const page: number = Number(request.nextUrl.searchParams.get("page")) || 1;
   const search: string = request.nextUrl.searchParams.get("search") || "";
   const sort = request.nextUrl.searchParams.get("sort") || "clientname";
-  // const order = request.nextUrl.searchParams.get("order") === "asc" ? 1 : -1;
   const order = request.nextUrl.searchParams.get("order") || "asc";
 
   try {
@@ -25,10 +24,7 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
-    const query = {
-      adminId: user._id,
-      status: true,
-    };
+
     const skip = (page - 1) * items_per_page;
     const countPromise = Client.countDocuments({
       adminId: user._id,

@@ -18,15 +18,7 @@ interface IconType {
 const sideBarDataAdmin = [
   {
     name: "Dashboard",
-    icon: (
-      <RxDashboard
-      // className={`${
-      //   currentPath === data?.page
-      //     ? "text-white w-9 h-9"
-      //     : "text-gray-600 w-9 h-9"
-      // }`}
-      />
-    ),
+    icon: <RxDashboard />,
     page: "/dashboard",
   },
   {
@@ -85,35 +77,18 @@ const SideBarData = () => {
   const userRole = useAppSelector((state) => state?.userData?.role);
   useEffect(() => {
     setRole(userRole);
-    // const currentPage = getCurrentPage();
-    // console.log(currentPage);
-    // setActive(currentPage);
   }, [userRole]);
   const pathname = usePathname();
-  console.log(pathname.split("/")[1]);
 
   const currentPath = "/" + pathname.split("/")[1];
   return (
     <div>
       {role === "admin"
         ? sideBarDataAdmin.map((data, index) => (
-            <SidebarLink
-              data={data}
-              key={index}
-              currentPath={currentPath}
-
-              // active={active}
-              // setActive={setActive}
-            />
+            <SidebarLink data={data} key={index} currentPath={currentPath} />
           ))
         : sideBarDataClient.map((data, index) => (
-            <SidebarLink
-              data={data}
-              key={index}
-              currentPath={currentPath}
-              // active={active}
-              // setActive={setActive}
-            />
+            <SidebarLink data={data} key={index} currentPath={currentPath} />
           ))}
     </div>
   );
@@ -145,16 +120,8 @@ const SidebarLink = ({
               currentPath === data.page ? "text-white" : "text-gray-600 "
             }`,
           })}
-          {/* {data.icon} */}
         </div>
-        <div
-          className="ml-4 text-lg"
-          // onClick={() => {
-          //   setActive(data.name);
-          // }}
-        >
-          {data.name}
-        </div>
+        <div className="ml-4 text-lg">{data.name}</div>
       </div>
     </div>
   </Link>

@@ -20,7 +20,6 @@ export async function DELETE(
       );
     }
     if (userId !== entryUser.user_id.toString()) {
-      console.log(userId, entryUser.user_id);
       return NextResponse.json(
         {
           message: "You can only delete your time entries",
@@ -31,7 +30,6 @@ export async function DELETE(
     }
     await TimeEntries.findByIdAndDelete(params.id);
     const timeEntryIdtoDelete = new mongoose.Types.ObjectId(params.id);
-    console.log(timeEntryIdtoDelete);
     const response = await User.findOneAndUpdate(
       { _id: userId },
       {

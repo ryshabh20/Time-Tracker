@@ -20,7 +20,6 @@ export async function GET(
         { status: 401 }
       );
     }
-    console.log("projectDetails");
     const employee = Employee.find({});
     const projectDetailsPromise = Project.find({ _id: params.id });
     const projectId = new mongoose.Types.ObjectId(params.id);
@@ -49,7 +48,7 @@ export async function GET(
       {
         $group: {
           _id: { $dateToString: { format: "%Y-%m-%d", date: "$start_time" } },
-          entries: { $addToSet: "$$ROOT" }, // Add all documents to the 'entries' array
+          entries: { $addToSet: "$$ROOT" },
         },
       },
       {
@@ -88,8 +87,6 @@ export async function GET(
 
       projectDetailsPromise,
     ]);
-    console.log(projectDetails);
-    console.log(groupedTimeEntries);
     const timeEntry = await TimeEntries.find({
       project_id: params.id,
       end_time: { $exists: true },
@@ -117,7 +114,6 @@ export async function GET(
       { status: 200 }
     );
   } catch (error) {
-    console.log("error", error);
     return NextResponse.json(
       {
         message: error,

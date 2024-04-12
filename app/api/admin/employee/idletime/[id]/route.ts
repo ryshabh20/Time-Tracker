@@ -18,7 +18,6 @@ export async function GET(
   try {
     const user = await tokenDataId(request, true);
     const employeeId = params.id;
-    console.log("employeeId", employeeId);
     if (!user || user.role !== "admin") {
       return NextResponse.json(
         {
@@ -57,8 +56,6 @@ export async function GET(
               $subtract: ["$end_time", "$start_time"],
             },
           },
-
-          // createdAt: { $first: "$createdAt" },
         },
       },
 
