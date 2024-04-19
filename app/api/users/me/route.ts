@@ -20,7 +20,8 @@ export async function GET(request: NextRequest) {
       );
     }
     const user = await User.findOne({ _id: userId }).select("-password");
-
+    const { email, name, role, isTimer, team, currentTask, avatar } = user;
+    const userInfo = { email, name, role, isTimer, team, currentTask, avatar };
     if (!user) {
       return NextResponse.json(
         {
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       message: "User found",
       success: "true",
-      data: user,
+      data: userInfo,
     });
   } catch (error: any) {
     return NextResponse.json(

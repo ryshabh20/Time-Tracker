@@ -50,7 +50,13 @@ interface Client {
   _id: string;
 }
 
+interface TableHeaders {
+  name: string;
+  sortvalue?: string;
+}
+
 interface Project {
+  _id: string;
   projectname: string;
   client: string;
   clientname: string;
@@ -70,7 +76,7 @@ interface PopulatedTimeEntry {
   };
 
   project_id: {
-    id: string;
+    _id: string;
     projectname: string;
     hoursConsumed: number;
     hoursLeft: number;
@@ -90,7 +96,25 @@ interface TimeEntry {
   _id: string;
   user_id: string;
 
-  project_id: strig;
+  project_id: string;
+
+  start_time: string;
+  task: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  duration: number;
+  end_time: string;
+}
+
+interface TimeTrackerEntries {
+  _id: string;
+  user_id: string;
+
+  project_id: {
+    _id: string;
+    projectname: string;
+  };
 
   start_time: string;
   task: string;

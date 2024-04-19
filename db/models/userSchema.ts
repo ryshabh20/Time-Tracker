@@ -52,8 +52,9 @@ const userSchema = new mongoose.Schema(
 
     currentTask: {
       description: { type: String, default: "" },
+      startedAt: { type: Date },
       currentProject: {
-        projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project" },
+        projectId: { type: String, default: "" },
         projectTask: { type: String, default: "" },
         projectName: { type: String, default: "" },
       },

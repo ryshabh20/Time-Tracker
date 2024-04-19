@@ -12,22 +12,18 @@ interface currentProject {
 }
 interface currentTask {
   description?: string;
+  startedAt?: Date;
   currentProject?: currentProject | null;
 }
 
 export interface UserData {
-  _id: string;
   email: string;
   name: string;
   role: string;
-  updatedAt: string;
   isTimer: boolean;
   team: string;
-  projects: string[];
-  timeentries: string[];
   currentTask?: currentTask;
   avatar: string;
-  screenshots: string[];
 }
 
 const initialState: UserState = {
@@ -37,7 +33,7 @@ const initialState: UserState = {
 };
 
 export const fetchUser = createAsyncThunk("user/fetch", async (thunkApi) => {
-  const response = await axios.get("/api/users/currentUser");
+  const response = await axios.get("/api/users/me");
   return response.data.data;
 });
 

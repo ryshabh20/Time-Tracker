@@ -1,345 +1,77 @@
-"use client";
-import AddClient from "@/components/AdminClient";
-import axios from "axios";
-import { useAppSelector } from "@/store/store";
-import { useEffect, useState } from "react";
-import { FaEllipsisV, FaPlusCircle } from "react-icons/fa";
-import { useRouter } from "next/navigation";
-
-import Link from "next/link";
-import toast, { Toaster } from "react-hot-toast";
-import ListingLoader from "@/helperComponents/ListingLoader";
-
-const Project = () => {
-  const router = useRouter();
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [role, setRole] = useState<string | undefined>("user");
-  const [term, setTerm] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageCount, setPageCount] = useState(0);
-  const [active, setActive] = useState<number>();
-  const [showModal, setShowModal] = useState(null);
-  const [sortBy, setSortBy] = useState<string>("projectname");
-  const [order, setOrder] = useState<string>("asc");
-
-  const notify = (status: boolean, message: string) => {
-    if (status) {
-      toast.success(message);
-    } else {
-      toast.error(message);
-    }
-  };
-
-  const openModal = (id: any) => {
-    setShowModal(id);
-  };
-  const closeModal = () => {
-    setShowModal(null);
-  };
-  const userRole = useAppSelector((state) => state?.userData?.role);
-  const fetchingProject = async () => {
-    setLoading(true);
-
-    const response = await axios.get(
-      `/api/admin/project/getprojects?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
+import Pagination from "@/app/ui/Pagination";
+import { ProjectTableHeaders } from "@/app/ui/data";
+import AddProjectButton from "@/app/ui/projects/AddProjectButton";
+import ProjectsTable from "@/app/ui/projects/ProjectsTable";
+import Search from "@/app/ui/projects/Search";
+import GetCookie from "@/helperComponents/getcookies";
+const GetProjects = async (
+  search: string,
+  currentPage: number,
+  sortBy: string,
+  order: string
+) => {
+  try {
+    const cookie = await GetCookie();
+    console.log(
+      "search,currentPage,typeof sortBy,order",
+      search,
+      currentPage,
+      typeof sortBy,
+      order
     );
-    if (response.data) {
-      setLoading(false);
-
-      setPageCount(response.data.pagination.pageCount);
-      setProjects(response.data.projects);
-    }
-    setLoading(false);
-  };
-  const pagesToRender = Math.ceil(pageCount);
-  const pagesarr = Array.from({ length: pagesToRender }, (_, i) => i + 1);
-  const handleClick = async (e: any) => {
-    e.preventDefault();
-    try {
-      setLoading(true);
-
-      const response = await axios.get(
-        `/api/admin/project/getprojects?search=${term}&page=${page}&sort=${sortBy}&order=${order}`
-      );
-      if (response.data) {
-        setLoading(false);
-
-        setPageCount(response.data.pagination.pageCount);
-        setProjects(response.data.projects);
-      }
-    } catch (err: any) {
-      setLoading(false);
-      notify(err.response.data.success, err.response.data.message);
-    }
-  };
-  useEffect(() => {
-    setRole(userRole);
-
-    fetchingProject();
-    setActive(page);
-  }, [page, order]);
-
-  const handleSort = (sort: string, order: string) => {
-    setSortBy(sort);
-    setOrder(order);
-  };
-
-  const deleteHandler = async () => {
-    try {
-      const response = await axios.delete(
-        `/api/admin/project/deleteproject/${showModal}`
-      );
-      if (response.data.success) {
-        notify(response.data.success, response.data.message);
-      }
-      fetchingProject();
-      setShowModal(null);
-    } catch (err: any) {
-      notify(err.response.data.success, err.response.data.message);
-    }
-  };
-
-  const handlePrevious = () => {
-    setPage((p) => {
-      if (p === 1) return pageCount;
-      return p - 1;
+    const url =
+      process.env.NODE_ENV === "production"
+        ? `https://time-tracker-xi-three.vercel.app/api/admin/project/getprojects?search=${search}&page=${currentPage}}&sort=${sortBy}&order=${order}`
+        : `http://localhost:3000/api/admin/project/getprojects?search=${search}&page=${currentPage}&sort=${sortBy}&order=${order}`;
+    const res = await fetch(url, {
+      next: { tags: ["projects"] },
+      headers: {
+        Cookie: `authtoken=${cookie}`,
+      },
     });
-  };
-  const handleNext = () => {
-    setPage((p) => {
-      if (p >= pageCount) return 1;
-      return p + 1;
-    });
-  };
 
-  const pageRender = () => {
-    if (pagesToRender) {
-      return (
-        <div className="flex space-x-4">
-          {pagesarr.map((pagelink) => (
-            <div
-              className={`px-4 py-2 ${
-                active === pagelink
-                  ? "bg-custom-green text-white rounded-full hover:bg-custom-green"
-                  : "hover:bg-custom-green hover:text-white hover:rounded-full"
-              }`}
-              key={pagelink}
-              onClick={() => {
-                setPage(pagelink);
-              }}
-            >
-              {pagelink}
-            </div>
-          ))}
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex px-4 py-2 rounded-full bg-custom-green text-white">
-          1
-        </div>
-      );
-    }
+    const response = await res.json();
+    return {
+      success: true,
+      projects: response.projects,
+      totalPages: Math.ceil(response.pagination.pageCount),
+      role: response.role,
+    };
+  } catch (error) {
+    return { success: false };
+  }
+};
+export default async function Page({
+  searchParams,
+}: {
+  searchParams?: {
+    search?: string;
+    page?: string;
+    sort?: string;
+    order?: string;
   };
+}) {
+  const search = searchParams?.search || "";
+  const currentPage = Number(searchParams?.page) || 1;
+  const sortBy = searchParams?.sort || "";
 
+  const order = searchParams?.order || "";
+  const {
+    success,
+    projects = [],
+    totalPages,
+    role,
+  } = await GetProjects(search, currentPage, sortBy, order);
+  const options = [
+    { value: "clients", label: "Clients" },
+    { value: "employees", label: "Employees" },
+  ];
   return (
     <div className="flex flex-col max-h-screen space-y-10">
-      <div className="flex justify-between items-center ">
-        <span className="text-2xl">Project</span>
-        {role === "admin" ? (
-          <Link href="/projects/admin/addproject">
-            <button className="text-white flex items-center bg-custom-green p-3">
-              <FaPlusCircle /> &nbsp; Add a new Project
-            </button>
-          </Link>
-        ) : (
-          ""
-        )}
-      </div>
-      <form className="flex  bg-white py-2 px-2 h-14">
-        <div className="SelectProjets text-gray-600 flex  md:2/12 lg:w-1/12 lg:justify-center border-r  items-center">
-          <select
-            onChange={(e) => {
-              const { value } = e.target;
-
-              router.push(`/${value}`);
-            }}
-            className="bg-white "
-          >
-            <option value={`clients`}>Clients</option>
-            <option value={`employees`}>Employees</option>
-          </select>
-        </div>
-        <div className=" lg:w-5/6 ml-auto">
-          <input
-            type="text"
-            required
-            onChange={(e) => {
-              setTerm(e.target.value);
-            }}
-            className=" h-full w-4/6 mr-2 px-2 float-right  bg-[#f6f6f6]"
-            placeholder="Search by project name..."
-          />
-        </div>
-        <div>
-          <button
-            type="submit"
-            onClick={handleClick}
-            className="bg-custom-green px-3 h-full text-white "
-          >
-            Search
-          </button>
-        </div>
-      </form>
-      <div>
-        <table
-          className={`table-auto text-gray-600 ${
-            loading
-              ? "border-separate border-spacing-x-1 border-spacing-y-3"
-              : ""
-          } font-light w-full text-left`}
-        >
-          <thead className="bg-[#e9e9e9]  h-10">
-            <tr>
-              <th className=" px-5">
-                Project{" "}
-                <span
-                  onClick={() => handleSort("projectname", "asc")}
-                  className={`text-2xl ${
-                    sortBy === "projectname" && order === "asc"
-                      ? "text-3xl"
-                      : "text-2xl"
-                  }`}
-                >
-                  ↑{" "}
-                </span>
-                <span
-                  onClick={() => handleSort("projectname", "desc")}
-                  className={`text-2xl ${
-                    sortBy === "projectname" && order === "desc"
-                      ? "text-3xl"
-                      : "text-2xl"
-                  }`}
-                >
-                  {" "}
-                  ↓
-                </span>
-              </th>
-              <th className="px-5">
-                Client{" "}
-                <span
-                  onClick={() => handleSort("clientname", "asc")}
-                  className={`text-2xl ${
-                    sortBy === "clientname" && order === "asc"
-                      ? "text-3xl"
-                      : "text-2xl"
-                  }`}
-                >
-                  ↑{" "}
-                </span>
-                <span
-                  onClick={() => handleSort("clientname", "desc")}
-                  className={`text-2xl ${
-                    sortBy === "clientname" && order === "desc"
-                      ? "text-3xl"
-                      : "text-2xl"
-                  }`}
-                >
-                  {" "}
-                  ↓
-                </span>
-              </th>
-              <th className="  px-5">
-                Hours{" "}
-                <span
-                  onClick={() => handleSort("hoursLeft", "asc")}
-                  className={`text-2xl ${
-                    sortBy === "hoursLeft" && order === "asc"
-                      ? "text-3xl"
-                      : "text-2xl"
-                  }`}
-                >
-                  ↑{" "}
-                </span>
-                <span
-                  onClick={() => handleSort("hoursLeft", "desc")}
-                  className={`text-2xl ${
-                    sortBy === "hoursLeft" && order === "desc"
-                      ? "text-3xl"
-                      : "text-2xl"
-                  }`}
-                >
-                  {" "}
-                  ↓
-                </span>
-              </th>
-
-              <th className="px-5">Team</th>
-              <th className="px-5"></th>
-            </tr>
-          </thead>
-          {loading ? (
-            <ListingLoader />
-          ) : (
-            <tbody>
-              {projects.map((project: any) => {
-                return (
-                  <tr className="bg-white h-12 border" key={project._id}>
-                    <td className="px-5  text-custom-green">
-                      <Link
-                        href={`/projects/admin/projectdetail/${project._id}`}
-                      >
-                        {" "}
-                        <li className="md:list-none lg:list-disc">
-                          <span className="">{project.projectname}</span>
-                        </li>
-                      </Link>
-                    </td>
-                    <td className="px-5">{project.clientname}</td>
-                    <td className="px-5">{project?.hoursLeft?.toFixed(2)}</td>
-                    <td className="px-5">{project.assignedTeam.join(" , ")}</td>
-                    <td className="relative">
-                      <FaEllipsisV onClick={() => openModal(project._id)} />
-                      {showModal === project._id && (
-                        <div className="absolute bg-white z-10  shadow-lg border ">
-                          <Link
-                            href={`/projects/admin/editproject/${project._id}`}
-                          >
-                            <div className="px-2 py-1 border-b hover:bg-gray-400 ">
-                              Edit
-                            </div>
-                          </Link>
-                          <div
-                            onClick={deleteHandler}
-                            className="px-2 py-1  hover:bg-red-400"
-                          >
-                            Delete
-                          </div>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          )}
-        </table>
-      </div>
-      {pageCount > 1 && (
-        <div className="flex justify-center space-x-4">
-          <button disabled={page === 1} onClick={handlePrevious}>
-            &lt;&lt;
-          </button>
-          <div>{pageRender()}</div>
-          <button disabled={page === pageCount} onClick={handleNext}>
-            &gt;&gt;
-          </button>
-        </div>
-      )}
-      <Toaster position="bottom-right" />
+      <AddProjectButton role={role} />
+      <Search options={options} placeholder="Search by project name" />
+      <ProjectsTable TableHeaders={ProjectTableHeaders} projects={projects} />
+      <Pagination totalPages={totalPages} />
     </div>
   );
-};
-
-export default Project;
+}

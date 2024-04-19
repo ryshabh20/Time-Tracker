@@ -1,5 +1,4 @@
 import { connect } from "@/db/dbConfig";
-
 import { NextRequest, NextResponse } from "next/server";
 import TimeEntries from "@/db/models/timeEntries";
 import { tokenDataId } from "@/helper/tokenData";
@@ -11,9 +10,8 @@ connect();
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
-    const userId = reqBody.user._id;
-    const tokenId = await tokenDataId(request);
-    if (tokenId !== userId) {
+    const userId = await tokenDataId(request);
+    if (!userId) {
       return NextResponse.json(
         {
           message: "You can only update your time entries",
@@ -22,34 +20,21 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
-    const userData = await User.findOne({ _id: tokenId }).select("-password");
+    const userData = await User.findOne({ _id: userId }).select("-password");
+
     if (userData.isTimer === false) {
-      const newTimeEntry = await new TimeEntries({
-        user_id: userId,
-        start_time: new Date(),
-        task: reqBody.task,
-        project_id: reqBody.project.projectId,
-      });
-      const savedEntry = await newTimeEntry.save();
-
-      const currentTaskDescription = savedEntry.task;
-      const currentProject = savedEntry.project_id;
-
+      const currentTaskDescription = reqBody.task;
+      const currentProject = reqBody?.project?.projectId;
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
           $set: {
             isTimer: !userData.isTimer,
             "currentTask.description": currentTaskDescription,
+            "currentTask.startedAt": new Date(),
             "currentTask.currentProject.projectId": currentProject,
             "currentTask.currentProject.projectName":
               reqBody.project.projectName,
-          },
-          $push: {
-            timeentries: savedEntry,
-          },
-          $addToSet: {
-            projects: currentProject,
           },
         },
         { new: true }
@@ -58,57 +43,53 @@ export async function POST(request: NextRequest) {
       const updatedTimer = updatedUser.isTimer;
       return NextResponse.json({
         message: "Time entry created successfully",
-        task: savedEntry.task,
+        task: updatedUser.currentTask.description,
+        startedAt: updatedUser.currentTask.startedAt,
         success: true,
-        savedEntry,
         project: {
-          projectId: savedEntry.project_id,
-          projectName: updatedUser.currentTask.currentProject.projectName,
+          projectId: currentProject,
+          projectName: reqBody.project.projectName,
         },
         updatedTimer,
       });
     }
     if (userData.isTimer === true) {
-      const timeEntryId = userData.timeentries[userData.timeentries.length - 1];
-      const projectId = reqBody.project.projectId;
-
-      const timeEntry = await TimeEntries.findOne({ _id: timeEntryId });
-
-      if (!timeEntry) {
-        return NextResponse.json({
-          message: "Time entry not found",
-          success: false,
-        });
-      }
       const durationInMillis =
-        new Date().getTime() - timeEntry.start_time.getTime();
+        new Date().getTime() - userData.currentTask.startedAt.getTime();
+
+      const newTimeEntry = await new TimeEntries({
+        user_id: userId,
+        project_id: reqBody.project.projectId,
+        start_time: userData.currentTask.startedAt,
+        end_time: new Date(),
+        task: reqBody.task,
+        duration: durationInMillis,
+      });
+
+      const savedEntry = await newTimeEntry.save();
+      const projectId = savedEntry.project_id;
       const durationInHours = durationInMillis / (1000 * 60 * 60);
-      const updatedTimeEntry = await TimeEntries.findByIdAndUpdate(
-        timeEntryId,
-        {
-          $set: {
-            end_time: new Date(),
-            task: reqBody.task,
-            duration: durationInMillis,
-            project_id: projectId,
-          },
-        },
-        { new: true }
-      );
-      const updatedUser = await User.findByIdAndUpdate(
+
+      const userPromise = User.findByIdAndUpdate(
         userId,
         {
           $set: {
             isTimer: !userData.isTimer,
             "currentTask.description": "",
+            "currentTask.startedAt": null,
             "currentTask.currentProject.projectId": null,
             "currentTask.currentProject.projectName": "",
+          },
+          $push: {
+            timeentries: savedEntry,
+          },
+          $addToSet: {
+            projects: savedEntry.project_id,
           },
         },
         { new: true }
       );
-
-      const updatedProject = await Project.findByIdAndUpdate(
+      const projectPromise = Project.findByIdAndUpdate(
         projectId,
         {
           $inc: {
@@ -120,6 +101,10 @@ export async function POST(request: NextRequest) {
           new: true,
         }
       );
+      const [updatedUser, updatedProject] = await Promise.all([
+        userPromise,
+        projectPromise,
+      ]);
 
       const updatedTimer = updatedUser.isTimer;
       return NextResponse.json({

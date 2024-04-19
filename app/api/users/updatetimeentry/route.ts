@@ -11,7 +11,6 @@ connect();
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
-
     const timeEntryId = reqBody.id;
     const timeEntry = await TimeEntries.findById(timeEntryId);
     if (!timeEntry) {
@@ -48,68 +47,50 @@ export async function POST(request: NextRequest) {
       );
     }
     if (userData.isTimer === false) {
-      const newTimeEntry = await new TimeEntries({
-        user_id: userId,
-        start_time: new Date(),
-        task: timeEntry.task,
-        project_id: reqBody.projectId,
-      });
-      const savedEntry = await newTimeEntry.save();
-      const currentTaskDescription = savedEntry.task;
-      const currentProject = savedEntry.project_id;
+      const currentProject = timeEntry.project_id;
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
           $set: {
             isTimer: !userData.isTimer,
-            "currentTask.description": currentTaskDescription,
+            "currentTask.description": timeEntry.task,
+            "currentTask.startedAt": new Date(),
             "currentTask.currentProject.projectId": currentProject,
             "currentTask.currentProject.projectName": reqBody.projectname,
           },
-          $push: {
-            timeentries: savedEntry,
-          },
+          // $push: {
+          //   timeentries: savedEntry,
+          // },
         },
         { new: true }
       );
       const updatedTimer = updatedUser.isTimer;
       return NextResponse.json({
         message: "time entry created successfully",
-        task: savedEntry.task,
+        task: timeEntry.task,
         success: true,
-        savedEntry,
-        projectID: savedEntry.project_id,
+        startedAt: updatedUser.currentTask.startedAt,
+        projectID: timeEntry.project_id,
         projectName: updatedUser.currentTask.currentProject.projectName,
         updatedTimer,
       });
     }
     if (userData.isTimer === true) {
-      const timeEntryId = userData.timeentries[userData.timeentries.length - 1];
-      const timeEntry = await TimeEntries.findOne({ _id: timeEntryId });
-      const projectId = reqBody.projectId;
-
-      if (!timeEntry) {
-        return NextResponse.json({
-          message: "Time entry not found",
-          success: false,
-        });
-      }
       const durationInMillis =
-        new Date().getTime() - timeEntry.start_time.getTime();
+        new Date().getTime() - userData.currentTask.startedAt.getTime();
+      const newTimeEntry = await new TimeEntries({
+        user_id: userId,
+        project_id: userData.currentTask.currentProject.projectId,
+        start_time: userData.currentTask.startedAt,
+        end_time: new Date(),
+        task: reqBody.task,
+        duration: durationInMillis,
+      });
+      const savedEntry = await newTimeEntry.save();
+
+      const projectId = savedEntry.project_id;
       const durationInHours = durationInMillis / (1000 * 60 * 60);
-
-      const updatedOldTimeEntry = await TimeEntries.findByIdAndUpdate(
-        timeEntryId,
-        {
-          $set: {
-            end_time: new Date(),
-            duration: durationInMillis,
-          },
-        },
-        { new: true }
-      );
-
-      const updatedOldProject = await Project.findByIdAndUpdate(
+      const project = await Project.findByIdAndUpdate(
         projectId,
         {
           $inc: {
@@ -121,21 +102,13 @@ export async function POST(request: NextRequest) {
           new: true,
         }
       );
-      const newTimeEntry = await new TimeEntries({
-        user_id: userId,
-        start_time: new Date(),
-        task: reqBody.task,
-        project_id: reqBody.projectId,
-      });
-      const savedEntry = await newTimeEntry.save();
-      const currentTaskDescription = savedEntry.task;
-      const currentProject = savedEntry.project_id;
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
           $set: {
-            "currentTask.description": currentTaskDescription,
-            "currentTask.currentProject.projectId": currentProject,
+            "currentTask.description": reqBody.task,
+            "currentTask.startedAt": new Date(),
+            "currentTask.currentProject.projectId": reqBody.projectId,
             "currentTask.currentProject.projectName": reqBody.projectname,
           },
           $push: {
@@ -149,7 +122,7 @@ export async function POST(request: NextRequest) {
         message: "time entry created and started successfully",
         task: savedEntry.task,
         success: true,
-        savedEntry,
+        startedAt: updatedUser.currentTask.startedAt,
         projectID: savedEntry.project_id,
         projectName: reqBody.projectname,
         updatedTimer,

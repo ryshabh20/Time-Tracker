@@ -138,12 +138,7 @@ const Dashboard = () => {
           <div>Today</div>
           <div className="relative " onClick={() => setModal(true)}>
             <dialog ref={dialogRef} open={modal}>
-              <div
-                onBlur={() => {
-                  setModal(false);
-                }}
-                className="absolute -left-32 space-y-2 "
-              >
+              <div className="absolute -left-32 space-y-2 ">
                 <div className="bg-white   md:p-1 lg:p-4 md:space-y-1 lg:space-y-2 border md:w-48 lg:w-60  flex flex-col">
                   <span className="md:text-xl lg:text-2xl  md:py-1 lg:py-2">
                     Up Time

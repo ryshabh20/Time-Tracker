@@ -62,7 +62,7 @@ const SearchableDropdown = ({
   );
 
   return (
-    <div className="relative ">
+    <div className="relative " onBlur={() => setIsOpen(false)}>
       <div
         className=" bg-white  lg:mr-4 md:mr-0  flex items-center text-md  "
         onClick={handleToggleDropdown}

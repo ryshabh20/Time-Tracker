@@ -3,14 +3,13 @@ import React, { useEffect, useState } from "react";
 ("");
 import { useAppDispatch } from "@/store/store";
 import { setUserData } from "@/store/slices/userSlice";
-import { useAppSelector } from "@/store/store";
 import Image from "next/image";
-
 import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { userDetails } from "@/helper/hydrationHelper";
 import SideBarData from "@/helperComponents/SideBarData";
+import { Toaster } from "react-hot-toast";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -70,6 +69,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {" "}
         {children}
       </div>
+      <Toaster position="bottom-right" />
     </div>
   );
 };

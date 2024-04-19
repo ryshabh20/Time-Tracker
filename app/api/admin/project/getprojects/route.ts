@@ -12,8 +12,14 @@ export async function GET(request: NextRequest) {
     Number(request.nextUrl.searchParams.get("items")) || 7;
   const page: number = Number(request.nextUrl.searchParams.get("page")) || 1;
   const search: string = request.nextUrl.searchParams.get("search") || "";
-  const sort = request.nextUrl.searchParams.get("sort") || "clientname";
-  const order = request.nextUrl.searchParams.get("order") || "asc";
+  let sort = request.nextUrl.searchParams.get("sort") || "projectname";
+  if (sort !== "projectname" && sort !== "clientname" && sort !== "hoursLeft") {
+    sort = "projectname";
+  }
+  let order = request.nextUrl.searchParams.get("order") || "asc";
+  if (order !== "asc" && order !== "desc" && order !== "-1" && order !== "1") {
+    order = "asc";
+  }
 
   try {
     const user = await tokenDataId(request, true);
@@ -26,7 +32,6 @@ export async function GET(request: NextRequest) {
 
     const skip = (page - 1) * items_per_page;
     const countPromise = Project.countDocuments({
-      status: true,
       projectname: { $regex: search, $options: "i" },
     });
 
@@ -40,6 +45,7 @@ export async function GET(request: NextRequest) {
       countPromise,
       projectsPromise,
     ]);
+
     const pageCount = count / items_per_page;
 
     return NextResponse.json({
@@ -50,8 +56,10 @@ export async function GET(request: NextRequest) {
         count,
         pageCount,
       },
+      role: user.role,
     });
   } catch (error: any) {
+    console.log("error", error);
     return NextResponse.json(
       {
         message: error.message,
