@@ -9,10 +9,6 @@ import GetCookie from "@/helperComponents/getcookies";
 
 import { IoCalendarOutline } from "react-icons/io5";
 
-interface CombinedInterfaces {
-  timeEntry: PopulatedTimeEntry[];
-  uniqueName: [string, string][];
-}
 async function GetData(id: string) {
   const cookie = await GetCookie();
   try {

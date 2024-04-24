@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { dynamicaction } from "@/helper/action";
 import { notify } from "@/utils/Notify";
-// import Button from "./Button";
 import dynamic from "next/dynamic";
 const Button = dynamic(() => import("./Button"), { ssr: false });
 
@@ -35,6 +34,7 @@ export function CreateTimeEntry() {
     currentEntry();
   }, [user?.isTimer]);
   const projectSet = (id: string, name: string) => {
+    console.log("hello i am running ");
     dispatch(
       setUserData({
         ...user!,
@@ -111,7 +111,6 @@ export function CreateTimeEntry() {
     }
   };
 
-  //   if (task?.trim() !== "" && user?.currentTask?.currentProject?.projectId) {
   //     const bodydata = { task, user, project };
 
   //     try {

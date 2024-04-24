@@ -1,21 +1,23 @@
 import Pagination from "@/app/ui/Pagination";
-import { ProjectTableHeaders } from "@/app/ui/data";
+import { WorkDetailsTableHeaders } from "@/app/ui/data";
 import AddButton from "@/app/ui/AddButton";
-import ProjectsTable from "@/app/ui/projects/ProjectsTable";
+import WorkDetailTable from "@/app/ui/employees/WorkDetailTable";
 import Search from "@/app/ui/Search";
 import GetCookie from "@/helperComponents/getcookies";
 import { BASE_URL } from "@/utils/BaseUrl";
-const GetProjects = async (
+const GetWorkDetails = async (
   search: string,
   currentPage: number,
   sortBy: string,
-  order: string
+  order: string,
+  id: string
 ) => {
   try {
     const cookie = await GetCookie();
-    const url = `${BASE_URL}admin/project/getprojects?search=${search}&page=${currentPage}&sort=${sortBy}&order=${order}`;
+    const url = `${BASE_URL}admin/employee/workdetails/${id}?search=${search}&page=${currentPage}&sort=${sortBy}&order=${order}`;
+
     const res = await fetch(url, {
-      next: { tags: ["projects"] },
+      next: { tags: ["workdetails"] },
       headers: {
         Cookie: `authtoken=${cookie}`,
       },
@@ -24,7 +26,7 @@ const GetProjects = async (
     const response = await res.json();
     return {
       success: true,
-      projects: response.projects,
+      workdetails: response.employees,
       totalPages: Math.ceil(response.pagination.pageCount),
       role: response.role,
     };
@@ -34,6 +36,7 @@ const GetProjects = async (
 };
 export default async function Page({
   searchParams,
+  params,
 }: {
   searchParams?: {
     search?: string;
@@ -41,6 +44,7 @@ export default async function Page({
     sort?: string;
     order?: string;
   };
+  params: { id: string };
 }) {
   const search = searchParams?.search || "";
   const currentPage = Number(searchParams?.page) || 1;
@@ -48,10 +52,10 @@ export default async function Page({
 
   const order = searchParams?.order || "";
   const {
-    projects = [],
+    workdetails = [],
     totalPages,
     role,
-  } = await GetProjects(search, currentPage, sortBy, order);
+  } = await GetWorkDetails(search, currentPage, sortBy, order, params.id);
 
   const options = [
     { value: "clients", label: "Clients" },
@@ -65,8 +69,11 @@ export default async function Page({
         apiroute="/projects/admin/addproject"
         text="Add a new Project"
       />
-      <Search options={options} placeholder="Search by project name" />
-      <ProjectsTable TableHeaders={ProjectTableHeaders} projects={projects} />
+      <Search options={options} placeholder="Search by technologies" />
+      <WorkDetailTable
+        TableHeaders={WorkDetailsTableHeaders}
+        workdetails={workdetails}
+      />
       <Pagination totalPages={totalPages!} />
     </div>
   );

@@ -171,4 +171,4 @@ const AddClient = () => {
     </div>
   );
 };
-export default AdminRoute(AddClient);
+export default AddClient;

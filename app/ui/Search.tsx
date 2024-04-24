@@ -31,7 +31,7 @@ export default function Search({
 
   return (
     <form className="flex  bg-white py-2 px-2 h-14" onSubmit={handleSubmit}>
-      <div className="SelectProjets text-gray-600 flex  md:2/12 lg:w-1/12 lg:justify-center border-r  items-center">
+      <div className="SelectProjets text-gray-600 flex  md:2/12  lg:justify-center border-r  items-center">
         <select
           onChange={(e) => {
             const { value } = e.target;
@@ -47,7 +47,8 @@ export default function Search({
           ))}
         </select>
       </div>
-      <div className=" lg:w-5/6 ml-auto">
+
+      <div className=" w-5/6 ml-auto">
         <input
           type="text"
           onChange={(e) => {

@@ -1,21 +1,23 @@
 import Pagination from "@/app/ui/Pagination";
-import { ProjectTableHeaders } from "@/app/ui/data";
+import { IdleTimeTableHeaders } from "@/app/ui/data";
 import AddButton from "@/app/ui/AddButton";
-import ProjectsTable from "@/app/ui/projects/ProjectsTable";
 import Search from "@/app/ui/Search";
 import GetCookie from "@/helperComponents/getcookies";
 import { BASE_URL } from "@/utils/BaseUrl";
-const GetProjects = async (
-  search: string,
+import IdleTimeTable from "@/app/ui/employees/IdleTimeTable";
+const GetIdleTime = async (
   currentPage: number,
-  sortBy: string,
-  order: string
+  order: string,
+  id: string,
+  search: string
 ) => {
   try {
     const cookie = await GetCookie();
-    const url = `${BASE_URL}admin/project/getprojects?search=${search}&page=${currentPage}&sort=${sortBy}&order=${order}`;
+    const url = `${BASE_URL}admin/employee/idletime/${id}/?order=${order}&page=${currentPage}&search=${new Date(
+      search
+    )}`;
     const res = await fetch(url, {
-      next: { tags: ["projects"] },
+      next: { tags: ["idletime"] },
       headers: {
         Cookie: `authtoken=${cookie}`,
       },
@@ -24,7 +26,7 @@ const GetProjects = async (
     const response = await res.json();
     return {
       success: true,
-      projects: response.projects,
+      duration: response.duration,
       totalPages: Math.ceil(response.pagination.pageCount),
       role: response.role,
     };
@@ -34,39 +36,34 @@ const GetProjects = async (
 };
 export default async function Page({
   searchParams,
+  params,
 }: {
   searchParams?: {
     search?: string;
     page?: string;
-    sort?: string;
     order?: string;
   };
+  params: { id: string };
 }) {
   const search = searchParams?.search || "";
   const currentPage = Number(searchParams?.page) || 1;
-  const sortBy = searchParams?.sort || "";
 
   const order = searchParams?.order || "";
   const {
-    projects = [],
+    duration = [],
     totalPages,
     role,
-  } = await GetProjects(search, currentPage, sortBy, order);
+  } = await GetIdleTime(currentPage, order, params.id, search);
 
   const options = [
     { value: "clients", label: "Clients" },
-    { value: "employees", label: "Employees" },
+    { value: "projects", label: "Projects" },
   ];
   return (
     <div className="flex flex-col max-h-screen space-y-10">
-      <AddButton
-        page="Project"
-        role={role}
-        apiroute="/projects/admin/addproject"
-        text="Add a new Project"
-      />
-      <Search options={options} placeholder="Search by project name" />
-      <ProjectsTable TableHeaders={ProjectTableHeaders} projects={projects} />
+      <AddButton page="Idle Time" />
+      <Search options={options} placeholder="Search by date" />
+      <IdleTimeTable TableHeaders={IdleTimeTableHeaders} duration={duration} />
       <Pagination totalPages={totalPages!} />
     </div>
   );

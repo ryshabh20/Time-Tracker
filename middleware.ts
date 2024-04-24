@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
-import { tokenDataId } from "./helper/tokenData";
+import { jwtVerify } from "jose";
+import { cookies } from "next/headers";
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
@@ -12,17 +12,31 @@ export async function middleware(request: NextRequest) {
     path === "/verifyemail" ||
     path === "/";
 
-  const isAdminPath =
-    path === "/admin/clients/addclient" || path === "/admin/clients/editclient";
-
   const token = request.cookies.get("authtoken")?.value || "";
 
-  if (isPublicPath && token) {
-    return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
+  let user;
+  try {
+    user = token
+      ? await jwtVerify(token, new TextEncoder().encode(process.env.SECRET))
+      : null;
+  } catch (error) {
+    user = null;
   }
 
-  if (!isPublicPath && !token) {
+  if (!isPublicPath && !user) {
     return NextResponse.redirect(new URL("/login", request.nextUrl));
+  }
+
+  if (isPublicPath && user) {
+    return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
+  }
+  if (
+    (request.nextUrl.pathname.startsWith("/clients/admin") ||
+      request.nextUrl.pathname.startsWith("/projects/admin") ||
+      request.nextUrl.pathname.startsWith("/employees/admin")) &&
+    user?.payload?.role !== "admin"
+  ) {
+    return NextResponse.redirect(new URL("/dashboard", request.nextUrl));
   }
 }
 

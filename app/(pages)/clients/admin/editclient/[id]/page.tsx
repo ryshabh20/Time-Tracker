@@ -130,4 +130,4 @@ const Addeditclient = ({ params }: { params: { id: string } }) => {
     </div>
   );
 };
-export default AdminRoute(Addeditclient);
+export default Addeditclient;

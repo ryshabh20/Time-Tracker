@@ -6,4 +6,4 @@ const Editemployee = ({ params }: { params: { id: string } }) => {
   return <EmployeeForm edit={true} id={params.id} />;
 };
 
-export default AdminRoute(Editemployee);
+export default Editemployee;

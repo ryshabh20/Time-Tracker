@@ -15,9 +15,14 @@ export async function GET(
     Number(request.nextUrl.searchParams.get("items")) || 7;
   const page: number = Number(request.nextUrl.searchParams.get("page")) || 1;
   const search: string = request.nextUrl.searchParams.get("search") || "";
-  const sort = request.nextUrl.searchParams.get("sort") || "technologies";
-  const order = request.nextUrl.searchParams.get("order") || "asc";
-
+  let sort = request.nextUrl.searchParams.get("sort") || "projectname";
+  if (sort !== "projectname" && sort !== "clientname") {
+    sort = "clientname";
+  }
+  let order = request.nextUrl.searchParams.get("order") || "asc";
+  if (order !== "asc" && order !== "desc" && order !== "-1" && order !== "1") {
+    order = "asc";
+  }
   try {
     const user = await tokenDataId(request, true);
     if (!user) {
@@ -44,6 +49,7 @@ export async function GET(
     const filteredEmployees = employees.filter((entry: any) =>
       entry.project_id.technology.includes(search)
     );
+
     return NextResponse.json({
       message: "all entries fetched",
       success: true,

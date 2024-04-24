@@ -62,7 +62,7 @@ const SearchableDropdown = ({
   );
 
   return (
-    <div className="relative " onBlur={() => setIsOpen(false)}>
+    <div className="relative  ">
       <div
         className=" bg-white  lg:mr-4 md:mr-0  flex items-center text-md  "
         onClick={handleToggleDropdown}
@@ -71,7 +71,7 @@ const SearchableDropdown = ({
         <RiArrowDropDownLine color="#00a8b2" />
       </div>
       {isOpen && (
-        <div className="top-11 border p-2 absolute z-30 bg-white ">
+        <div className="top-11 max-h-[20rem] overflow-y-auto p-2 absolute z-30 bg-white border ">
           <input
             type="text"
             className="border p-2 rounded-sm"

@@ -10,6 +10,10 @@ interface Entry {
   duration: number;
   end_time: string;
 }
+interface Duration {
+  _id: string;
+  totalDuration: string;
+}
 
 interface TimeEntryDetails {
   _id: string;
@@ -123,4 +127,15 @@ interface TimeTrackerEntries {
   __v: number;
   duration: number;
   end_time: string;
+}
+
+interface Employee {
+  _id: string;
+  employeename: string;
+  code: string;
+  desingation: string;
+  department: string;
+  technologies: string[];
+  permission: string[];
+  createdBy: string;
 }

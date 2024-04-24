@@ -6,4 +6,4 @@ const Editproject = ({ params }: { params: { id: string } }) => {
   return <FormProject edit={true} id={params.id} />;
 };
 
-export default AdminRoute(Editproject);
+export default Editproject;

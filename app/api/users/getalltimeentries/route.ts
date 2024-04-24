@@ -6,9 +6,18 @@ import { tokenDataId } from "@/helper/tokenData";
 import { NextRequest, NextResponse } from "next/server";
 
 connect();
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest, response: NextResponse) {
   try {
     const userId = await tokenDataId(request);
+    if (!userId) {
+      return NextResponse.json(
+        {
+          message: "Please login",
+          success: false,
+        },
+        { status: 401 }
+      );
+    }
     const project = await Project.find({});
     const timeEntries = await TimeEntries.find({
       user_id: userId,
@@ -57,6 +66,7 @@ export async function GET(request: NextRequest) {
       duration,
     });
   } catch (error: any) {
+    console.log("error", error);
     return NextResponse.json(
       { error: error.message, success: false },
       { status: 400 }

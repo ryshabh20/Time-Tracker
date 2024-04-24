@@ -12,8 +12,18 @@ export async function GET(request: NextRequest) {
     Number(request.nextUrl.searchParams.get("items")) || 7;
   const page: number = Number(request.nextUrl.searchParams.get("page")) || 1;
   const search: string = request.nextUrl.searchParams.get("search") || "";
-  const sort = request.nextUrl.searchParams.get("sort") || "employeename";
-  const order = request.nextUrl.searchParams.get("order") || "asc";
+  let sort = request.nextUrl.searchParams.get("sort") || "employeename";
+  if (
+    sort !== "employeename" &&
+    sort !== "department" &&
+    sort !== "designation"
+  ) {
+    sort = "employeename";
+  }
+  let order = request.nextUrl.searchParams.get("order") || "asc";
+  if (order !== "asc" && order !== "desc" && order !== "-1" && order !== "1") {
+    order = "asc";
+  }
 
   try {
     const user = await tokenDataId(request, true);
@@ -53,6 +63,7 @@ export async function GET(request: NextRequest) {
         count,
         pageCount,
       },
+      role: user.role,
     });
   } catch (error: any) {
     return NextResponse.json(

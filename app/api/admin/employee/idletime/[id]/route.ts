@@ -1,8 +1,6 @@
-import Employee from "@/db/models/employeeSchema";
 import TimeEntries from "@/db/models/timeEntries";
 import User from "@/db/models/userSchema";
 import { tokenDataId } from "@/helper/tokenData";
-import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -12,6 +10,26 @@ export async function GET(
   const items_per_page: number =
     Number(request.nextUrl.searchParams.get("items")) || 7;
   const page: number = Number(request.nextUrl.searchParams.get("page")) || 1;
+  let order: any = request.nextUrl.searchParams.get("order");
+  let search: any = request.nextUrl.searchParams.get("search") || "";
+  if (search === "Invalid Date") {
+    search = "";
+  } else {
+    console.log(search);
+  }
+
+  if (order === "asc") {
+    console.log("asc");
+    order = 1;
+  }
+  if (order === "desc") {
+    console.log("desc");
+    order = -1;
+  }
+
+  if (order !== "asc" && order !== "desc" && order !== -1 && order !== 1) {
+    order = 1;
+  }
 
   try {
     const user = await tokenDataId(request, true);
@@ -56,10 +74,15 @@ export async function GET(
           },
         },
       },
+      {
+        $match: {
+          _id: { $regex: search },
+        },
+      },
 
       {
         $sort: {
-          createdAt: -1,
+          _id: order,
         },
       },
     ]);
@@ -77,6 +100,11 @@ export async function GET(
         },
       },
       {
+        $match: {
+          _id: { $regex: search },
+        },
+      },
+      {
         $count: "count",
       },
     ]);
@@ -85,7 +113,9 @@ export async function GET(
       durationPromise,
       countPromise,
     ]);
-    const count = finalCount[0].count;
+
+    const count = finalCount[0]?.count;
+
     const pageCount = count / items_per_page;
 
     return NextResponse.json({
@@ -98,6 +128,7 @@ export async function GET(
       },
     });
   } catch (error: any) {
+    console.log(error.message);
     return NextResponse.json(
       {
         message: error.message,

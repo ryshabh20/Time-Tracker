@@ -6,4 +6,4 @@ const Addemployee = () => {
   return <EmployeeForm edit={false} />;
 };
 
-export default AdminRoute(Addemployee);
+export default Addemployee;

@@ -30,11 +30,8 @@ export async function POST(request: NextRequest) {
       email: user.email,
       team: user.team,
       role: user.role,
-      isTimer: user.isTimer,
-      projects: user.projects,
-      timeentries: user.timeentries,
     };
-    const token = await jwt.sign(userData, process.env.SECRET!, {
+    const token = jwt.sign(userData, process.env.SECRET!, {
       expiresIn: stayLoggedIn ? "7d" : "1d",
     });
 

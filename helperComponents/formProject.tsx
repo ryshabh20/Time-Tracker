@@ -241,6 +241,7 @@ const FormProject: React.FC<{
                     hoursConsumed: Number(e.target.value),
                   })
                 }
+                required
                 className="p-2 w-full border rounded-md"
                 placeholder="Hours Consumed"
                 name="hoursConsumed"

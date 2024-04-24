@@ -35,8 +35,8 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
-    params.set("page", pageNumber.toString());
-    return `${pathname}?${params.toString()}`;
+    params.set("page", pageNumber?.toString());
+    return `${pathname}?${params?.toString()}`;
   };
 
   const allPages = generatePagination(currentPage, totalPages);
@@ -51,7 +51,7 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
         />
 
         <div className="flex space-x-3">
-          {allPages.map((page, index) => {
+          {allPages?.map((page, index) => {
             return (
               <PaginationNumber
                 key={uuidv4()}
